@@ -1,0 +1,6686 @@
+nodes:
+  '607':
+    id: '607'
+    ou: UW_0
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '628'
+      ip: 172.16.9.90/24
+  '614':
+    id: '614'
+    ou: UW_0
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '628'
+      ip: 172.16.9.70/24
+  '618':
+    id: '618'
+    ou: UW_0
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '628'
+      ip: 172.16.9.38/24
+  '622':
+    id: '622'
+    ou: UW_0
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '628'
+      ip: 172.16.9.110/24
+  '627':
+    id: '627'
+    ou: UW_0
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '628'
+      ip: 172.16.9.93/24
+  '628':
+    id: '628'
+    ou: UW_0
+    owner: DSO
+    type: switch
+    zone: Station
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 4.0
+    position2d:
+      x: 6.819661379667859
+      y: 30.844764926375
+    interfaces:
+    - id: i1
+      destination_host: '607'
+    - id: i2
+      destination_host: '614'
+    - id: i3
+      destination_host: '618'
+    - id: i4
+      destination_host: '622'
+    - id: i5
+      destination_host: '627'
+    - id: i6
+      destination_host: '629'
+  '629':
+    id: '629'
+    ou: UW_0
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 52.4247
+      z: 4.5
+    position2d:
+      x: 8.3523452993755
+      y: 37.0698608716704
+    interfaces:
+    - id: i1
+      destination_host: '628'
+    - id: i2
+      destination_host: '1672'
+    - id: i3
+      destination_host: '1673'
+    - id: i4
+      destination_host: '1674'
+  '634':
+    id: '634'
+    ou: ONS_107
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: ONS_107
+    position3d:
+      x: 11.8124
+      y: 53.4145
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '635'
+      ip: 172.16.9.34/24
+  '635':
+    id: '635'
+    ou: ONS_107
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: Distribution
+    name: ONS_107
+    position3d:
+      x: 11.8124
+      y: 53.4145
+      z: 4.0
+    position2d:
+      x: 6.819892319775535
+      y: 30.838875953629262
+    interfaces:
+    - id: i1
+      destination_host: '634'
+    - id: i2
+      destination_host: '1595'
+    - id: i3
+      destination_host: '1604'
+  '640':
+    id: '640'
+    ou: ONS_100
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: Distribution
+    name: ONS_100
+    position3d:
+      x: 11.8216
+      y: 53.4471
+      z: 3.0
+    position2d:
+      x: 0.0
+      y: 0.0
+    interfaces:
+    - id: i1
+      destination_host: '641'
+      ip: 172.16.9.50/24
+  '641':
+    id: '641'
+    ou: ONS_100
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: Distribution
+    name: ONS_100
+    position3d:
+      x: 11.8216
+      y: 53.4471
+      z: 4.0
+    position2d:
+      x: 6.82520394225208
+      y: 30.857697572404845
+    interfaces:
+    - id: i1
+      destination_host: '640'
+    - id: i2
+      destination_host: '972'
+    - id: i3
+      destination_host: '1540'
+  '648':
+    id: '648'
+    ou: DEA_1
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_1
+    position3d:
+      x: 11.812
+      y: 52.9247
+      z: 4.0
+    position2d:
+      x: 6.819661379667859
+      y: 30.556089791780185
+    interfaces:
+    - id: i1
+      destination_host: '649'
+      ip: 172.16.9.35/24
+  '649':
+    id: '649'
+    ou: DEA_1
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_1
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 4.0
+    position2d:
+      x: 6.819661379667859
+      y: 30.844764926375
+    interfaces:
+    - id: i1
+      destination_host: '648'
+    - id: i2
+      destination_host: '1668'
+  '661':
+    id: '661'
+    ou: DEA_2
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_2
+    position3d:
+      x: 11.812
+      y: 52.9247
+      z: 4.0
+    position2d:
+      x: 6.819661379667859
+      y: 30.556089791780185
+    interfaces:
+    - id: i1
+      destination_host: '662'
+      ip: 172.16.9.43/24
+  '662':
+    id: '662'
+    ou: DEA_2
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_2
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 4.0
+    position2d:
+      x: 6.819661379667859
+      y: 30.844764926375
+    interfaces:
+    - id: i1
+      destination_host: '661'
+    - id: i2
+      destination_host: '671'
+    - id: i3
+      destination_host: '873'
+    - id: i4
+      destination_host: '981'
+    - id: i5
+      destination_host: '1081'
+  '670':
+    id: '670'
+    ou: DEA_4
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_4
+    position3d:
+      x: 11.8149
+      y: 52.9244
+      z: 4.0
+    position2d:
+      x: 6.821335695448509
+      y: 30.55591658669943
+    interfaces:
+    - id: i1
+      destination_host: '671'
+      ip: 172.16.9.42/24
+  '671':
+    id: '671'
+    ou: DEA_4
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_4
+    position3d:
+      x: 11.8149
+      y: 53.4244
+      z: 4.0
+    position2d:
+      x: 6.821335695448509
+      y: 30.84459172129424
+    interfaces:
+    - id: i1
+      destination_host: '662'
+    - id: i2
+      destination_host: '670'
+    - id: i3
+      destination_host: '680'
+  '679':
+    id: '679'
+    ou: DEA_5
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_5
+    position3d:
+      x: 11.8166
+      y: 52.9241
+      z: 4.0
+    position2d:
+      x: 6.822317190906131
+      y: 30.555743381618672
+    interfaces:
+    - id: i1
+      destination_host: '680'
+      ip: 172.16.9.3/24
+  '680':
+    id: '680'
+    ou: DEA_5
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_5
+    position3d:
+      x: 11.8166
+      y: 53.4241
+      z: 4.0
+    position2d:
+      x: 6.822317190906131
+      y: 30.844418516213487
+    interfaces:
+    - id: i1
+      destination_host: '671'
+    - id: i2
+      destination_host: '679'
+    - id: i3
+      destination_host: '689'
+  '688':
+    id: '688'
+    ou: DEA_6
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_6
+    position3d:
+      x: 11.8181
+      y: 52.9238
+      z: 4.0
+    position2d:
+      x: 6.823183216309915
+      y: 30.555570176537913
+    interfaces:
+    - id: i1
+      destination_host: '689'
+      ip: 172.16.9.115/24
+  '689':
+    id: '689'
+    ou: DEA_6
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_6
+    position3d:
+      x: 11.8181
+      y: 53.4238
+      z: 4.0
+    position2d:
+      x: 6.823183216309915
+      y: 30.844245311132727
+    interfaces:
+    - id: i1
+      destination_host: '680'
+    - id: i2
+      destination_host: '688'
+    - id: i3
+      destination_host: '698'
+  '697':
+    id: '697'
+    ou: DEA_7
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_7
+    position3d:
+      x: 11.8193
+      y: 52.9234
+      z: 4.0
+    position2d:
+      x: 6.823876036632943
+      y: 30.55533923643024
+    interfaces:
+    - id: i1
+      destination_host: '698'
+      ip: 172.16.9.31/24
+  '698':
+    id: '698'
+    ou: DEA_7
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_7
+    position3d:
+      x: 11.8193
+      y: 53.4234
+      z: 4.0
+    position2d:
+      x: 6.823876036632943
+      y: 30.84401437102505
+    interfaces:
+    - id: i1
+      destination_host: '689'
+    - id: i2
+      destination_host: '697'
+    - id: i3
+      destination_host: '707'
+  '706':
+    id: '706'
+    ou: DEA_8
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_8
+    position3d:
+      x: 11.8207
+      y: 52.9229
+      z: 4.0
+    position2d:
+      x: 6.824684327009809
+      y: 30.555050561295644
+    interfaces:
+    - id: i1
+      destination_host: '707'
+      ip: 172.16.9.25/24
+  '707':
+    id: '707'
+    ou: DEA_8
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_8
+    position3d:
+      x: 11.8207
+      y: 53.4229
+      z: 4.0
+    position2d:
+      x: 6.824684327009809
+      y: 30.843725695890456
+    interfaces:
+    - id: i1
+      destination_host: '698'
+    - id: i2
+      destination_host: '706'
+    - id: i3
+      destination_host: '716'
+  '715':
+    id: '715'
+    ou: DEA_9
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_9
+    position3d:
+      x: 11.8217
+      y: 52.9225
+      z: 4.0
+    position2d:
+      x: 6.8252616772789985
+      y: 30.554819621187967
+    interfaces:
+    - id: i1
+      destination_host: '716'
+      ip: 172.16.9.51/24
+  '716':
+    id: '716'
+    ou: DEA_9
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_9
+    position3d:
+      x: 11.8217
+      y: 53.4225
+      z: 4.0
+    position2d:
+      x: 6.8252616772789985
+      y: 30.843494755782782
+    interfaces:
+    - id: i1
+      destination_host: '707'
+    - id: i2
+      destination_host: '715'
+    - id: i3
+      destination_host: '726'
+  '725':
+    id: '725'
+    ou: DEA_10
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_10
+    position3d:
+      x: 11.8247
+      y: 52.9213
+      z: 4.0
+    position2d:
+      x: 6.826993728086568
+      y: 30.554126800864942
+    interfaces:
+    - id: i1
+      destination_host: '726'
+      ip: 172.16.9.101/24
+  '726':
+    id: '726'
+    ou: DEA_10
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_10
+    position3d:
+      x: 11.8247
+      y: 53.4213
+      z: 4.0
+    position2d:
+      x: 6.826993728086568
+      y: 30.842801935459754
+    interfaces:
+    - id: i1
+      destination_host: '716'
+    - id: i2
+      destination_host: '725'
+    - id: i3
+      destination_host: '735'
+  '734':
+    id: '734'
+    ou: DEA_11
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_11
+    position3d:
+      x: 11.8263
+      y: 52.9207
+      z: 4.0
+    position2d:
+      x: 6.82791748851727
+      y: 30.553780390703423
+    interfaces:
+    - id: i1
+      destination_host: '735'
+      ip: 172.16.9.8/24
+  '735':
+    id: '735'
+    ou: DEA_11
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_11
+    position3d:
+      x: 11.8263
+      y: 53.4207
+      z: 4.0
+    position2d:
+      x: 6.82791748851727
+      y: 30.842455525298238
+    interfaces:
+    - id: i1
+      destination_host: '726'
+    - id: i2
+      destination_host: '734'
+    - id: i3
+      destination_host: '744'
+  '743':
+    id: '743'
+    ou: DEA_12
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_12
+    position3d:
+      x: 11.8282
+      y: 52.9198
+      z: 4.0
+    position2d:
+      x: 6.829014454028732
+      y: 30.55326077546116
+    interfaces:
+    - id: i1
+      destination_host: '744'
+      ip: 172.16.9.40/24
+  '744':
+    id: '744'
+    ou: DEA_12
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_12
+    position3d:
+      x: 11.8282
+      y: 53.4198
+      z: 4.0
+    position2d:
+      x: 6.829014454028732
+      y: 30.84193591005597
+    interfaces:
+    - id: i1
+      destination_host: '735'
+    - id: i2
+      destination_host: '743'
+    - id: i3
+      destination_host: '754'
+  '753':
+    id: '753'
+    ou: DEA_13
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_13
+    position3d:
+      x: 11.8294
+      y: 52.9191
+      z: 4.0
+    position2d:
+      x: 6.829707274351758
+      y: 30.552856630272725
+    interfaces:
+    - id: i1
+      destination_host: '754'
+      ip: 172.16.9.48/24
+  '754':
+    id: '754'
+    ou: DEA_13
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_13
+    position3d:
+      x: 11.8294
+      y: 53.4191
+      z: 4.0
+    position2d:
+      x: 6.829707274351758
+      y: 30.841531764867536
+    interfaces:
+    - id: i1
+      destination_host: '744'
+    - id: i2
+      destination_host: '753'
+    - id: i3
+      destination_host: '763'
+    - id: i4
+      destination_host: '1641'
+  '762':
+    id: '762'
+    ou: DEA_14
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_14
+    position3d:
+      x: 11.831
+      y: 52.9202
+      z: 4.0
+    position2d:
+      x: 6.830631034782462
+      y: 30.553491715568832
+    interfaces:
+    - id: i1
+      destination_host: '763'
+      ip: 172.16.9.39/24
+  '763':
+    id: '763'
+    ou: DEA_14
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_14
+    position3d:
+      x: 11.831
+      y: 53.4202
+      z: 4.0
+    position2d:
+      x: 6.830631034782462
+      y: 30.842166850163647
+    interfaces:
+    - id: i1
+      destination_host: '754'
+    - id: i2
+      destination_host: '762'
+    - id: i3
+      destination_host: '772'
+  '771':
+    id: '771'
+    ou: DEA_15
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_15
+    position3d:
+      x: 11.8318
+      y: 52.9207
+      z: 4.0
+    position2d:
+      x: 6.8310929149978135
+      y: 30.553780390703423
+    interfaces:
+    - id: i1
+      destination_host: '772'
+      ip: 172.16.9.107/24
+  '772':
+    id: '772'
+    ou: DEA_15
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_15
+    position3d:
+      x: 11.8318
+      y: 53.4207
+      z: 4.0
+    position2d:
+      x: 6.8310929149978135
+      y: 30.842455525298238
+    interfaces:
+    - id: i1
+      destination_host: '763'
+    - id: i2
+      destination_host: '771'
+    - id: i3
+      destination_host: '781'
+  '780':
+    id: '780'
+    ou: DEA_16
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_16
+    position3d:
+      x: 11.8323
+      y: 52.9212
+      z: 4.0
+    position2d:
+      x: 6.831381590132408
+      y: 30.55406906583802
+    interfaces:
+    - id: i1
+      destination_host: '781'
+      ip: 172.16.9.57/24
+  '781':
+    id: '781'
+    ou: DEA_16
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_16
+    position3d:
+      x: 11.8323
+      y: 53.4212
+      z: 4.0
+    position2d:
+      x: 6.831381590132408
+      y: 30.842744200432833
+    interfaces:
+    - id: i1
+      destination_host: '772'
+    - id: i2
+      destination_host: '780'
+    - id: i3
+      destination_host: '790'
+  '789':
+    id: '789'
+    ou: DEA_17
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_17
+    position3d:
+      x: 11.8333
+      y: 52.9221
+      z: 4.0
+    position2d:
+      x: 6.831958940401598
+      y: 30.554588681080293
+    interfaces:
+    - id: i1
+      destination_host: '790'
+      ip: 172.16.9.65/24
+  '790':
+    id: '790'
+    ou: DEA_17
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_17
+    position3d:
+      x: 11.8333
+      y: 53.4221
+      z: 4.0
+    position2d:
+      x: 6.831958940401598
+      y: 30.843263815675105
+    interfaces:
+    - id: i1
+      destination_host: '781'
+    - id: i2
+      destination_host: '789'
+    - id: i3
+      destination_host: '799'
+  '798':
+    id: '798'
+    ou: DEA_18
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_18
+    position3d:
+      x: 11.8342
+      y: 52.9233
+      z: 4.0
+    position2d:
+      x: 6.832478555643869
+      y: 30.555281501403318
+    interfaces:
+    - id: i1
+      destination_host: '799'
+      ip: 172.16.9.80/24
+  '799':
+    id: '799'
+    ou: DEA_18
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_18
+    position3d:
+      x: 11.8342
+      y: 53.4233
+      z: 4.0
+    position2d:
+      x: 6.832478555643869
+      y: 30.84395663599813
+    interfaces:
+    - id: i1
+      destination_host: '790'
+    - id: i2
+      destination_host: '798'
+    - id: i3
+      destination_host: '808'
+  '807':
+    id: '807'
+    ou: DEA_19
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_19
+    position3d:
+      x: 11.8347
+      y: 52.9242
+      z: 4.0
+    position2d:
+      x: 6.8327672307784635
+      y: 30.55580111664559
+    interfaces:
+    - id: i1
+      destination_host: '808'
+      ip: 172.16.9.18/24
+  '808':
+    id: '808'
+    ou: DEA_19
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_19
+    position3d:
+      x: 11.8347
+      y: 53.4242
+      z: 4.0
+    position2d:
+      x: 6.8327672307784635
+      y: 30.8444762512404
+    interfaces:
+    - id: i1
+      destination_host: '799'
+    - id: i2
+      destination_host: '807'
+    - id: i3
+      destination_host: '817'
+  '816':
+    id: '816'
+    ou: DEA_20
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_20
+    position3d:
+      x: 11.8354
+      y: 52.9257
+      z: 4.0
+    position2d:
+      x: 6.833171375966896
+      y: 30.556667142049374
+    interfaces:
+    - id: i1
+      destination_host: '817'
+      ip: 172.16.9.106/24
+  '817':
+    id: '817'
+    ou: DEA_20
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_20
+    position3d:
+      x: 11.8354
+      y: 53.4257
+      z: 4.0
+    position2d:
+      x: 6.833171375966896
+      y: 30.845342276644185
+    interfaces:
+    - id: i1
+      destination_host: '808'
+    - id: i2
+      destination_host: '816'
+    - id: i3
+      destination_host: '827'
+  '826':
+    id: '826'
+    ou: DEA_21
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_21
+    position3d:
+      x: 11.8359
+      y: 52.9278
+      z: 4.0
+    position2d:
+      x: 6.833460051101492
+      y: 30.55787957761467
+    interfaces:
+    - id: i1
+      destination_host: '827'
+      ip: 172.16.9.88/24
+  '827':
+    id: '827'
+    ou: DEA_21
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_21
+    position3d:
+      x: 11.8359
+      y: 53.4278
+      z: 4.0
+    position2d:
+      x: 6.833460051101492
+      y: 30.846554712209485
+    interfaces:
+    - id: i1
+      destination_host: '817'
+    - id: i2
+      destination_host: '826'
+    - id: i3
+      destination_host: '836'
+    - id: i4
+      destination_host: '1420'
+  '835':
+    id: '835'
+    ou: DEA_22
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_22
+    position3d:
+      x: 11.8368
+      y: 52.9334
+      z: 4.0
+    position2d:
+      x: 6.833979666343762
+      y: 30.561112739122134
+    interfaces:
+    - id: i1
+      destination_host: '836'
+      ip: 172.16.9.105/24
+  '836':
+    id: '836'
+    ou: DEA_22
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_22
+    position3d:
+      x: 11.8368
+      y: 53.4334
+      z: 4.0
+    position2d:
+      x: 6.833979666343762
+      y: 30.84978787371695
+    interfaces:
+    - id: i1
+      destination_host: '827'
+    - id: i2
+      destination_host: '835'
+    - id: i3
+      destination_host: '845'
+  '844':
+    id: '844'
+    ou: DEA_23
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_23
+    position3d:
+      x: 11.8345
+      y: 52.9394
+      z: 4.0
+    position2d:
+      x: 6.832651760724626
+      y: 30.56457684073727
+    interfaces:
+    - id: i1
+      destination_host: '845'
+      ip: 172.16.9.78/24
+  '845':
+    id: '845'
+    ou: DEA_23
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_23
+    position3d:
+      x: 11.8345
+      y: 53.4394
+      z: 4.0
+    position2d:
+      x: 6.832651760724626
+      y: 30.853251975332086
+    interfaces:
+    - id: i1
+      destination_host: '836'
+    - id: i2
+      destination_host: '844'
+    - id: i3
+      destination_host: '855'
+  '854':
+    id: '854'
+    ou: DEA_24
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_24
+    position3d:
+      x: 11.8303
+      y: 52.9436
+      z: 4.0
+    position2d:
+      x: 6.830226889594029
+      y: 30.56700171186787
+    interfaces:
+    - id: i1
+      destination_host: '855'
+      ip: 172.16.9.66/24
+  '855':
+    id: '855'
+    ou: DEA_24
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_24
+    position3d:
+      x: 11.8303
+      y: 53.4436
+      z: 4.0
+    position2d:
+      x: 6.830226889594029
+      y: 30.855676846462682
+    interfaces:
+    - id: i1
+      destination_host: '845'
+    - id: i2
+      destination_host: '854'
+    - id: i3
+      destination_host: '864'
+  '863':
+    id: '863'
+    ou: DEA_25
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_25
+    position3d:
+      x: 11.8265
+      y: 52.9454
+      z: 4.0
+    position2d:
+      x: 6.828032958571108
+      y: 30.56804094235241
+    interfaces:
+    - id: i1
+      destination_host: '864'
+      ip: 172.16.9.54/24
+  '864':
+    id: '864'
+    ou: DEA_25
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_25
+    position3d:
+      x: 11.8265
+      y: 53.4454
+      z: 4.0
+    position2d:
+      x: 6.828032958571108
+      y: 30.856716076947222
+    interfaces:
+    - id: i1
+      destination_host: '855'
+    - id: i2
+      destination_host: '863'
+    - id: i3
+      destination_host: '1550'
+  '872':
+    id: '872'
+    ou: DEA_26
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_26
+    position3d:
+      x: 11.8117
+      y: 52.9255
+      z: 4.0
+    position2d:
+      x: 6.819488174587102
+      y: 30.556551671995535
+    interfaces:
+    - id: i1
+      destination_host: '873'
+      ip: 172.16.9.100/24
+  '873':
+    id: '873'
+    ou: DEA_26
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_26
+    position3d:
+      x: 11.8117
+      y: 53.4255
+      z: 4.0
+    position2d:
+      x: 6.819488174587102
+      y: 30.84522680659035
+    interfaces:
+    - id: i1
+      destination_host: '662'
+    - id: i2
+      destination_host: '872'
+    - id: i3
+      destination_host: '1672'
+    - id: i4
+      destination_host: '882'
+  '881':
+    id: '881'
+    ou: DEA_27
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_27
+    position3d:
+      x: 11.8112
+      y: 52.9273
+      z: 4.0
+    position2d:
+      x: 6.819199499452507
+      y: 30.55759090248008
+    interfaces:
+    - id: i1
+      destination_host: '882'
+      ip: 172.16.9.56/24
+  '882':
+    id: '882'
+    ou: DEA_27
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_27
+    position3d:
+      x: 11.8112
+      y: 53.4273
+      z: 4.0
+    position2d:
+      x: 6.819199499452507
+      y: 30.84626603707489
+    interfaces:
+    - id: i1
+      destination_host: '873'
+    - id: i2
+      destination_host: '881'
+    - id: i3
+      destination_host: '891'
+  '890':
+    id: '890'
+    ou: DEA_28
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_28
+    position3d:
+      x: 11.8107
+      y: 52.9286
+      z: 4.0
+    position2d:
+      x: 6.818910824317913
+      y: 30.558341457830025
+    interfaces:
+    - id: i1
+      destination_host: '891'
+      ip: 172.16.9.46/24
+  '891':
+    id: '891'
+    ou: DEA_28
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_28
+    position3d:
+      x: 11.8107
+      y: 53.4286
+      z: 4.0
+    position2d:
+      x: 6.818910824317913
+      y: 30.84701659242484
+    interfaces:
+    - id: i1
+      destination_host: '882'
+    - id: i2
+      destination_host: '890'
+    - id: i3
+      destination_host: '900'
+  '899':
+    id: '899'
+    ou: DEA_29
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_29
+    position3d:
+      x: 11.8103
+      y: 52.9296
+      z: 4.0
+    position2d:
+      x: 6.818679884210237
+      y: 30.558918808099214
+    interfaces:
+    - id: i1
+      destination_host: '900'
+      ip: 172.16.9.49/24
+  '900':
+    id: '900'
+    ou: DEA_29
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_29
+    position3d:
+      x: 11.8103
+      y: 53.4296
+      z: 4.0
+    position2d:
+      x: 6.818679884210237
+      y: 30.847593942694026
+    interfaces:
+    - id: i1
+      destination_host: '891'
+    - id: i2
+      destination_host: '899'
+  '908':
+    id: '908'
+    ou: DEA_30
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_30
+    position3d:
+      x: 11.8097
+      y: 52.9379
+      z: 4.0
+    position2d:
+      x: 6.818333474048723
+      y: 30.563710815333486
+    interfaces:
+    - id: i1
+      destination_host: '909'
+      ip: 172.16.9.69/24
+  '909':
+    id: '909'
+    ou: DEA_30
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_30
+    position3d:
+      x: 11.8097
+      y: 53.4379
+      z: 4.0
+    position2d:
+      x: 6.818333474048723
+      y: 30.8523859499283
+    interfaces:
+    - id: i1
+      destination_host: '908'
+    - id: i2
+      destination_host: '918'
+  '917':
+    id: '917'
+    ou: DEA_31
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_31
+    position3d:
+      x: 11.8115
+      y: 52.9425
+      z: 4.0
+    position2d:
+      x: 6.819372704533265
+      y: 30.56636662657176
+    interfaces:
+    - id: i1
+      destination_host: '918'
+      ip: 172.16.9.10/24
+  '918':
+    id: '918'
+    ou: DEA_31
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_31
+    position3d:
+      x: 11.8115
+      y: 53.4425
+      z: 4.0
+    position2d:
+      x: 6.819372704533265
+      y: 30.855041761166575
+    interfaces:
+    - id: i1
+      destination_host: '909'
+    - id: i2
+      destination_host: '917'
+    - id: i3
+      destination_host: '927'
+  '926':
+    id: '926'
+    ou: DEA_32
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_32
+    position3d:
+      x: 11.8156
+      y: 52.9474
+      z: 4.0
+    position2d:
+      x: 6.821739840636941
+      y: 30.56919564289079
+    interfaces:
+    - id: i1
+      destination_host: '927'
+      ip: 172.16.9.119/24
+  '927':
+    id: '927'
+    ou: DEA_32
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_32
+    position3d:
+      x: 11.8156
+      y: 53.4474
+      z: 4.0
+    position2d:
+      x: 6.821739840636941
+      y: 30.857870777485605
+    interfaces:
+    - id: i1
+      destination_host: '918'
+    - id: i2
+      destination_host: '926'
+    - id: i3
+      destination_host: '936'
+  '935':
+    id: '935'
+    ou: DEA_33
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_33
+    position3d:
+      x: 11.8166
+      y: 52.9479
+      z: 4.0
+    position2d:
+      x: 6.822317190906131
+      y: 30.56948431802538
+    interfaces:
+    - id: i1
+      destination_host: '936'
+      ip: 172.16.9.109/24
+  '936':
+    id: '936'
+    ou: DEA_33
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_33
+    position3d:
+      x: 11.8166
+      y: 53.4479
+      z: 4.0
+    position2d:
+      x: 6.822317190906131
+      y: 30.858159452620196
+    interfaces:
+    - id: i1
+      destination_host: '927'
+    - id: i2
+      destination_host: '935'
+    - id: i3
+      destination_host: '945'
+  '944':
+    id: '944'
+    ou: DEA_34
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_34
+    position3d:
+      x: 11.8172
+      y: 52.9481
+      z: 4.0
+    position2d:
+      x: 6.822663601067645
+      y: 30.56959978807922
+    interfaces:
+    - id: i1
+      destination_host: '945'
+      ip: 172.16.9.30/24
+  '945':
+    id: '945'
+    ou: DEA_34
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_34
+    position3d:
+      x: 11.8172
+      y: 53.4481
+      z: 4.0
+    position2d:
+      x: 6.822663601067645
+      y: 30.858274922674035
+    interfaces:
+    - id: i1
+      destination_host: '936'
+    - id: i2
+      destination_host: '944'
+    - id: i3
+      destination_host: '954'
+  '953':
+    id: '953'
+    ou: DEA_35
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_35
+    position3d:
+      x: 11.8185
+      y: 52.9483
+      z: 4.0
+    position2d:
+      x: 6.823414156417591
+      y: 30.569715258133062
+    interfaces:
+    - id: i1
+      destination_host: '954'
+      ip: 172.16.9.84/24
+  '954':
+    id: '954'
+    ou: DEA_35
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_35
+    position3d:
+      x: 11.8185
+      y: 53.4483
+      z: 4.0
+    position2d:
+      x: 6.823414156417591
+      y: 30.858390392727873
+    interfaces:
+    - id: i1
+      destination_host: '945'
+    - id: i2
+      destination_host: '953'
+    - id: i3
+      destination_host: '963'
+  '962':
+    id: '962'
+    ou: DEA_36
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_36
+    position3d:
+      x: 11.8196
+      y: 52.9483
+      z: 4.0
+    position2d:
+      x: 6.8240492417137
+      y: 30.569715258133062
+    interfaces:
+    - id: i1
+      destination_host: '963'
+      ip: 172.16.9.27/24
+  '963':
+    id: '963'
+    ou: DEA_36
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_36
+    position3d:
+      x: 11.8196
+      y: 53.4483
+      z: 4.0
+    position2d:
+      x: 6.8240492417137
+      y: 30.858390392727873
+    interfaces:
+    - id: i1
+      destination_host: '954'
+    - id: i2
+      destination_host: '962'
+    - id: i3
+      destination_host: '972'
+  '971':
+    id: '971'
+    ou: DEA_37
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_37
+    position3d:
+      x: 11.8206
+      y: 52.9479
+      z: 4.0
+    position2d:
+      x: 6.824626591982891
+      y: 30.56948431802538
+    interfaces:
+    - id: i1
+      destination_host: '972'
+      ip: 172.16.9.79/24
+  '972':
+    id: '972'
+    ou: DEA_37
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_37
+    position3d:
+      x: 11.8206
+      y: 53.4479
+      z: 4.0
+    position2d:
+      x: 6.824626591982891
+      y: 30.858159452620196
+    interfaces:
+    - id: i1
+      destination_host: '641'
+    - id: i2
+      destination_host: '963'
+    - id: i3
+      destination_host: '971'
+  '980':
+    id: '980'
+    ou: DEA_38
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_38
+    position3d:
+      x: 11.8108
+      y: 52.9251
+      z: 4.0
+    position2d:
+      x: 6.818968559344832
+      y: 30.556320731887862
+    interfaces:
+    - id: i1
+      destination_host: '981'
+      ip: 172.16.9.15/24
+  '981':
+    id: '981'
+    ou: DEA_38
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_38
+    position3d:
+      x: 11.8108
+      y: 53.4251
+      z: 4.0
+    position2d:
+      x: 6.818968559344832
+      y: 30.844995866482673
+    interfaces:
+    - id: i1
+      destination_host: '662'
+    - id: i2
+      destination_host: '980'
+    - id: i3
+      destination_host: '990'
+  '989':
+    id: '989'
+    ou: DEA_39
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_39
+    position3d:
+      x: 11.8102
+      y: 52.9255
+      z: 4.0
+    position2d:
+      x: 6.818622149183318
+      y: 30.556551671995535
+    interfaces:
+    - id: i1
+      destination_host: '990'
+      ip: 172.16.9.102/24
+  '990':
+    id: '990'
+    ou: DEA_39
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_39
+    position3d:
+      x: 11.8102
+      y: 53.4255
+      z: 4.0
+    position2d:
+      x: 6.818622149183318
+      y: 30.84522680659035
+    interfaces:
+    - id: i1
+      destination_host: '981'
+    - id: i2
+      destination_host: '989'
+    - id: i3
+      destination_host: '999'
+  '998':
+    id: '998'
+    ou: DEA_40
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_40
+    position3d:
+      x: 11.8093
+      y: 52.926
+      z: 4.0
+    position2d:
+      x: 6.8181025339410475
+      y: 30.556840347130134
+    interfaces:
+    - id: i1
+      destination_host: '999'
+      ip: 172.16.9.103/24
+  '999':
+    id: '999'
+    ou: DEA_40
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_40
+    position3d:
+      x: 11.8093
+      y: 53.426
+      z: 4.0
+    position2d:
+      x: 6.8181025339410475
+      y: 30.845515481724945
+    interfaces:
+    - id: i1
+      destination_host: '990'
+    - id: i2
+      destination_host: '998'
+    - id: i3
+      destination_host: '1009'
+  '1008':
+    id: '1008'
+    ou: DEA_41
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_41
+    position3d:
+      x: 11.8085
+      y: 52.9266
+      z: 4.0
+    position2d:
+      x: 6.817640653725696
+      y: 30.557186757291646
+    interfaces:
+    - id: i1
+      destination_host: '1009'
+      ip: 172.16.9.87/24
+  '1009':
+    id: '1009'
+    ou: DEA_41
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_41
+    position3d:
+      x: 11.8085
+      y: 53.4266
+      z: 4.0
+    position2d:
+      x: 6.817640653725696
+      y: 30.845861891886457
+    interfaces:
+    - id: i1
+      destination_host: '999'
+    - id: i2
+      destination_host: '1008'
+    - id: i3
+      destination_host: '1018'
+    - id: i4
+      destination_host: '1063'
+  '1017':
+    id: '1017'
+    ou: DEA_42
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_42
+    position3d:
+      x: 11.8074
+      y: 52.9281
+      z: 4.0
+    position2d:
+      x: 6.817005568429587
+      y: 30.55805278269543
+    interfaces:
+    - id: i1
+      destination_host: '1018'
+      ip: 172.16.9.76/24
+  '1018':
+    id: '1018'
+    ou: DEA_42
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_42
+    position3d:
+      x: 11.8074
+      y: 53.4281
+      z: 4.0
+    position2d:
+      x: 6.817005568429587
+      y: 30.84672791729024
+    interfaces:
+    - id: i1
+      destination_host: '1009'
+    - id: i2
+      destination_host: '1017'
+    - id: i3
+      destination_host: '1028'
+  '1027':
+    id: '1027'
+    ou: DEA_43
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_43
+    position3d:
+      x: 11.8057
+      y: 52.93
+      z: 4.0
+    position2d:
+      x: 6.816024072971964
+      y: 30.559149748206888
+    interfaces:
+    - id: i1
+      destination_host: '1028'
+      ip: 172.16.9.61/24
+  '1028':
+    id: '1028'
+    ou: DEA_43
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_43
+    position3d:
+      x: 11.8057
+      y: 53.43
+      z: 4.0
+    position2d:
+      x: 6.816024072971964
+      y: 30.847824882801703
+    interfaces:
+    - id: i1
+      destination_host: '1018'
+    - id: i2
+      destination_host: '1027'
+    - id: i3
+      destination_host: '1037'
+    - id: i4
+      destination_host: '1072'
+  '1036':
+    id: '1036'
+    ou: DEA_44
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_44
+    position3d:
+      x: 11.8052
+      y: 52.9329
+      z: 4.0
+    position2d:
+      x: 6.815735397837369
+      y: 30.56082406398754
+    interfaces:
+    - id: i1
+      destination_host: '1037'
+      ip: 172.16.9.19/24
+  '1037':
+    id: '1037'
+    ou: DEA_44
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_44
+    position3d:
+      x: 11.8052
+      y: 53.4329
+      z: 4.0
+    position2d:
+      x: 6.815735397837369
+      y: 30.84949919858235
+    interfaces:
+    - id: i1
+      destination_host: '1028'
+    - id: i2
+      destination_host: '1036'
+    - id: i3
+      destination_host: '1046'
+  '1045':
+    id: '1045'
+    ou: DEA_45
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_45
+    position3d:
+      x: 11.806
+      y: 52.9363
+      z: 4.0
+    position2d:
+      x: 6.816197278052721
+      y: 30.562787054902785
+    interfaces:
+    - id: i1
+      destination_host: '1046'
+      ip: 172.16.9.62/24
+  '1046':
+    id: '1046'
+    ou: DEA_45
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_45
+    position3d:
+      x: 11.806
+      y: 53.4363
+      z: 4.0
+    position2d:
+      x: 6.816197278052721
+      y: 30.8514621894976
+    interfaces:
+    - id: i1
+      destination_host: '1037'
+    - id: i2
+      destination_host: '1045'
+    - id: i3
+      destination_host: '1055'
+  '1054':
+    id: '1054'
+    ou: DEA_46
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_46
+    position3d:
+      x: 11.8102
+      y: 52.9367
+      z: 4.0
+    position2d:
+      x: 6.818622149183318
+      y: 30.563017995010462
+    interfaces:
+    - id: i1
+      destination_host: '1055'
+      ip: 172.16.9.11/24
+  '1055':
+    id: '1055'
+    ou: DEA_46
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_46
+    position3d:
+      x: 11.8102
+      y: 53.4367
+      z: 4.0
+    position2d:
+      x: 6.818622149183318
+      y: 30.851693129605273
+    interfaces:
+    - id: i1
+      destination_host: '1046'
+    - id: i2
+      destination_host: '1054'
+    - id: i3
+      destination_host: '1502'
+  '1062':
+    id: '1062'
+    ou: DEA_47
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_47
+    position3d:
+      x: 11.8069
+      y: 52.9264
+      z: 4.0
+    position2d:
+      x: 6.816716893294992
+      y: 30.557071287237807
+    interfaces:
+    - id: i1
+      destination_host: '1063'
+      ip: 172.16.9.45/24
+  '1063':
+    id: '1063'
+    ou: DEA_47
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_47
+    position3d:
+      x: 11.8069
+      y: 53.4264
+      z: 4.0
+    position2d:
+      x: 6.816716893294992
+      y: 30.845746421832622
+    interfaces:
+    - id: i1
+      destination_host: '1009'
+    - id: i2
+      destination_host: '1062'
+  '1071':
+    id: '1071'
+    ou: DEA_48
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_48
+    position3d:
+      x: 11.8036
+      y: 52.9303
+      z: 4.0
+    position2d:
+      x: 6.814811637406666
+      y: 30.559322953287648
+    interfaces:
+    - id: i1
+      destination_host: '1072'
+      ip: 172.16.9.53/24
+  '1072':
+    id: '1072'
+    ou: DEA_48
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_48
+    position3d:
+      x: 11.8036
+      y: 53.4303
+      z: 4.0
+    position2d:
+      x: 6.814811637406666
+      y: 30.847998087882463
+    interfaces:
+    - id: i1
+      destination_host: '1028'
+    - id: i2
+      destination_host: '1071'
+  '1080':
+    id: '1080'
+    ou: DEA_49
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_49
+    position3d:
+      x: 11.8123
+      y: 52.9243
+      z: 4.0
+    position2d:
+      x: 6.819834584748616
+      y: 30.55585885167251
+    interfaces:
+    - id: i1
+      destination_host: '1081'
+      ip: 172.16.9.120/24
+  '1081':
+    id: '1081'
+    ou: DEA_49
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_49
+    position3d:
+      x: 11.8123
+      y: 53.4243
+      z: 4.0
+    position2d:
+      x: 6.819834584748616
+      y: 30.844533986267322
+    interfaces:
+    - id: i1
+      destination_host: '662'
+    - id: i2
+      destination_host: '1080'
+    - id: i3
+      destination_host: '1090'
+  '1089':
+    id: '1089'
+    ou: DEA_50
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_50
+    position3d:
+      x: 11.8128
+      y: 52.9237
+      z: 4.0
+    position2d:
+      x: 6.820123259883211
+      y: 30.555512441510995
+    interfaces:
+    - id: i1
+      destination_host: '1090'
+      ip: 172.16.9.13/24
+  '1090':
+    id: '1090'
+    ou: DEA_50
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_50
+    position3d:
+      x: 11.8128
+      y: 53.4237
+      z: 4.0
+    position2d:
+      x: 6.820123259883211
+      y: 30.844187576105806
+    interfaces:
+    - id: i1
+      destination_host: '1081'
+    - id: i2
+      destination_host: '1089'
+    - id: i3
+      destination_host: '1099'
+  '1098':
+    id: '1098'
+    ou: DEA_51
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_51
+    position3d:
+      x: 11.8135
+      y: 52.9222
+      z: 4.0
+    position2d:
+      x: 6.820527405071643
+      y: 30.554646416107207
+    interfaces:
+    - id: i1
+      destination_host: '1099'
+      ip: 172.16.9.111/24
+  '1099':
+    id: '1099'
+    ou: DEA_51
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_51
+    position3d:
+      x: 11.8135
+      y: 53.4222
+      z: 4.0
+    position2d:
+      x: 6.820527405071643
+      y: 30.843321550702022
+    interfaces:
+    - id: i1
+      destination_host: '1090'
+    - id: i2
+      destination_host: '1098'
+    - id: i3
+      destination_host: '1108'
+  '1107':
+    id: '1107'
+    ou: DEA_52
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_52
+    position3d:
+      x: 11.8139
+      y: 52.9209
+      z: 4.0
+    position2d:
+      x: 6.8207583451793194
+      y: 30.553895860757265
+    interfaces:
+    - id: i1
+      destination_host: '1108'
+      ip: 172.16.9.92/24
+  '1108':
+    id: '1108'
+    ou: DEA_52
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_52
+    position3d:
+      x: 11.8139
+      y: 53.4209
+      z: 4.0
+    position2d:
+      x: 6.8207583451793194
+      y: 30.84257099535208
+    interfaces:
+    - id: i1
+      destination_host: '1099'
+    - id: i2
+      destination_host: '1107'
+    - id: i3
+      destination_host: '1118'
+  '1117':
+    id: '1117'
+    ou: DEA_53
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_53
+    position3d:
+      x: 11.8142
+      y: 52.9199
+      z: 4.0
+    position2d:
+      x: 6.8209315502600765
+      y: 30.553318510488072
+    interfaces:
+    - id: i1
+      destination_host: '1118'
+      ip: 172.16.9.86/24
+  '1118':
+    id: '1118'
+    ou: DEA_53
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_53
+    position3d:
+      x: 11.8142
+      y: 53.4199
+      z: 4.0
+    position2d:
+      x: 6.8209315502600765
+      y: 30.841993645082887
+    interfaces:
+    - id: i1
+      destination_host: '1108'
+    - id: i2
+      destination_host: '1117'
+    - id: i3
+      destination_host: '1127'
+    - id: i4
+      destination_host: '1165'
+  '1126':
+    id: '1126'
+    ou: DEA_54
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_54
+    position3d:
+      x: 11.8161
+      y: 52.9183
+      z: 4.0
+    position2d:
+      x: 6.822028515771537
+      y: 30.552394750057374
+    interfaces:
+    - id: i1
+      destination_host: '1127'
+      ip: 172.16.9.21/24
+  '1127':
+    id: '1127'
+    ou: DEA_54
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_54
+    position3d:
+      x: 11.8161
+      y: 53.4183
+      z: 4.0
+    position2d:
+      x: 6.822028515771537
+      y: 30.841069884652185
+    interfaces:
+    - id: i1
+      destination_host: '1118'
+    - id: i2
+      destination_host: '1126'
+    - id: i3
+      destination_host: '1136'
+  '1135':
+    id: '1135'
+    ou: DEA_55
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_55
+    position3d:
+      x: 11.8179
+      y: 52.9161
+      z: 4.0
+    position2d:
+      x: 6.823067746256078
+      y: 30.551124579465153
+    interfaces:
+    - id: i1
+      destination_host: '1136'
+      ip: 172.16.9.55/24
+  '1136':
+    id: '1136'
+    ou: DEA_55
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_55
+    position3d:
+      x: 11.8179
+      y: 53.4161
+      z: 4.0
+    position2d:
+      x: 6.823067746256078
+      y: 30.839799714059968
+    interfaces:
+    - id: i1
+      destination_host: '1127'
+    - id: i2
+      destination_host: '1135'
+    - id: i3
+      destination_host: '1146'
+  '1145':
+    id: '1145'
+    ou: DEA_56
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_56
+    position3d:
+      x: 11.8189
+      y: 52.9153
+      z: 4.0
+    position2d:
+      x: 6.823645096525267
+      y: 30.550662699249802
+    interfaces:
+    - id: i1
+      destination_host: '1146'
+      ip: 172.16.9.12/24
+  '1146':
+    id: '1146'
+    ou: DEA_56
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_56
+    position3d:
+      x: 11.8189
+      y: 53.4153
+      z: 4.0
+    position2d:
+      x: 6.823645096525267
+      y: 30.839337833844617
+    interfaces:
+    - id: i1
+      destination_host: '1136'
+    - id: i2
+      destination_host: '1145'
+    - id: i3
+      destination_host: '1156'
+  '1155':
+    id: '1155'
+    ou: DEA_57
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_57
+    position3d:
+      x: 11.8203
+      y: 52.9142
+      z: 4.0
+    position2d:
+      x: 6.824453386902133
+      y: 30.550027613953695
+    interfaces:
+    - id: i1
+      destination_host: '1156'
+      ip: 172.16.9.77/24
+  '1156':
+    id: '1156'
+    ou: DEA_57
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_57
+    position3d:
+      x: 11.8203
+      y: 53.4142
+      z: 4.0
+    position2d:
+      x: 6.824453386902133
+      y: 30.838702748548506
+    interfaces:
+    - id: i1
+      destination_host: '1146'
+    - id: i2
+      destination_host: '1155'
+    - id: i3
+      destination_host: '1192'
+  '1164':
+    id: '1164'
+    ou: DEA_58
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_58
+    position3d:
+      x: 11.8136
+      y: 52.9185
+      z: 4.0
+    position2d:
+      x: 6.820585140098562
+      y: 30.55251022011121
+    interfaces:
+    - id: i1
+      destination_host: '1165'
+      ip: 172.16.9.26/24
+  '1165':
+    id: '1165'
+    ou: DEA_58
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_58
+    position3d:
+      x: 11.8136
+      y: 53.4185
+      z: 4.0
+    position2d:
+      x: 6.820585140098562
+      y: 30.841185354706024
+    interfaces:
+    - id: i1
+      destination_host: '1118'
+    - id: i2
+      destination_host: '1164'
+    - id: i3
+      destination_host: '1174'
+  '1173':
+    id: '1173'
+    ou: DEA_59
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_59
+    position3d:
+      x: 11.8131
+      y: 52.9167
+      z: 4.0
+    position2d:
+      x: 6.820296464963968
+      y: 30.55147098962667
+    interfaces:
+    - id: i1
+      destination_host: '1174'
+      ip: 172.16.9.59/24
+  '1174':
+    id: '1174'
+    ou: DEA_59
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_59
+    position3d:
+      x: 11.8131
+      y: 53.4167
+      z: 4.0
+    position2d:
+      x: 6.820296464963968
+      y: 30.84014612422148
+    interfaces:
+    - id: i1
+      destination_host: '1165'
+    - id: i2
+      destination_host: '1173'
+  '1182':
+    id: '1182'
+    ou: DEA_60
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_60
+    position3d:
+      x: 11.8159
+      y: 52.9116
+      z: 4.0
+    position2d:
+      x: 6.821913045717698
+      y: 30.5485265032538
+    interfaces:
+    - id: i1
+      destination_host: '1183'
+      ip: 172.16.9.114/24
+  '1183':
+    id: '1183'
+    ou: DEA_60
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_60
+    position3d:
+      x: 11.8159
+      y: 53.4116
+      z: 4.0
+    position2d:
+      x: 6.821913045717698
+      y: 30.837201637848615
+    interfaces:
+    - id: i1
+      destination_host: '1182'
+    - id: i2
+      destination_host: '1192'
+  '1191':
+    id: '1191'
+    ou: DEA_61
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_61
+    position3d:
+      x: 11.8201
+      y: 52.9128
+      z: 4.0
+    position2d:
+      x: 6.824337916848295
+      y: 30.54921932357683
+    interfaces:
+    - id: i1
+      destination_host: '1192'
+      ip: 172.16.9.44/24
+  '1192':
+    id: '1192'
+    ou: DEA_61
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_61
+    position3d:
+      x: 11.8201
+      y: 53.4128
+      z: 4.0
+    position2d:
+      x: 6.824337916848295
+      y: 30.83789445817164
+    interfaces:
+    - id: i1
+      destination_host: '1156'
+    - id: i2
+      destination_host: '1183'
+    - id: i3
+      destination_host: '1191'
+  '1200':
+    id: '1200'
+    ou: DEA_62
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_62
+    position3d:
+      x: 11.8071
+      y: 52.9232
+      z: 4.0
+    position2d:
+      x: 6.81683236334883
+      y: 30.5552237663764
+    interfaces:
+    - id: i1
+      destination_host: '1201'
+      ip: 172.16.9.22/24
+  '1201':
+    id: '1201'
+    ou: DEA_62
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_62
+    position3d:
+      x: 11.8071
+      y: 53.4232
+      z: 4.0
+    position2d:
+      x: 6.81683236334883
+      y: 30.843898900971215
+    interfaces:
+    - id: i1
+      destination_host: '1200'
+    - id: i2
+      destination_host: '1672'
+    - id: i3
+      destination_host: '1212'
+  '1211':
+    id: '1211'
+    ou: DEA_63
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_63
+    position3d:
+      x: 11.8059
+      y: 52.9228
+      z: 4.0
+    position2d:
+      x: 6.816139543025802
+      y: 30.554992826268727
+    interfaces:
+    - id: i1
+      destination_host: '1212'
+      ip: 172.16.9.67/24
+  '1212':
+    id: '1212'
+    ou: DEA_63
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_63
+    position3d:
+      x: 11.8059
+      y: 53.4228
+      z: 4.0
+    position2d:
+      x: 6.816139543025802
+      y: 30.843667960863538
+    interfaces:
+    - id: i1
+      destination_host: '1201'
+    - id: i2
+      destination_host: '1211'
+    - id: i3
+      destination_host: '1221'
+    - id: i4
+      destination_host: '1248'
+    - id: i5
+      destination_host: '1266'
+  '1220':
+    id: '1220'
+    ou: DEA_64
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_64
+    position3d:
+      x: 11.8049
+      y: 52.9217
+      z: 4.0
+    position2d:
+      x: 6.815562192756612
+      y: 30.554357740972616
+    interfaces:
+    - id: i1
+      destination_host: '1221'
+      ip: 172.16.9.6/24
+  '1221':
+    id: '1221'
+    ou: DEA_64
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_64
+    position3d:
+      x: 11.8049
+      y: 53.4217
+      z: 4.0
+    position2d:
+      x: 6.815562192756612
+      y: 30.84303287556743
+    interfaces:
+    - id: i1
+      destination_host: '1212'
+    - id: i2
+      destination_host: '1220'
+    - id: i3
+      destination_host: '1230'
+  '1229':
+    id: '1229'
+    ou: DEA_65
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_65
+    position3d:
+      x: 11.8042
+      y: 52.9211
+      z: 4.0
+    position2d:
+      x: 6.81515804756818
+      y: 30.554011330811104
+    interfaces:
+    - id: i1
+      destination_host: '1230'
+      ip: 172.16.9.83/24
+  '1230':
+    id: '1230'
+    ou: DEA_65
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_65
+    position3d:
+      x: 11.8042
+      y: 53.4211
+      z: 4.0
+    position2d:
+      x: 6.81515804756818
+      y: 30.842686465405915
+    interfaces:
+    - id: i1
+      destination_host: '1221'
+    - id: i2
+      destination_host: '1229'
+    - id: i3
+      destination_host: '1239'
+  '1238':
+    id: '1238'
+    ou: DEA_66
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_66
+    position3d:
+      x: 11.8018
+      y: 52.9185
+      z: 4.0
+    position2d:
+      x: 6.813772406922125
+      y: 30.55251022011121
+    interfaces:
+    - id: i1
+      destination_host: '1239'
+      ip: 172.16.9.117/24
+  '1239':
+    id: '1239'
+    ou: DEA_66
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_66
+    position3d:
+      x: 11.8018
+      y: 53.4185
+      z: 4.0
+    position2d:
+      x: 6.813772406922125
+      y: 30.841185354706024
+    interfaces:
+    - id: i1
+      destination_host: '1230'
+    - id: i2
+      destination_host: '1238'
+    - id: i3
+      destination_host: '1320'
+  '1247':
+    id: '1247'
+    ou: DEA_67
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_67
+    position3d:
+      x: 11.8004
+      y: 52.9237
+      z: 4.0
+    position2d:
+      x: 6.81296411654526
+      y: 30.555512441510995
+    interfaces:
+    - id: i1
+      destination_host: '1248'
+      ip: 172.16.9.16/24
+  '1248':
+    id: '1248'
+    ou: DEA_67
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_67
+    position3d:
+      x: 11.8004
+      y: 53.4237
+      z: 4.0
+    position2d:
+      x: 6.81296411654526
+      y: 30.844187576105806
+    interfaces:
+    - id: i1
+      destination_host: '1212'
+    - id: i2
+      destination_host: '1247'
+    - id: i3
+      destination_host: '1257'
+  '1256':
+    id: '1256'
+    ou: DEA_68
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_68
+    position3d:
+      x: 11.7963
+      y: 52.9231
+      z: 4.0
+    position2d:
+      x: 6.8105969804415825
+      y: 30.55516603134948
+    interfaces:
+    - id: i1
+      destination_host: '1257'
+      ip: 172.16.9.2/24
+  '1257':
+    id: '1257'
+    ou: DEA_68
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_68
+    position3d:
+      x: 11.7963
+      y: 53.4231
+      z: 4.0
+    position2d:
+      x: 6.8105969804415825
+      y: 30.843841165944294
+    interfaces:
+    - id: i1
+      destination_host: '1248'
+    - id: i2
+      destination_host: '1256'
+  '1265':
+    id: '1265'
+    ou: DEA_69
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_69
+    position3d:
+      x: 11.8027
+      y: 52.9244
+      z: 4.0
+    position2d:
+      x: 6.814292022164396
+      y: 30.55591658669943
+    interfaces:
+    - id: i1
+      destination_host: '1266'
+      ip: 172.16.9.94/24
+  '1266':
+    id: '1266'
+    ou: DEA_69
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_69
+    position3d:
+      x: 11.8027
+      y: 53.4244
+      z: 4.0
+    position2d:
+      x: 6.814292022164396
+      y: 30.84459172129424
+    interfaces:
+    - id: i1
+      destination_host: '1212'
+    - id: i2
+      destination_host: '1265'
+  '1274':
+    id: '1274'
+    ou: DEA_70
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_70
+    position3d:
+      x: 11.8113
+      y: 52.9242
+      z: 4.0
+    position2d:
+      x: 6.8192572344794256
+      y: 30.55580111664559
+    interfaces:
+    - id: i1
+      destination_host: '1275'
+      ip: 172.16.9.98/24
+  '1275':
+    id: '1275'
+    ou: DEA_70
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_70
+    position3d:
+      x: 11.8113
+      y: 53.4242
+      z: 4.0
+    position2d:
+      x: 6.8192572344794256
+      y: 30.8444762512404
+    interfaces:
+    - id: i1
+      destination_host: '1274'
+    - id: i2
+      destination_host: '1673'
+    - id: i3
+      destination_host: '1284'
+  '1283':
+    id: '1283'
+    ou: DEA_71
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_71
+    position3d:
+      x: 11.8098
+      y: 52.9231
+      z: 4.0
+    position2d:
+      x: 6.818391209075641
+      y: 30.55516603134948
+    interfaces:
+    - id: i1
+      destination_host: '1284'
+      ip: 172.16.9.41/24
+  '1284':
+    id: '1284'
+    ou: DEA_71
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_71
+    position3d:
+      x: 11.8098
+      y: 53.4231
+      z: 4.0
+    position2d:
+      x: 6.818391209075641
+      y: 30.843841165944294
+    interfaces:
+    - id: i1
+      destination_host: '1275'
+    - id: i2
+      destination_host: '1283'
+    - id: i3
+      destination_host: '1293'
+  '1292':
+    id: '1292'
+    ou: DEA_72
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_72
+    position3d:
+      x: 11.8077
+      y: 52.9203
+      z: 4.0
+    position2d:
+      x: 6.817178773510344
+      y: 30.55354945059575
+    interfaces:
+    - id: i1
+      destination_host: '1293'
+      ip: 172.16.9.89/24
+  '1293':
+    id: '1293'
+    ou: DEA_72
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_72
+    position3d:
+      x: 11.8077
+      y: 53.4203
+      z: 4.0
+    position2d:
+      x: 6.817178773510344
+      y: 30.84222458519056
+    interfaces:
+    - id: i1
+      destination_host: '1284'
+    - id: i2
+      destination_host: '1292'
+    - id: i3
+      destination_host: '1302'
+  '1301':
+    id: '1301'
+    ou: DEA_73
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_73
+    position3d:
+      x: 11.8072
+      y: 52.9197
+      z: 4.0
+    position2d:
+      x: 6.816890098375749
+      y: 30.553203040434237
+    interfaces:
+    - id: i1
+      destination_host: '1302'
+      ip: 172.16.9.7/24
+  '1302':
+    id: '1302'
+    ou: DEA_73
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_73
+    position3d:
+      x: 11.8072
+      y: 53.4197
+      z: 4.0
+    position2d:
+      x: 6.816890098375749
+      y: 30.84187817502905
+    interfaces:
+    - id: i1
+      destination_host: '1293'
+    - id: i2
+      destination_host: '1301'
+  '1310':
+    id: '1310'
+    ou: DEA_74
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_74
+    position3d:
+      x: 11.8027
+      y: 52.9168
+      z: 4.0
+    position2d:
+      x: 6.814292022164396
+      y: 30.55152872465359
+    interfaces:
+    - id: i1
+      destination_host: '1311'
+      ip: 172.16.9.9/24
+  '1311':
+    id: '1311'
+    ou: DEA_74
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_74
+    position3d:
+      x: 11.8027
+      y: 53.4168
+      z: 4.0
+    position2d:
+      x: 6.814292022164396
+      y: 30.8402038592484
+    interfaces:
+    - id: i1
+      destination_host: '1310'
+    - id: i2
+      destination_host: '1320'
+  '1319':
+    id: '1319'
+    ou: DEA_75
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_75
+    position3d:
+      x: 11.8017
+      y: 52.9177
+      z: 4.0
+    position2d:
+      x: 6.813714671895206
+      y: 30.552048339895858
+    interfaces:
+    - id: i1
+      destination_host: '1320'
+      ip: 172.16.9.23/24
+  '1320':
+    id: '1320'
+    ou: DEA_75
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_75
+    position3d:
+      x: 11.8017
+      y: 53.4177
+      z: 4.0
+    position2d:
+      x: 6.813714671895206
+      y: 30.840723474490673
+    interfaces:
+    - id: i1
+      destination_host: '1239'
+    - id: i2
+      destination_host: '1311'
+    - id: i3
+      destination_host: '1319'
+  '1328':
+    id: '1328'
+    ou: DEA_76
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_76
+    position3d:
+      x: 11.8151
+      y: 52.9265
+      z: 4.0
+    position2d:
+      x: 6.821451165502347
+      y: 30.557129022264725
+    interfaces:
+    - id: i1
+      destination_host: '1329'
+      ip: 172.16.9.29/24
+  '1329':
+    id: '1329'
+    ou: DEA_76
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_76
+    position3d:
+      x: 11.8151
+      y: 53.4265
+      z: 4.0
+    position2d:
+      x: 6.821451165502347
+      y: 30.845804156859536
+    interfaces:
+    - id: i1
+      destination_host: '1328'
+    - id: i2
+      destination_host: '1673'
+    - id: i3
+      destination_host: '1338'
+  '1337':
+    id: '1337'
+    ou: DEA_77
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_77
+    position3d:
+      x: 11.8191
+      y: 52.9297
+      z: 4.0
+    position2d:
+      x: 6.8237605665791055
+      y: 30.558976543126132
+    interfaces:
+    - id: i1
+      destination_host: '1338'
+      ip: 172.16.9.33/24
+  '1338':
+    id: '1338'
+    ou: DEA_77
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_77
+    position3d:
+      x: 11.8191
+      y: 53.4297
+      z: 4.0
+    position2d:
+      x: 6.8237605665791055
+      y: 30.847651677720943
+    interfaces:
+    - id: i1
+      destination_host: '1329'
+    - id: i2
+      destination_host: '1337'
+  '1346':
+    id: '1346'
+    ou: DEA_78
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_78
+    position3d:
+      x: 11.8243
+      y: 52.9319
+      z: 4.0
+    position2d:
+      x: 6.8267627879788915
+      y: 30.56024671371835
+    interfaces:
+    - id: i1
+      destination_host: '1347'
+      ip: 172.16.9.20/24
+  '1347':
+    id: '1347'
+    ou: DEA_78
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_78
+    position3d:
+      x: 11.8243
+      y: 53.4319
+      z: 4.0
+    position2d:
+      x: 6.8267627879788915
+      y: 30.84892184831316
+    interfaces:
+    - id: i1
+      destination_host: '1346'
+    - id: i2
+      destination_host: '1356'
+  '1355':
+    id: '1355'
+    ou: DEA_79
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_79
+    position3d:
+      x: 11.8251
+      y: 52.9321
+      z: 4.0
+    position2d:
+      x: 6.827224668194244
+      y: 30.560362183772188
+    interfaces:
+    - id: i1
+      destination_host: '1356'
+      ip: 172.16.9.108/24
+  '1356':
+    id: '1356'
+    ou: DEA_79
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_79
+    position3d:
+      x: 11.8251
+      y: 53.4321
+      z: 4.0
+    position2d:
+      x: 6.827224668194244
+      y: 30.849037318367
+    interfaces:
+    - id: i1
+      destination_host: '1347'
+    - id: i2
+      destination_host: '1355'
+    - id: i3
+      destination_host: '1365'
+  '1364':
+    id: '1364'
+    ou: DEA_80
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_80
+    position3d:
+      x: 11.826
+      y: 52.9323
+      z: 4.0
+    position2d:
+      x: 6.827744283436514
+      y: 30.560477653826023
+    interfaces:
+    - id: i1
+      destination_host: '1365'
+      ip: 172.16.9.36/24
+  '1365':
+    id: '1365'
+    ou: DEA_80
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_80
+    position3d:
+      x: 11.826
+      y: 53.4323
+      z: 4.0
+    position2d:
+      x: 6.827744283436514
+      y: 30.849152788420838
+    interfaces:
+    - id: i1
+      destination_host: '1356'
+    - id: i2
+      destination_host: '1364'
+    - id: i3
+      destination_host: '1374'
+  '1373':
+    id: '1373'
+    ou: DEA_81
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_81
+    position3d:
+      x: 11.8273
+      y: 52.9324
+      z: 4.0
+    position2d:
+      x: 6.82849483878646
+      y: 30.560535388852944
+    interfaces:
+    - id: i1
+      destination_host: '1374'
+      ip: 172.16.9.73/24
+  '1374':
+    id: '1374'
+    ou: DEA_81
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_81
+    position3d:
+      x: 11.8273
+      y: 53.4324
+      z: 4.0
+    position2d:
+      x: 6.82849483878646
+      y: 30.84921052344776
+    interfaces:
+    - id: i1
+      destination_host: '1365'
+    - id: i2
+      destination_host: '1373'
+    - id: i3
+      destination_host: '1384'
+  '1383':
+    id: '1383'
+    ou: DEA_82
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_82
+    position3d:
+      x: 11.8305
+      y: 52.9322
+      z: 4.0
+    position2d:
+      x: 6.830342359647868
+      y: 30.56041991879911
+    interfaces:
+    - id: i1
+      destination_host: '1384'
+      ip: 172.16.9.60/24
+  '1384':
+    id: '1384'
+    ou: DEA_82
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_82
+    position3d:
+      x: 11.8305
+      y: 53.4322
+      z: 4.0
+    position2d:
+      x: 6.830342359647868
+      y: 30.84909505339392
+    interfaces:
+    - id: i1
+      destination_host: '1374'
+    - id: i2
+      destination_host: '1383'
+    - id: i3
+      destination_host: '1393'
+  '1392':
+    id: '1392'
+    ou: DEA_83
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_83
+    position3d:
+      x: 11.8341
+      y: 52.9307
+      z: 4.0
+    position2d:
+      x: 6.832420820616949
+      y: 30.559553893395325
+    interfaces:
+    - id: i1
+      destination_host: '1393'
+      ip: 172.16.9.85/24
+  '1393':
+    id: '1393'
+    ou: DEA_83
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_83
+    position3d:
+      x: 11.8341
+      y: 53.4307
+      z: 4.0
+    position2d:
+      x: 6.832420820616949
+      y: 30.848229027990136
+    interfaces:
+    - id: i1
+      destination_host: '1384'
+    - id: i2
+      destination_host: '1392'
+    - id: i3
+      destination_host: '1402'
+  '1401':
+    id: '1401'
+    ou: DEA_84
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_84
+    position3d:
+      x: 11.8347
+      y: 52.9301
+      z: 4.0
+    position2d:
+      x: 6.8327672307784635
+      y: 30.55920748323381
+    interfaces:
+    - id: i1
+      destination_host: '1402'
+      ip: 172.16.9.95/24
+  '1402':
+    id: '1402'
+    ou: DEA_84
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_84
+    position3d:
+      x: 11.8347
+      y: 53.4301
+      z: 4.0
+    position2d:
+      x: 6.8327672307784635
+      y: 30.847882617828624
+    interfaces:
+    - id: i1
+      destination_host: '1393'
+    - id: i2
+      destination_host: '1401'
+    - id: i3
+      destination_host: '1411'
+  '1410':
+    id: '1410'
+    ou: DEA_85
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_85
+    position3d:
+      x: 11.8354
+      y: 52.9294
+      z: 4.0
+    position2d:
+      x: 6.833171375966896
+      y: 30.558803338045376
+    interfaces:
+    - id: i1
+      destination_host: '1411'
+      ip: 172.16.9.68/24
+  '1411':
+    id: '1411'
+    ou: DEA_85
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_85
+    position3d:
+      x: 11.8354
+      y: 53.4294
+      z: 4.0
+    position2d:
+      x: 6.833171375966896
+      y: 30.84747847264019
+    interfaces:
+    - id: i1
+      destination_host: '1402'
+    - id: i2
+      destination_host: '1410'
+    - id: i3
+      destination_host: '1420'
+  '1419':
+    id: '1419'
+    ou: DEA_86
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_86
+    position3d:
+      x: 11.8358
+      y: 52.9286
+      z: 4.0
+    position2d:
+      x: 6.833402316074572
+      y: 30.558341457830025
+    interfaces:
+    - id: i1
+      destination_host: '1420'
+      ip: 172.16.9.14/24
+  '1420':
+    id: '1420'
+    ou: DEA_86
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_86
+    position3d:
+      x: 11.8358
+      y: 53.4286
+      z: 4.0
+    position2d:
+      x: 6.833402316074572
+      y: 30.84701659242484
+    interfaces:
+    - id: i1
+      destination_host: '827'
+    - id: i2
+      destination_host: '1411'
+    - id: i3
+      destination_host: '1419'
+  '1428':
+    id: '1428'
+    ou: DEA_87
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_87
+    position3d:
+      x: 11.8123
+      y: 52.9251
+      z: 4.0
+    position2d:
+      x: 6.819834584748616
+      y: 30.556320731887862
+    interfaces:
+    - id: i1
+      destination_host: '1429'
+      ip: 172.16.9.4/24
+  '1429':
+    id: '1429'
+    ou: DEA_87
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_87
+    position3d:
+      x: 11.8123
+      y: 53.4251
+      z: 4.0
+    position2d:
+      x: 6.819834584748616
+      y: 30.844995866482673
+    interfaces:
+    - id: i1
+      destination_host: '1428'
+    - id: i2
+      destination_host: '1438'
+  '1437':
+    id: '1437'
+    ou: DEA_88
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_88
+    position3d:
+      x: 11.8127
+      y: 52.9259
+      z: 4.0
+    position2d:
+      x: 6.820065524856291
+      y: 30.556782612103213
+    interfaces:
+    - id: i1
+      destination_host: '1438'
+      ip: 172.16.9.71/24
+  '1438':
+    id: '1438'
+    ou: DEA_88
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_88
+    position3d:
+      x: 11.8127
+      y: 53.4259
+      z: 4.0
+    position2d:
+      x: 6.820065524856291
+      y: 30.845457746698024
+    interfaces:
+    - id: i1
+      destination_host: '1429'
+    - id: i2
+      destination_host: '1437'
+    - id: i3
+      destination_host: '1447'
+  '1446':
+    id: '1446'
+    ou: DEA_89
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_89
+    position3d:
+      x: 11.813
+      y: 52.9273
+      z: 4.0
+    position2d:
+      x: 6.820238729937049
+      y: 30.55759090248008
+    interfaces:
+    - id: i1
+      destination_host: '1447'
+      ip: 172.16.9.1/24
+  '1447':
+    id: '1447'
+    ou: DEA_89
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_89
+    position3d:
+      x: 11.813
+      y: 53.4273
+      z: 4.0
+    position2d:
+      x: 6.820238729937049
+      y: 30.84626603707489
+    interfaces:
+    - id: i1
+      destination_host: '1438'
+    - id: i2
+      destination_host: '1446'
+    - id: i3
+      destination_host: '1456'
+  '1455':
+    id: '1455'
+    ou: DEA_90
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_90
+    position3d:
+      x: 11.8131
+      y: 52.9284
+      z: 4.0
+    position2d:
+      x: 6.820296464963968
+      y: 30.55822598777619
+    interfaces:
+    - id: i1
+      destination_host: '1456'
+      ip: 172.16.9.91/24
+  '1456':
+    id: '1456'
+    ou: DEA_90
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_90
+    position3d:
+      x: 11.8131
+      y: 53.4284
+      z: 4.0
+    position2d:
+      x: 6.820296464963968
+      y: 30.846901122371
+    interfaces:
+    - id: i1
+      destination_host: '1447'
+    - id: i2
+      destination_host: '1455'
+    - id: i3
+      destination_host: '1465'
+  '1464':
+    id: '1464'
+    ou: DEA_91
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_91
+    position3d:
+      x: 11.813
+      y: 52.9298
+      z: 4.0
+    position2d:
+      x: 6.820238729937049
+      y: 30.559034278153053
+    interfaces:
+    - id: i1
+      destination_host: '1465'
+      ip: 172.16.9.74/24
+  '1465':
+    id: '1465'
+    ou: DEA_91
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_91
+    position3d:
+      x: 11.813
+      y: 53.4298
+      z: 4.0
+    position2d:
+      x: 6.820238729937049
+      y: 30.847709412747864
+    interfaces:
+    - id: i1
+      destination_host: '1456'
+    - id: i2
+      destination_host: '1464'
+    - id: i3
+      destination_host: '1474'
+  '1473':
+    id: '1473'
+    ou: DEA_92
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_92
+    position3d:
+      x: 11.8129
+      y: 52.9308
+      z: 4.0
+    position2d:
+      x: 6.82018099491013
+      y: 30.55961162842224
+    interfaces:
+    - id: i1
+      destination_host: '1474'
+      ip: 172.16.9.17/24
+  '1474':
+    id: '1474'
+    ou: DEA_92
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_92
+    position3d:
+      x: 11.8129
+      y: 53.4308
+      z: 4.0
+    position2d:
+      x: 6.82018099491013
+      y: 30.848286763017054
+    interfaces:
+    - id: i1
+      destination_host: '1465'
+    - id: i2
+      destination_host: '1473'
+    - id: i3
+      destination_host: '1483'
+  '1482':
+    id: '1482'
+    ou: DEA_93
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_93
+    position3d:
+      x: 11.8128
+      y: 52.9315
+      z: 4.0
+    position2d:
+      x: 6.820123259883211
+      y: 30.560015773610676
+    interfaces:
+    - id: i1
+      destination_host: '1483'
+      ip: 172.16.9.24/24
+  '1483':
+    id: '1483'
+    ou: DEA_93
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_93
+    position3d:
+      x: 11.8128
+      y: 53.4315
+      z: 4.0
+    position2d:
+      x: 6.820123259883211
+      y: 30.848690908205487
+    interfaces:
+    - id: i1
+      destination_host: '1474'
+    - id: i2
+      destination_host: '1482'
+    - id: i3
+      destination_host: '1492'
+  '1491':
+    id: '1491'
+    ou: DEA_94
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_94
+    position3d:
+      x: 11.8125
+      y: 52.9328
+      z: 4.0
+    position2d:
+      x: 6.819950054802454
+      y: 30.56076632896062
+    interfaces:
+    - id: i1
+      destination_host: '1492'
+      ip: 172.16.9.118/24
+  '1492':
+    id: '1492'
+    ou: DEA_94
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_94
+    position3d:
+      x: 11.8125
+      y: 53.4328
+      z: 4.0
+    position2d:
+      x: 6.819950054802454
+      y: 30.849441463555433
+    interfaces:
+    - id: i1
+      destination_host: '1483'
+    - id: i2
+      destination_host: '1491'
+    - id: i3
+      destination_host: '1502'
+  '1501':
+    id: '1501'
+    ou: DEA_95
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_95
+    position3d:
+      x: 11.8113
+      y: 52.9364
+      z: 4.0
+    position2d:
+      x: 6.8192572344794256
+      y: 30.562844789929702
+    interfaces:
+    - id: i1
+      destination_host: '1502'
+      ip: 172.16.9.58/24
+  '1502':
+    id: '1502'
+    ou: DEA_95
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_95
+    position3d:
+      x: 11.8113
+      y: 53.4364
+      z: 4.0
+    position2d:
+      x: 6.8192572344794256
+      y: 30.851519924524517
+    interfaces:
+    - id: i1
+      destination_host: '1055'
+    - id: i2
+      destination_host: '1492'
+    - id: i3
+      destination_host: '1501'
+    - id: i4
+      destination_host: '1511'
+  '1510':
+    id: '1510'
+    ou: DEA_96
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_96
+    position3d:
+      x: 11.8125
+      y: 52.9382
+      z: 4.0
+    position2d:
+      x: 6.819950054802454
+      y: 30.563884020414246
+    interfaces:
+    - id: i1
+      destination_host: '1511'
+      ip: 172.16.9.52/24
+  '1511':
+    id: '1511'
+    ou: DEA_96
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_96
+    position3d:
+      x: 11.8125
+      y: 53.4382
+      z: 4.0
+    position2d:
+      x: 6.819950054802454
+      y: 30.852559155009057
+    interfaces:
+    - id: i1
+      destination_host: '1502'
+    - id: i2
+      destination_host: '1510'
+  '1519':
+    id: '1519'
+    ou: DEA_97
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_97
+    position3d:
+      x: 11.8167
+      y: 52.942
+      z: 4.0
+    position2d:
+      x: 6.822374925933051
+      y: 30.566077951437165
+    interfaces:
+    - id: i1
+      destination_host: '1520'
+      ip: 172.16.9.75/24
+  '1520':
+    id: '1520'
+    ou: DEA_97
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_97
+    position3d:
+      x: 11.8167
+      y: 53.442
+      z: 4.0
+    position2d:
+      x: 6.822374925933051
+      y: 30.854753086031977
+    interfaces:
+    - id: i1
+      destination_host: '1519'
+    - id: i2
+      destination_host: '1530'
+  '1529':
+    id: '1529'
+    ou: DEA_98
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_98
+    position3d:
+      x: 11.8215
+      y: 52.9446
+      z: 4.0
+    position2d:
+      x: 6.825146207225161
+      y: 30.56757906213706
+    interfaces:
+    - id: i1
+      destination_host: '1530'
+      ip: 172.16.9.113/24
+  '1530':
+    id: '1530'
+    ou: DEA_98
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_98
+    position3d:
+      x: 11.8215
+      y: 53.4446
+      z: 4.0
+    position2d:
+      x: 6.825146207225161
+      y: 30.85625419673187
+    interfaces:
+    - id: i1
+      destination_host: '1520'
+    - id: i2
+      destination_host: '1529'
+    - id: i3
+      destination_host: '1540'
+  '1539':
+    id: '1539'
+    ou: DEA_99
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_99
+    position3d:
+      x: 11.8223
+      y: 52.9459
+      z: 4.0
+    position2d:
+      x: 6.8256080874405125
+      y: 30.568329617487006
+    interfaces:
+    - id: i1
+      destination_host: '1540'
+      ip: 172.16.9.81/24
+  '1540':
+    id: '1540'
+    ou: DEA_99
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_99
+    position3d:
+      x: 11.8223
+      y: 53.4459
+      z: 4.0
+    position2d:
+      x: 6.8256080874405125
+      y: 30.857004752081817
+    interfaces:
+    - id: i1
+      destination_host: '641'
+    - id: i2
+      destination_host: '1530'
+    - id: i3
+      destination_host: '1539'
+    - id: i4
+      destination_host: '1550'
+  '1549':
+    id: '1549'
+    ou: DEA_101
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_101
+    position3d:
+      x: 11.8239
+      y: 52.9458
+      z: 4.0
+    position2d:
+      x: 6.826531847871216
+      y: 30.568271882460085
+    interfaces:
+    - id: i1
+      destination_host: '1550'
+      ip: 172.16.9.37/24
+  '1550':
+    id: '1550'
+    ou: DEA_101
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_101
+    position3d:
+      x: 11.8239
+      y: 53.4458
+      z: 4.0
+    position2d:
+      x: 6.826531847871216
+      y: 30.8569470170549
+    interfaces:
+    - id: i1
+      destination_host: '864'
+    - id: i2
+      destination_host: '1540'
+    - id: i3
+      destination_host: '1549'
+  '1558':
+    id: '1558'
+    ou: DEA_102
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_102
+    position3d:
+      x: 11.8116
+      y: 52.9234
+      z: 4.0
+    position2d:
+      x: 6.8194304395601835
+      y: 30.55533923643024
+    interfaces:
+    - id: i1
+      destination_host: '1559'
+      ip: 172.16.9.96/24
+  '1559':
+    id: '1559'
+    ou: DEA_102
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_102
+    position3d:
+      x: 11.8116
+      y: 53.4234
+      z: 4.0
+    position2d:
+      x: 6.8194304395601835
+      y: 30.84401437102505
+    interfaces:
+    - id: i1
+      destination_host: '1558'
+    - id: i2
+      destination_host: '1568'
+  '1567':
+    id: '1567'
+    ou: DEA_103
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_103
+    position3d:
+      x: 11.8114
+      y: 52.9226
+      z: 4.0
+    position2d:
+      x: 6.819314969506346
+      y: 30.554877356214888
+    interfaces:
+    - id: i1
+      destination_host: '1568'
+      ip: 172.16.9.82/24
+  '1568':
+    id: '1568'
+    ou: DEA_103
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_103
+    position3d:
+      x: 11.8114
+      y: 53.4226
+      z: 4.0
+    position2d:
+      x: 6.819314969506346
+      y: 30.8435524908097
+    interfaces:
+    - id: i1
+      destination_host: '1559'
+    - id: i2
+      destination_host: '1567'
+    - id: i3
+      destination_host: '1577'
+  '1576':
+    id: '1576'
+    ou: DEA_104
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_104
+    position3d:
+      x: 11.8111
+      y: 52.9214
+      z: 4.0
+    position2d:
+      x: 6.819141764425589
+      y: 30.55418453589186
+    interfaces:
+    - id: i1
+      destination_host: '1577'
+      ip: 172.16.9.99/24
+  '1577':
+    id: '1577'
+    ou: DEA_104
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_104
+    position3d:
+      x: 11.8111
+      y: 53.4214
+      z: 4.0
+    position2d:
+      x: 6.819141764425589
+      y: 30.84285967048667
+    interfaces:
+    - id: i1
+      destination_host: '1568'
+    - id: i2
+      destination_host: '1576'
+    - id: i3
+      destination_host: '1586'
+  '1585':
+    id: '1585'
+    ou: DEA_105
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_105
+    position3d:
+      x: 11.8109
+      y: 52.9201
+      z: 4.0
+    position2d:
+      x: 6.819026294371751
+      y: 30.55343398054191
+    interfaces:
+    - id: i1
+      destination_host: '1586'
+      ip: 172.16.9.28/24
+  '1586':
+    id: '1586'
+    ou: DEA_105
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_105
+    position3d:
+      x: 11.8109
+      y: 53.4201
+      z: 4.0
+    position2d:
+      x: 6.819026294371751
+      y: 30.842109115136726
+    interfaces:
+    - id: i1
+      destination_host: '1577'
+    - id: i2
+      destination_host: '1585'
+    - id: i3
+      destination_host: '1595'
+  '1594':
+    id: '1594'
+    ou: DEA_106
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_106
+    position3d:
+      x: 11.8108
+      y: 52.9186
+      z: 4.0
+    position2d:
+      x: 6.818968559344832
+      y: 30.552567955138127
+    interfaces:
+    - id: i1
+      destination_host: '1595'
+      ip: 172.16.9.72/24
+  '1595':
+    id: '1595'
+    ou: DEA_106
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_106
+    position3d:
+      x: 11.8108
+      y: 53.4186
+      z: 4.0
+    position2d:
+      x: 6.818968559344832
+      y: 30.84124308973294
+    interfaces:
+    - id: i1
+      destination_host: '635'
+    - id: i2
+      destination_host: '1586'
+    - id: i3
+      destination_host: '1594'
+  '1603':
+    id: '1603'
+    ou: DEA_108
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_108
+    position3d:
+      x: 11.8194
+      y: 52.9104
+      z: 4.0
+    position2d:
+      x: 6.8239337716598625
+      y: 30.547833682930776
+    interfaces:
+    - id: i1
+      destination_host: '1604'
+      ip: 172.16.9.5/24
+  '1604':
+    id: '1604'
+    ou: DEA_108
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_108
+    position3d:
+      x: 11.8194
+      y: 53.4104
+      z: 4.0
+    position2d:
+      x: 6.8239337716598625
+      y: 30.836508817525587
+    interfaces:
+    - id: i1
+      destination_host: '635'
+    - id: i2
+      destination_host: '1603'
+    - id: i3
+      destination_host: '1613'
+  '1612':
+    id: '1612'
+    ou: DEA_109
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_109
+    position3d:
+      x: 11.8254
+      y: 52.9101
+      z: 4.0
+    position2d:
+      x: 6.827397873275
+      y: 30.547660477850016
+    interfaces:
+    - id: i1
+      destination_host: '1613'
+      ip: 172.16.9.47/24
+  '1613':
+    id: '1613'
+    ou: DEA_109
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_109
+    position3d:
+      x: 11.8254
+      y: 53.4101
+      z: 4.0
+    position2d:
+      x: 6.827397873275
+      y: 30.83633561244483
+    interfaces:
+    - id: i1
+      destination_host: '1604'
+    - id: i2
+      destination_host: '1612'
+    - id: i3
+      destination_host: '1622'
+  '1621':
+    id: '1621'
+    ou: DEA_110
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_110
+    position3d:
+      x: 11.8294
+      y: 52.9121
+      z: 4.0
+    position2d:
+      x: 6.829707274351758
+      y: 30.5488151783884
+    interfaces:
+    - id: i1
+      destination_host: '1622'
+      ip: 172.16.9.63/24
+  '1622':
+    id: '1622'
+    ou: DEA_110
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_110
+    position3d:
+      x: 11.8294
+      y: 53.4121
+      z: 4.0
+    position2d:
+      x: 6.829707274351758
+      y: 30.83749031298321
+    interfaces:
+    - id: i1
+      destination_host: '1613'
+    - id: i2
+      destination_host: '1621'
+    - id: i3
+      destination_host: '1631'
+  '1630':
+    id: '1630'
+    ou: DEA_111
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_111
+    position3d:
+      x: 11.8303
+      y: 52.9156
+      z: 4.0
+    position2d:
+      x: 6.830226889594029
+      y: 30.550835904330558
+    interfaces:
+    - id: i1
+      destination_host: '1631'
+      ip: 172.16.9.116/24
+  '1631':
+    id: '1631'
+    ou: DEA_111
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_111
+    position3d:
+      x: 11.8303
+      y: 53.4156
+      z: 4.0
+    position2d:
+      x: 6.830226889594029
+      y: 30.83951103892537
+    interfaces:
+    - id: i1
+      destination_host: '1622'
+    - id: i2
+      destination_host: '1630'
+    - id: i3
+      destination_host: '1641'
+  '1640':
+    id: '1640'
+    ou: DEA_112
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_112
+    position3d:
+      x: 11.8294
+      y: 52.9167
+      z: 4.0
+    position2d:
+      x: 6.829707274351758
+      y: 30.55147098962667
+    interfaces:
+    - id: i1
+      destination_host: '1641'
+      ip: 172.16.9.104/24
+  '1641':
+    id: '1641'
+    ou: DEA_112
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_112
+    position3d:
+      x: 11.8294
+      y: 53.4167
+      z: 4.0
+    position2d:
+      x: 6.829707274351758
+      y: 30.84014612422148
+    interfaces:
+    - id: i1
+      destination_host: '754'
+    - id: i2
+      destination_host: '1631'
+    - id: i3
+      destination_host: '1640'
+    - id: i4
+      destination_host: '1650'
+  '1649':
+    id: '1649'
+    ou: DEA_113
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_113
+    position3d:
+      x: 11.8286
+      y: 52.9159
+      z: 4.0
+    position2d:
+      x: 6.829245394136406
+      y: 30.551009109411318
+    interfaces:
+    - id: i1
+      destination_host: '1650'
+      ip: 172.16.9.112/24
+  '1650':
+    id: '1650'
+    ou: DEA_113
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_113
+    position3d:
+      x: 11.8286
+      y: 53.4159
+      z: 4.0
+    position2d:
+      x: 6.829245394136406
+      y: 30.83968424400613
+    interfaces:
+    - id: i1
+      destination_host: '1641'
+    - id: i2
+      destination_host: '1649'
+    - id: i3
+      destination_host: '1659'
+  '1658':
+    id: '1658'
+    ou: DEA_114
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_114
+    position3d:
+      x: 11.828
+      y: 52.9154
+      z: 4.0
+    position2d:
+      x: 6.828898983974892
+      y: 30.55072043427672
+    interfaces:
+    - id: i1
+      destination_host: '1659'
+      ip: 172.16.9.32/24
+  '1659':
+    id: '1659'
+    ou: DEA_114
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_114
+    position3d:
+      x: 11.828
+      y: 53.4154
+      z: 4.0
+    position2d:
+      x: 6.828898983974892
+      y: 30.839395568871534
+    interfaces:
+    - id: i1
+      destination_host: '1650'
+    - id: i2
+      destination_host: '1658'
+    - id: i3
+      destination_host: '1668'
+  '1667':
+    id: '1667'
+    ou: DEA_115
+    owner: DSO
+    type: rtu
+    zone: Station
+    domain: DEA
+    name: DEA_115
+    position3d:
+      x: 11.8271
+      y: 52.9148
+      z: 4.0
+    position2d:
+      x: 6.828379368732622
+      y: 30.550374024115207
+    interfaces:
+    - id: i1
+      destination_host: '1668'
+      ip: 172.16.9.64/24
+  '1668':
+    id: '1668'
+    ou: DEA_115
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: DEA
+    name: DEA_115
+    position3d:
+      x: 11.8271
+      y: 53.4148
+      z: 4.0
+    position2d:
+      x: 6.828379368732622
+      y: 30.83904915871002
+    interfaces:
+    - id: i1
+      destination_host: '649'
+    - id: i2
+      destination_host: '1659'
+    - id: i3
+      destination_host: '1667'
+  '1672':
+    id: '1672'
+    ou: UW_0
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 0.0
+      y: 4.0
+      z: 6.0
+    position2d:
+      x: 0.0
+      y: 4.0
+    interfaces:
+    - id: i1
+      destination_host: '629'
+    - id: i2
+      destination_host: '873'
+    - id: i3
+      destination_host: '1201'
+  '1673':
+    id: '1673'
+    ou: UW_0
+    owner: DSO
+    type: switch
+    zone: WAN
+    domain: Distribution
+    name: UW_0
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 5.0
+    position2d:
+      x: 9.6444576139183
+      y: 43.62108488708949
+    interfaces:
+    - id: i1
+      destination_host: '629'
+    - id: i2
+      destination_host: '1275'
+    - id: i3
+      destination_host: '1329'
+  '1674':
+    id: '1674'
+    ou: DSO_SCADA
+    owner: DSO
+    type: router
+    zone: Operation
+    domain: Distribution
+    name: DSO_SCADA
+    position3d:
+      x: 11.812
+      y: 53.4247
+      z: 5.0
+    position2d:
+      x: 9.6444576139183
+      y: 43.62108488708949
+    interfaces:
+    - id: i2
+      destination_host: '1675'
+      ip: 172.16.3.1/24
+    - id: i3
+      destination_host: '629'
+      ip: 172.16.9.97/24
+  '1675':
+    id: '1675'
+    ou: DSO_SCADA
+    owner: DSO
+    type: mtu
+    zone: Operation
+    domain: Distribution
+    name: DSO_SCADA
+    position3d:
+      x: 0.0
+      y: 3.0
+      z: 6.5
+    position2d:
+      x: 0.0
+      y: 3.24037034920393
+    interfaces:
+    - id: i1
+      destination_host: '1674'
+      ip: 172.16.3.2/24
+    rtu_ips:
+      1027: 172.16.9.61
+      1539: 172.16.9.81
+      771: 172.16.9.107
+      1283: 172.16.9.41
+      1036: 172.16.9.19
+      1549: 172.16.9.37
+      780: 172.16.9.57
+      1292: 172.16.9.89
+      1045: 172.16.9.62
+      1558: 172.16.9.96
+      789: 172.16.9.65
+      1301: 172.16.9.7
+      1054: 172.16.9.11
+      1567: 172.16.9.82
+      798: 172.16.9.80
+      1310: 172.16.9.9
+      1062: 172.16.9.45
+      807: 172.16.9.18
+      1576: 172.16.9.99
+      1319: 172.16.9.23
+      1071: 172.16.9.53
+      816: 172.16.9.106
+      1585: 172.16.9.28
+      1328: 172.16.9.29
+      1080: 172.16.9.120
+      1337: 172.16.9.33
+      1594: 172.16.9.72
+      826: 172.16.9.88
+      1089: 172.16.9.13
+      1346: 172.16.9.20
+      1603: 172.16.9.5
+      835: 172.16.9.105
+      1098: 172.16.9.111
+      1355: 172.16.9.108
+      1612: 172.16.9.47
+      844: 172.16.9.78
+      1107: 172.16.9.92
+      1364: 172.16.9.36
+      1621: 172.16.9.63
+      854: 172.16.9.66
+      1117: 172.16.9.86
+      1630: 172.16.9.116
+      607: 172.16.9.90
+      1373: 172.16.9.73
+      863: 172.16.9.54
+      614: 172.16.9.70
+      1126: 172.16.9.21
+      1640: 172.16.9.104
+      1383: 172.16.9.60
+      618: 172.16.9.38
+      872: 172.16.9.100
+      622: 172.16.9.110
+      1135: 172.16.9.55
+      1392: 172.16.9.85
+      1649: 172.16.9.112
+      881: 172.16.9.56
+      627: 172.16.9.93
+      1145: 172.16.9.12
+      634: 172.16.9.34
+      1658: 172.16.9.32
+      1401: 172.16.9.95
+      890: 172.16.9.46
+      640: 172.16.9.50
+      1410: 172.16.9.68
+      1155: 172.16.9.77
+      1667: 172.16.9.64
+      899: 172.16.9.49
+      648: 172.16.9.35
+      1419: 172.16.9.14
+      1164: 172.16.9.26
+      908: 172.16.9.69
+      1428: 172.16.9.4
+      661: 172.16.9.43
+      1173: 172.16.9.59
+      917: 172.16.9.10
+      1437: 172.16.9.71
+      670: 172.16.9.42
+      1182: 172.16.9.114
+      926: 172.16.9.119
+      1446: 172.16.9.1
+      679: 172.16.9.3
+      1191: 172.16.9.44
+      935: 172.16.9.109
+      1455: 172.16.9.91
+      688: 172.16.9.115
+      1200: 172.16.9.22
+      944: 172.16.9.30
+      1464: 172.16.9.74
+      697: 172.16.9.31
+      953: 172.16.9.84
+      1211: 172.16.9.67
+      1473: 172.16.9.17
+      706: 172.16.9.25
+      962: 172.16.9.27
+      1220: 172.16.9.6
+      1482: 172.16.9.24
+      715: 172.16.9.51
+      971: 172.16.9.79
+      1229: 172.16.9.83
+      1491: 172.16.9.118
+      980: 172.16.9.15
+      725: 172.16.9.101
+      1238: 172.16.9.117
+      989: 172.16.9.102
+      734: 172.16.9.8
+      1247: 172.16.9.16
+      1501: 172.16.9.58
+      762: 172.16.9.39
+      998: 172.16.9.103
+      743: 172.16.9.40
+      1256: 172.16.9.2
+      1510: 172.16.9.52
+      1519: 172.16.9.75
+      1008: 172.16.9.87
+      753: 172.16.9.48
+      1265: 172.16.9.94
+      1529: 172.16.9.113
+      1274: 172.16.9.98
+      1017: 172.16.9.76
+links:
+- id: l0
+  interfaces:
+  - 607.i1
+  - 628.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l1
+  interfaces:
+  - 614.i1
+  - 628.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l2
+  interfaces:
+  - 618.i1
+  - 628.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l3
+  interfaces:
+  - 622.i1
+  - 628.i4
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l4
+  interfaces:
+  - 627.i1
+  - 628.i5
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l5
+  interfaces:
+  - 628.i6
+  - 629.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l6
+  interfaces:
+  - 629.i2
+  - 1672.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l7
+  interfaces:
+  - 629.i3
+  - 1673.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l8
+  interfaces:
+  - 629.i4
+  - 1674.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l9
+  interfaces:
+  - 634.i1
+  - 635.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l10
+  interfaces:
+  - 635.i2
+  - 1595.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l11
+  interfaces:
+  - 635.i3
+  - 1604.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l12
+  interfaces:
+  - 640.i1
+  - 641.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l13
+  interfaces:
+  - 641.i2
+  - 972.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l14
+  interfaces:
+  - 641.i3
+  - 1540.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l15
+  interfaces:
+  - 648.i1
+  - 649.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l16
+  interfaces:
+  - 649.i2
+  - 1668.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l17
+  interfaces:
+  - 661.i1
+  - 662.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l18
+  interfaces:
+  - 662.i2
+  - 671.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l19
+  interfaces:
+  - 662.i3
+  - 873.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l20
+  interfaces:
+  - 662.i4
+  - 981.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l21
+  interfaces:
+  - 662.i5
+  - 1081.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l22
+  interfaces:
+  - 670.i1
+  - 671.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l23
+  interfaces:
+  - 671.i3
+  - 680.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l24
+  interfaces:
+  - 679.i1
+  - 680.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l25
+  interfaces:
+  - 680.i3
+  - 689.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l26
+  interfaces:
+  - 688.i1
+  - 689.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l27
+  interfaces:
+  - 689.i3
+  - 698.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l28
+  interfaces:
+  - 697.i1
+  - 698.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l29
+  interfaces:
+  - 698.i3
+  - 707.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l30
+  interfaces:
+  - 706.i1
+  - 707.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l31
+  interfaces:
+  - 707.i3
+  - 716.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l32
+  interfaces:
+  - 715.i1
+  - 716.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l33
+  interfaces:
+  - 716.i3
+  - 726.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l34
+  interfaces:
+  - 725.i1
+  - 726.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l35
+  interfaces:
+  - 726.i3
+  - 735.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l36
+  interfaces:
+  - 734.i1
+  - 735.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l37
+  interfaces:
+  - 735.i3
+  - 744.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l38
+  interfaces:
+  - 743.i1
+  - 744.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l39
+  interfaces:
+  - 744.i3
+  - 754.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l40
+  interfaces:
+  - 753.i1
+  - 754.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l41
+  interfaces:
+  - 754.i3
+  - 763.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l42
+  interfaces:
+  - 754.i4
+  - 1641.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l43
+  interfaces:
+  - 762.i1
+  - 763.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l44
+  interfaces:
+  - 763.i3
+  - 772.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l45
+  interfaces:
+  - 771.i1
+  - 772.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l46
+  interfaces:
+  - 772.i3
+  - 781.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l47
+  interfaces:
+  - 780.i1
+  - 781.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l48
+  interfaces:
+  - 781.i3
+  - 790.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l49
+  interfaces:
+  - 789.i1
+  - 790.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l50
+  interfaces:
+  - 790.i3
+  - 799.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l51
+  interfaces:
+  - 798.i1
+  - 799.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l52
+  interfaces:
+  - 799.i3
+  - 808.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l53
+  interfaces:
+  - 807.i1
+  - 808.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l54
+  interfaces:
+  - 808.i3
+  - 817.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l55
+  interfaces:
+  - 816.i1
+  - 817.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l56
+  interfaces:
+  - 817.i3
+  - 827.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l57
+  interfaces:
+  - 826.i1
+  - 827.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l58
+  interfaces:
+  - 827.i3
+  - 836.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l59
+  interfaces:
+  - 827.i4
+  - 1420.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l60
+  interfaces:
+  - 835.i1
+  - 836.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l61
+  interfaces:
+  - 836.i3
+  - 845.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l62
+  interfaces:
+  - 844.i1
+  - 845.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l63
+  interfaces:
+  - 845.i3
+  - 855.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l64
+  interfaces:
+  - 854.i1
+  - 855.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l65
+  interfaces:
+  - 855.i3
+  - 864.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l66
+  interfaces:
+  - 863.i1
+  - 864.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l67
+  interfaces:
+  - 864.i3
+  - 1550.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l68
+  interfaces:
+  - 872.i1
+  - 873.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l69
+  interfaces:
+  - 873.i3
+  - 1672.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l70
+  interfaces:
+  - 873.i4
+  - 882.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l71
+  interfaces:
+  - 881.i1
+  - 882.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l72
+  interfaces:
+  - 882.i3
+  - 891.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l73
+  interfaces:
+  - 890.i1
+  - 891.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l74
+  interfaces:
+  - 891.i3
+  - 900.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l75
+  interfaces:
+  - 899.i1
+  - 900.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l76
+  interfaces:
+  - 908.i1
+  - 909.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l77
+  interfaces:
+  - 909.i2
+  - 918.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l78
+  interfaces:
+  - 917.i1
+  - 918.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l79
+  interfaces:
+  - 918.i3
+  - 927.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l80
+  interfaces:
+  - 926.i1
+  - 927.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l81
+  interfaces:
+  - 927.i3
+  - 936.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l82
+  interfaces:
+  - 935.i1
+  - 936.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l83
+  interfaces:
+  - 936.i3
+  - 945.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l84
+  interfaces:
+  - 944.i1
+  - 945.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l85
+  interfaces:
+  - 945.i3
+  - 954.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l86
+  interfaces:
+  - 953.i1
+  - 954.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l87
+  interfaces:
+  - 954.i3
+  - 963.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l88
+  interfaces:
+  - 962.i1
+  - 963.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l89
+  interfaces:
+  - 963.i3
+  - 972.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l90
+  interfaces:
+  - 971.i1
+  - 972.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l91
+  interfaces:
+  - 980.i1
+  - 981.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l92
+  interfaces:
+  - 981.i3
+  - 990.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l93
+  interfaces:
+  - 989.i1
+  - 990.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l94
+  interfaces:
+  - 990.i3
+  - 999.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l95
+  interfaces:
+  - 998.i1
+  - 999.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l96
+  interfaces:
+  - 999.i3
+  - 1009.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l97
+  interfaces:
+  - 1008.i1
+  - 1009.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l98
+  interfaces:
+  - 1009.i3
+  - 1018.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l99
+  interfaces:
+  - 1009.i4
+  - 1063.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l100
+  interfaces:
+  - 1017.i1
+  - 1018.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l101
+  interfaces:
+  - 1018.i3
+  - 1028.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l102
+  interfaces:
+  - 1027.i1
+  - 1028.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l103
+  interfaces:
+  - 1028.i3
+  - 1037.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l104
+  interfaces:
+  - 1028.i4
+  - 1072.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l105
+  interfaces:
+  - 1036.i1
+  - 1037.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l106
+  interfaces:
+  - 1037.i3
+  - 1046.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l107
+  interfaces:
+  - 1045.i1
+  - 1046.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l108
+  interfaces:
+  - 1046.i3
+  - 1055.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l109
+  interfaces:
+  - 1054.i1
+  - 1055.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l110
+  interfaces:
+  - 1055.i3
+  - 1502.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l111
+  interfaces:
+  - 1062.i1
+  - 1063.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l112
+  interfaces:
+  - 1071.i1
+  - 1072.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l113
+  interfaces:
+  - 1080.i1
+  - 1081.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l114
+  interfaces:
+  - 1081.i3
+  - 1090.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l115
+  interfaces:
+  - 1089.i1
+  - 1090.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l116
+  interfaces:
+  - 1090.i3
+  - 1099.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l117
+  interfaces:
+  - 1098.i1
+  - 1099.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l118
+  interfaces:
+  - 1099.i3
+  - 1108.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l119
+  interfaces:
+  - 1107.i1
+  - 1108.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l120
+  interfaces:
+  - 1108.i3
+  - 1118.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l121
+  interfaces:
+  - 1117.i1
+  - 1118.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l122
+  interfaces:
+  - 1118.i3
+  - 1127.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l123
+  interfaces:
+  - 1118.i4
+  - 1165.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l124
+  interfaces:
+  - 1126.i1
+  - 1127.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l125
+  interfaces:
+  - 1127.i3
+  - 1136.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l126
+  interfaces:
+  - 1135.i1
+  - 1136.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l127
+  interfaces:
+  - 1136.i3
+  - 1146.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l128
+  interfaces:
+  - 1145.i1
+  - 1146.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l129
+  interfaces:
+  - 1146.i3
+  - 1156.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l130
+  interfaces:
+  - 1155.i1
+  - 1156.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l131
+  interfaces:
+  - 1156.i3
+  - 1192.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l132
+  interfaces:
+  - 1164.i1
+  - 1165.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l133
+  interfaces:
+  - 1165.i3
+  - 1174.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l134
+  interfaces:
+  - 1173.i1
+  - 1174.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l135
+  interfaces:
+  - 1182.i1
+  - 1183.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l136
+  interfaces:
+  - 1183.i2
+  - 1192.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l137
+  interfaces:
+  - 1191.i1
+  - 1192.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l138
+  interfaces:
+  - 1200.i1
+  - 1201.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l139
+  interfaces:
+  - 1201.i2
+  - 1672.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l140
+  interfaces:
+  - 1201.i3
+  - 1212.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l141
+  interfaces:
+  - 1211.i1
+  - 1212.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l142
+  interfaces:
+  - 1212.i3
+  - 1221.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l143
+  interfaces:
+  - 1212.i4
+  - 1248.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l144
+  interfaces:
+  - 1212.i5
+  - 1266.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l145
+  interfaces:
+  - 1220.i1
+  - 1221.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l146
+  interfaces:
+  - 1221.i3
+  - 1230.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l147
+  interfaces:
+  - 1229.i1
+  - 1230.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l148
+  interfaces:
+  - 1230.i3
+  - 1239.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l149
+  interfaces:
+  - 1238.i1
+  - 1239.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l150
+  interfaces:
+  - 1239.i3
+  - 1320.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l151
+  interfaces:
+  - 1247.i1
+  - 1248.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l152
+  interfaces:
+  - 1248.i3
+  - 1257.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l153
+  interfaces:
+  - 1256.i1
+  - 1257.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l154
+  interfaces:
+  - 1265.i1
+  - 1266.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l155
+  interfaces:
+  - 1274.i1
+  - 1275.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l156
+  interfaces:
+  - 1275.i2
+  - 1673.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l157
+  interfaces:
+  - 1275.i3
+  - 1284.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l158
+  interfaces:
+  - 1283.i1
+  - 1284.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l159
+  interfaces:
+  - 1284.i3
+  - 1293.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l160
+  interfaces:
+  - 1292.i1
+  - 1293.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l161
+  interfaces:
+  - 1293.i3
+  - 1302.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l162
+  interfaces:
+  - 1301.i1
+  - 1302.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l163
+  interfaces:
+  - 1310.i1
+  - 1311.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l164
+  interfaces:
+  - 1311.i2
+  - 1320.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l165
+  interfaces:
+  - 1319.i1
+  - 1320.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l166
+  interfaces:
+  - 1328.i1
+  - 1329.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l167
+  interfaces:
+  - 1329.i2
+  - 1673.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l168
+  interfaces:
+  - 1329.i3
+  - 1338.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l169
+  interfaces:
+  - 1337.i1
+  - 1338.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l170
+  interfaces:
+  - 1346.i1
+  - 1347.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l171
+  interfaces:
+  - 1347.i2
+  - 1356.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l172
+  interfaces:
+  - 1355.i1
+  - 1356.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l173
+  interfaces:
+  - 1356.i3
+  - 1365.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l174
+  interfaces:
+  - 1364.i1
+  - 1365.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l175
+  interfaces:
+  - 1365.i3
+  - 1374.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l176
+  interfaces:
+  - 1373.i1
+  - 1374.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l177
+  interfaces:
+  - 1374.i3
+  - 1384.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l178
+  interfaces:
+  - 1383.i1
+  - 1384.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l179
+  interfaces:
+  - 1384.i3
+  - 1393.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l180
+  interfaces:
+  - 1392.i1
+  - 1393.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l181
+  interfaces:
+  - 1393.i3
+  - 1402.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l182
+  interfaces:
+  - 1401.i1
+  - 1402.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l183
+  interfaces:
+  - 1402.i3
+  - 1411.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l184
+  interfaces:
+  - 1410.i1
+  - 1411.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l185
+  interfaces:
+  - 1411.i3
+  - 1420.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l186
+  interfaces:
+  - 1419.i1
+  - 1420.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l187
+  interfaces:
+  - 1428.i1
+  - 1429.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l188
+  interfaces:
+  - 1429.i2
+  - 1438.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l189
+  interfaces:
+  - 1437.i1
+  - 1438.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l190
+  interfaces:
+  - 1438.i3
+  - 1447.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l191
+  interfaces:
+  - 1446.i1
+  - 1447.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l192
+  interfaces:
+  - 1447.i3
+  - 1456.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l193
+  interfaces:
+  - 1455.i1
+  - 1456.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l194
+  interfaces:
+  - 1456.i3
+  - 1465.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l195
+  interfaces:
+  - 1464.i1
+  - 1465.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l196
+  interfaces:
+  - 1465.i3
+  - 1474.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l197
+  interfaces:
+  - 1473.i1
+  - 1474.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l198
+  interfaces:
+  - 1474.i3
+  - 1483.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l199
+  interfaces:
+  - 1482.i1
+  - 1483.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l200
+  interfaces:
+  - 1483.i3
+  - 1492.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l201
+  interfaces:
+  - 1491.i1
+  - 1492.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l202
+  interfaces:
+  - 1492.i3
+  - 1502.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l203
+  interfaces:
+  - 1501.i1
+  - 1502.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l204
+  interfaces:
+  - 1502.i4
+  - 1511.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l205
+  interfaces:
+  - 1510.i1
+  - 1511.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l206
+  interfaces:
+  - 1519.i1
+  - 1520.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l207
+  interfaces:
+  - 1520.i2
+  - 1530.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l208
+  interfaces:
+  - 1529.i1
+  - 1530.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l209
+  interfaces:
+  - 1530.i3
+  - 1540.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l210
+  interfaces:
+  - 1539.i1
+  - 1540.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l211
+  interfaces:
+  - 1540.i4
+  - 1550.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l212
+  interfaces:
+  - 1549.i1
+  - 1550.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l213
+  interfaces:
+  - 1558.i1
+  - 1559.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l214
+  interfaces:
+  - 1559.i2
+  - 1568.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l215
+  interfaces:
+  - 1567.i1
+  - 1568.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l216
+  interfaces:
+  - 1568.i3
+  - 1577.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l217
+  interfaces:
+  - 1576.i1
+  - 1577.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l218
+  interfaces:
+  - 1577.i3
+  - 1586.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l219
+  interfaces:
+  - 1585.i1
+  - 1586.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l220
+  interfaces:
+  - 1586.i3
+  - 1595.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l221
+  interfaces:
+  - 1594.i1
+  - 1595.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l222
+  interfaces:
+  - 1603.i1
+  - 1604.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l223
+  interfaces:
+  - 1604.i3
+  - 1613.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l224
+  interfaces:
+  - 1612.i1
+  - 1613.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l225
+  interfaces:
+  - 1613.i3
+  - 1622.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l226
+  interfaces:
+  - 1621.i1
+  - 1622.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l227
+  interfaces:
+  - 1622.i3
+  - 1631.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l228
+  interfaces:
+  - 1630.i1
+  - 1631.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l229
+  interfaces:
+  - 1631.i3
+  - 1641.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l230
+  interfaces:
+  - 1640.i1
+  - 1641.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l231
+  interfaces:
+  - 1641.i4
+  - 1650.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l232
+  interfaces:
+  - 1649.i1
+  - 1650.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l233
+  interfaces:
+  - 1650.i3
+  - 1659.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l234
+  interfaces:
+  - 1658.i1
+  - 1659.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l235
+  interfaces:
+  - 1659.i3
+  - 1668.i2
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l236
+  interfaces:
+  - 1667.i1
+  - 1668.i3
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps
+- id: l237
+  interfaces:
+  - 1674.i2
+  - 1675.i1
+  edge_type: Digital
+  delay: 2ms
+  data-rate: 100Mbps

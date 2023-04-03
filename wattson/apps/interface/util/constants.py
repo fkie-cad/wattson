@@ -1,0 +1,17 @@
+COMMAND_INVALID = b"Send invalid subscription-command"
+NO_RESP = b"No response necessary"
+STR_NO_RESP = "No response necessary"
+STR_COMMAND_INVALID = "Send invalid subscription-command"
+JSON_INVALID = None
+
+DEFAULT_PUB_SERVER_IP = "127.0.0.1"
+DEFAULT_PUB_SERVER_PORT = 5580
+DEFAULT_CMD_SERVER_IP = "127.0.0.1"
+DEFAULT_CMD_SERVER_PORT = 5581
+
+UNEXPECTED_MSG_REFERENCE_NR = "-2"
+UNSET_REFERENCE_NR = "-1"
+WITHOUT_COMMAND = "0"
+NO_TS = -2
+DEFAULT_MAX_TRIES = 1
+STILL_SEND_KEY = "Still send"

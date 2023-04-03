@@ -1,0 +1,22 @@
+nodes:
+  ctrl:
+    id: ctrl
+    name: ScriptController
+    type: host
+    interfaces: [ ]
+    deploy:
+      type: python
+      module: wattson.apps.script_controller
+      class: ScriptControllerDeployment
+      config:
+        powernet: "!raw_powernet"
+        datapoints: "!datapoints"
+        nodeid: "!nodeid"
+        ip: "!management_ips.ctrl"
+        mtu_ip: "!management_ips.!mtus.0"
+        coordinator_ip: "!management_ips.coord"
+        scenario_path: "!scenario_path"
+        statistics: "!globals.statistics"
+        scripts:
+          - file: extensions/controller_script_linear.py
+            cls: EvaluationScript

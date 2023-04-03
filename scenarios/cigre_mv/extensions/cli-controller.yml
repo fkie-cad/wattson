@@ -1,0 +1,24 @@
+nodes:
+  ctrl:
+    id: ctrl
+    name: VCC Controller VC³
+    type: host
+    interfaces: [ ]
+    deploy:
+      type: python
+      module: wattson.apps.script_controller
+      class: ScriptControllerDeployment
+      config:
+        powernet: "!raw_powernet"
+        datapoints: "!datapoints"
+        nodeid: "!nodeid"
+        ip: "!management_ips.ctrl"
+        mtu_ip: "!management_ips.!mtus.0"
+        coordinator_ip: "!management_ips.coord"
+        scenario_path: "!scenario_path"
+        export_config:
+          enabled: true
+          interval: 2
+          measurements: true
+          delay_monitoring: true
+          delay_monitoring_timeout: 5

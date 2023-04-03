@@ -1,0 +1,2 @@
+class InterfaceNotFoundException(Exception):
+    pass

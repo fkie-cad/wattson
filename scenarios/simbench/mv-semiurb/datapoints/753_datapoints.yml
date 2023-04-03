@@ -1,0 +1,592 @@
+datapoints:
+  '753':
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: closed
+    value_id: 0.0
+    value: true
+    field_id: 1.0
+    identifier: '753.31110'
+    protocol_data:
+      coa: 753
+      ioa: 31110
+      cot: 6
+      type_id: 45
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: switch
+          pp_column: closed
+          pp_index: 16
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: closed
+    value_id: 1.0
+    value: true
+    field_id: 1.0
+    identifier: '753.21110'
+    protocol_data:
+      coa: 753
+      ioa: 21110
+      cot: 3
+      type_id: 1
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: switch
+          pp_column: closed
+          pp_index: 16
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: u
+    value_id: 2.0
+    value: 1.0033947351734989
+    field_id: 1.0
+    identifier: '753.11010'
+    protocol_data:
+      coa: 753
+      ioa: 11010
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: vm_to_pu
+          pp_index: 9
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: i
+    value_id: 3.0
+    value: 0.020681334651630624
+    field_id: 1.0
+    identifier: '753.11020'
+    protocol_data:
+      coa: 753
+      ioa: 11020
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: i_to_ka
+          pp_index: 9
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: p
+    value_id: 4.0
+    value: 0.2981568548742048
+    field_id: 1.0
+    identifier: '753.11030'
+    protocol_data:
+      coa: 753
+      ioa: 11030
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: p_to_mw
+          pp_index: 9
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: q
+    value_id: 5.0
+    value: -0.6541057250744563
+    field_id: 1.0
+    identifier: '753.11040'
+    protocol_data:
+      coa: 753
+      ioa: 11040
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: q_to_mvar
+          pp_index: 9
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: closed
+    value_id: 12.0
+    value: true
+    field_id: 2.0
+    identifier: '753.32110'
+    protocol_data:
+      coa: 753
+      ioa: 32110
+      cot: 6
+      type_id: 45
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: switch
+          pp_column: closed
+          pp_index: 38
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: closed
+    value_id: 13.0
+    value: true
+    field_id: 2.0
+    identifier: '753.22110'
+    protocol_data:
+      coa: 753
+      ioa: 22110
+      cot: 3
+      type_id: 1
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: switch
+          pp_column: closed
+          pp_index: 38
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: u
+    value_id: 14.0
+    value: 1.0033947351734989
+    field_id: 2.0
+    identifier: '753.12010'
+    protocol_data:
+      coa: 753
+      ioa: 12010
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: vm_from_pu
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: i
+    value_id: 15.0
+    value: 0.03457299775516053
+    field_id: 2.0
+    identifier: '753.12020'
+    protocol_data:
+      coa: 753
+      ioa: 12020
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: i_from_ka
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: p
+    value_id: 16.0
+    value: -0.5422766670454844
+    field_id: 2.0
+    identifier: '753.12030'
+    protocol_data:
+      coa: 753
+      ioa: 12030
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: p_from_mw
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: q
+    value_id: 17.0
+    value: 1.072399942007527
+    field_id: 2.0
+    identifier: '753.12040'
+    protocol_data:
+      coa: 753
+      ioa: 12040
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: q_from_mvar
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: closed
+    value_id: 24.0
+    value: true
+    field_id: 3.0
+    identifier: '753.33110'
+    protocol_data:
+      coa: 753
+      ioa: 33110
+      cot: 6
+      type_id: 45
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: switch
+          pp_column: closed
+          pp_index: 237
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: closed
+    value_id: 25.0
+    value: true
+    field_id: 3.0
+    identifier: '753.23110'
+    protocol_data:
+      coa: 753
+      ioa: 23110
+      cot: 3
+      type_id: 1
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: switch
+          pp_column: closed
+          pp_index: 237
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: u
+    value_id: 26.0
+    value: 1.0033947351734989
+    field_id: 3.0
+    identifier: '753.13010'
+    protocol_data:
+      coa: 753
+      ioa: 13010
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: vm_to_pu
+          pp_index: 115
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: i
+    value_id: 27.0
+    value: 0.01595283918260965
+    field_id: 3.0
+    identifier: '753.13020'
+    protocol_data:
+      coa: 753
+      ioa: 13020
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: i_to_ka
+          pp_index: 115
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: p
+    value_id: 28.0
+    value: 0.2072923521714766
+    field_id: 3.0
+    identifier: '753.13030'
+    protocol_data:
+      coa: 753
+      ioa: 13030
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: p_to_mw
+          pp_index: 115
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: q
+    value_id: 29.0
+    value: -0.5142942169280511
+    field_id: 3.0
+    identifier: '753.13040'
+    protocol_data:
+      coa: 753
+      ioa: 13040
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_line
+          pp_column: q_to_mvar
+          pp_index: 115
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: p
+    value_id: 36.0
+    value: 0.00585
+    field_id: 4.0
+    identifier: '753.14030'
+    protocol_data:
+      coa: 753
+      ioa: 14030
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_sgen
+          pp_column: p_mw
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: q
+    value_id: 37.0
+    value: 0.0
+    field_id: 4.0
+    identifier: '753.14040'
+    protocol_data:
+      coa: 753
+      ioa: 14040
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_sgen
+          pp_column: q_mvar
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: s
+    value_id: 38.0
+    value: 0.0065
+    field_id: 4.0
+    identifier: '753.14050'
+    protocol_data:
+      coa: 753
+      ioa: 14050
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: sgen
+          pp_column: sn_mva
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: p
+    value_id: 39.0
+    value: 0.00585
+    field_id: 4.0
+    identifier: '753.34030'
+    protocol_data:
+      coa: 753
+      ioa: 34030
+      cot: 6
+      type_id: 50
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: sgen
+          pp_column: p_mw
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: scaling
+    value_id: 40.0
+    value: 1.0
+    field_id: 4.0
+    description: SGEN SCALING [%]
+    pandapower_info:
+      pp_table: sgen
+      pp_index: 10
+    identifier: '753.34080'
+    protocol_data:
+      coa: 753
+      ioa: 34080
+      cot: 6
+      type_id: 50
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: sgen
+          pp_column: scaling
+          pp_index: 10
+        coupling: res = V / 100
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: scaling
+    value_id: 41.0
+    value: 1.0
+    field_id: 4.0
+    description: SGEN SCALING [%]
+    pandapower_info:
+      pp_table: sgen
+      pp_index: 10
+    identifier: '753.14080'
+    protocol_data:
+      coa: 753
+      ioa: 14080
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: sgen
+          pp_column: scaling
+          pp_index: 10
+        transform: res = X1 * 100
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: q
+    value_id: 42.0
+    value: 0.0
+    field_id: 4.0
+    identifier: '753.34040'
+    protocol_data:
+      coa: 753
+      ioa: 34040
+      cot: 6
+      type_id: 50
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: sgen
+          pp_column: q_mvar
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 0.0
+    datatype: cos_phi
+    value_id: 43.0
+    value: 1.0
+    field_id: 4.0
+    identifier: '753.34060'
+    protocol_data:
+      coa: 753
+      ioa: 34060
+      cot: 6
+      type_id: 50
+      direction: control
+    providers:
+      targets:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: sgen
+          pp_column: cos_phi
+          pp_index: 10
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: u
+    value_id: 44.0
+    value: 1.0033947351734989
+    field_id: 0.0
+    identifier: '753.10010'
+    protocol_data:
+      coa: 753
+      ioa: 10010
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_bus
+          pp_column: vm_pu
+          pp_index: 13
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: p
+    value_id: 45.0
+    value: 0.036827460000000034
+    field_id: 0.0
+    identifier: '753.10030'
+    protocol_data:
+      coa: 753
+      ioa: 10030
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_bus
+          pp_column: p_mw
+          pp_index: 13
+  - protocol: 60870-5-104
+    tm_interval: 10.0
+    datatype: q
+    value_id: 46.0
+    value: 0.09600000000000009
+    field_id: 0.0
+    identifier: '753.10040'
+    protocol_data:
+      coa: 753
+      ioa: 10040
+      cot: 1
+      type_id: 13
+      direction: monitoring
+    providers:
+      sources:
+      - provider_type: pandapower
+        provider_data:
+          pp_table: res_bus
+          pp_column: q_mvar
+          pp_index: 13

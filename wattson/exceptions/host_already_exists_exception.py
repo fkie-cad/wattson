@@ -1,0 +1,2 @@
+class HostAlreadyExistsException(Exception):
+    pass

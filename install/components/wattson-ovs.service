@@ -1,0 +1,12 @@
+[Unit]
+Description=Wattson OVS Service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/share/openvswitch/scripts/ovs-ctl start --system-id=wattson
+ExecStop=/usr/local/share/openvswitch/scripts/ovs-ctl stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

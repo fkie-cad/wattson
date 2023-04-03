@@ -1,0 +1,40 @@
+id;element1;element2;variable;subnet;voltLvl
+HV1 Measurement 676;HV1 Bus 19;NULL;p;HV1_MV2.101;3
+HV1 Measurement 677;HV1 Bus 19;NULL;q;HV1_MV2.101;3
+HV1 Measurement 678;HV1 Bus 19;NULL;v;HV1_MV2.101;3
+HV1 Measurement 688;HV1 Bus 20;NULL;p;HV1_MV2.101;3
+HV1 Measurement 689;HV1 Bus 20;NULL;q;HV1_MV2.101;3
+HV1 Measurement 690;HV1 Bus 20;NULL;v;HV1_MV2.101;3
+MV2.101 Measurement 3;MV2.101 Bus 4_1;MV2.101 Line 1;p;MV2.101_Feeder1;5
+MV2.101 Measurement 4;MV2.101 Bus 14_1;MV2.101 Line 11;p;MV2.101_Feeder1;5
+MV2.101 Measurement 5;MV2.101 Bus 15_1;MV2.101 Line 12;p;MV2.101_Feeder1;5
+MV2.101 Measurement 6;MV2.101 Bus 26_1;MV2.101 Line 23;p;MV2.101_Feeder2;5
+MV2.101 Measurement 7;MV2.101 Bus 38_1;MV2.101 Line 35;p;MV2.101_Feeder3;5
+MV2.101 Measurement 8;MV2.101 Bus 48_1;MV2.101 Line 45;p;MV2.101_Feeder3;5
+MV2.101 Measurement 9;MV2.101 Bus 49_1;MV2.101 Line 46;p;MV2.101_Feeder4;5
+MV2.101 Measurement 10;MV2.101 Bus 62_1;MV2.101 Line 59;p;MV2.101_Feeder5;5
+MV2.101 Measurement 11;MV2.101 Bus 4_1;MV2.101 Line 1;q;MV2.101_Feeder1;5
+MV2.101 Measurement 12;MV2.101 Bus 14_1;MV2.101 Line 11;q;MV2.101_Feeder1;5
+MV2.101 Measurement 13;MV2.101 busbar1.1;NULL;v;MV2.101;5
+MV2.101 Measurement 14;MV2.101 Bus 15_1;MV2.101 Line 12;q;MV2.101_Feeder1;5
+MV2.101 Measurement 15;MV2.101 Bus 26_1;MV2.101 Line 23;q;MV2.101_Feeder2;5
+MV2.101 Measurement 16;MV2.101 Bus 38_1;MV2.101 Line 35;q;MV2.101_Feeder3;5
+MV2.101 Measurement 17;MV2.101 Bus 48_1;MV2.101 Line 45;q;MV2.101_Feeder3;5
+MV2.101 Measurement 18;MV2.101 Bus 49_1;MV2.101 Line 46;q;MV2.101_Feeder4;5
+MV2.101 Measurement 19;MV2.101 Bus 62_1;MV2.101 Line 59;q;MV2.101_Feeder5;5
+MV2.101 Measurement 20;MV2.101 busbar1.1;NULL;v;MV2.101;5
+MV2.101 Measurement 21;MV2.101 Bus 14;NULL;v;MV2.101_Feeder1;5
+MV2.101 Measurement 22;MV2.101 Bus 48;NULL;v;MV2.101_Feeder3;5
+MV2.101 Measurement 23;MV2.101 busbar1.1;NULL;p;MV2.101;5
+MV2.101 Measurement 24;MV2.101 busbar1.2;NULL;v;MV2.101;5
+MV2.101 Measurement 25;MV2.101 Bus 14;NULL;p;MV2.101_Feeder1;5
+MV2.101 Measurement 26;MV2.101 Bus 48;NULL;p;MV2.101_Feeder3;5
+MV2.101 Measurement 27;MV2.101 busbar1.1;NULL;q;MV2.101;5
+MV2.101 Measurement 28;MV2.101 Bus 14;NULL;q;MV2.101_Feeder1;5
+MV2.101 Measurement 29;MV2.101 Bus 48;NULL;q;MV2.101_Feeder3;5
+MV2.101 Measurement 30;MV2.101 busbar1.1_1;HV1-MV2.101-Trafo1;p;MV2.101;4
+MV2.101 Measurement 31;MV2.101 busbar1.2_1;HV1-MV2.101-Trafo2;p;MV2.101;4
+MV2.101 Measurement 32;MV2.101 busbar1.1_1;HV1-MV2.101-Trafo1;q;MV2.101;4
+MV2.101 Measurement 33;MV2.101 busbar1.2_1;HV1-MV2.101-Trafo2;q;MV2.101;4
+MV2.101 Measurement 34;MV2.101 busbar1.1_1;HV1-MV2.101-Trafo1;i;MV2.101;4
+MV2.101 Measurement 35;MV2.101 busbar1.2_1;HV1-MV2.101-Trafo2;i;MV2.101;4

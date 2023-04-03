@@ -1,0 +1,9 @@
+#- ../default_extensions/virtual-cc-remote.yml
+#- ../default_extensions/virtual-cc.yml
+#- extensions/attacker-remote.yml
+#- extensions/attacker-local.yml
+#- extensions/attacker-local-scripted.yml
+- extensions/profiles.yml
+#- extensions/controller.yml
+- extensions/config.yml
+- extensions/script-controller.yml

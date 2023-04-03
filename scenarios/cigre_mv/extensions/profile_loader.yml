@@ -1,0 +1,22 @@
+nodes:
+  profile:             # Add new host
+    id: profile
+    name: Profile Loader
+    type: host
+    deploy:
+      type: python
+      module: wattson.powergrid.profiles.deployment
+      class: ProfileLoaderDeployment
+      config:
+        powernet: "!raw_powernet"
+        coordinator_ip: "!primary_ips.coord"    # ip of coordinator
+        profiles:
+          "load": "default"
+          "sgen": false
+        seed: 0
+        noise: "0%"
+        interval: 1            # Set new values every n seconds
+        interpolate: "cubic"   # false, "cubic", "linear", "steps"
+        speed: 10.0             # How fast time should advance as a float (2.0 is twice as fast as real-time)
+        #start_datetime: false  # Use current day and time - use fixed values for reproducibility!
+        start_datetime: "2021-12-22 00:00:00"

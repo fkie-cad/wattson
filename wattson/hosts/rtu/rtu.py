@@ -8,7 +8,6 @@ from wattson.hosts.rtu.rtu_iec104 import RtuIec104
 from wattson.hosts.rtu.rtu_logic import RTULogic
 
 from wattson.iec104.common import SERVER_UPDATE_PERIOD_MS
-from wattson.hosts.rtu_modbus.modbus_client import MODBUS_Client_Maintainer
 from wattson.powergrid import CoordinationClient
 
 from wattson.util import apply_args_from_kwargs, get_logger

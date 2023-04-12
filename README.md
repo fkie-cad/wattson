@@ -36,14 +36,16 @@ sudo apt install -y python3-pip git gcc make perl
 
 ### Install the IEC104 Python Connector
 Wattson relies on a C++-based Python binding implementation for its IEC104 communication.  
-Here, we rely on `c104`, which is [available here](https://github.com/fit-coop/104-connector-python).
+Here, we rely on `c104`, which is [available here](https://github.com/fraunhofer-fit-coop/104-connector-python).
+
+> :warning: The c104 repository is temporarily set as private due to delays in the licensing and publishing process.
 
 Until `c104` is available via PyPi, follow the git-based installation instructions:
 
 ```bash
 sudo apt-get install build-essential cmake python3-dev ninja-build
 python3 -m pip install --upgrade pip setuptools wheel ninja
-python3 -m pip install c104@git+https://github.com/fit-coop/104-connector-python.git@v1.16.0
+python3 -m pip install c104@git+https://github.com/fraunhofer-fit-coop/104-connector-python.git@v1.16.0
 ```
 
 

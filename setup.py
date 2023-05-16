@@ -45,6 +45,7 @@ setup(
         'wheel',
         'ifcfg',
         'ninja',
+        'c104==1.16.0',
         'testresources',
         'python-dateutil',
         'docker',

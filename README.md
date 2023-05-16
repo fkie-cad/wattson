@@ -61,4 +61,4 @@ If you can point out the changes to be made to fix your problem, feel free to do
 Patches are then applied to our internal version of Wattson and mirrored back into this repository.
 
 ## Acknowledgments
-A special thank goes to [Martin Unkel]() for his implementation of the C++-based Python bindings for the IEC104 protocol. The project is available at [PyPi](https://pypi.org/project/c104/) and on [Github](https://github.com/Fraunhofer-FIT-DIEN/iec104-python).
+A special thank goes to [Martin Unkel](https://github.com/m-unkel) for his implementation of the C++-based Python bindings for the IEC104 protocol. The project is available at [PyPi](https://pypi.org/project/c104/) and on [Github](https://github.com/Fraunhofer-FIT-DIEN/iec104-python).

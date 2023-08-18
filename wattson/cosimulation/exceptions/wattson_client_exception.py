@@ -1,0 +1,2 @@
+class WattsonClientException(Exception):
+    pass

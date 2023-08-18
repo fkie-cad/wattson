@@ -20,7 +20,7 @@ class StatisticClient(Thread):
     id_lock: Lock = Lock()
     _primary_instance: Optional['StatisticClient'] = None
 
-    def __init__(self, ip: Optional[str], **kwargs):
+    def __init__(self, ip: Optional[str], **kwargs: Any):
         super().__init__()
 
         if StatisticClient._primary_instance is None:

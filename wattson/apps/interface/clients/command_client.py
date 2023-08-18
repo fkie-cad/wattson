@@ -41,7 +41,7 @@ class CommandClient(th.Thread):
         self.node_id = kwargs.get('node_id', 'NoApp')
         self.subscriber_prefix = kwargs.get('subscriber_prefix', self.node_id)
 
-        self.namespace = "command_client"
+        # self.namespace = "command_client"
 
         self.status_logger = kwargs.get("status_logger", StatusLogger("command-client"))
 
@@ -175,7 +175,7 @@ class CommandClient(th.Thread):
         Returns:
             parsed response in msg-format/ STR_NO_RESP constant
         """
-        self.logger.warning(f'to send {msg=}')
+        self.logger.debug(f'to send {msg=}')
         event, send_start, task = self._build_task_from_msg(msg)
         self.tasks.put(task)
         response = task.get('reply', STR_NO_RESP)

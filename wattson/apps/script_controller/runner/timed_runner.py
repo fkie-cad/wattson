@@ -14,7 +14,7 @@ class TimedRunner(Thread):
         super().__init__()
         self._controller = controller
 
-        self._sim_start_time, self._sim_speed = self._controller.get_simulated_start_time()
+        self._wattson_time = controller.wattson_time
 
         self._scripts = []
         self._pending_actions = []
@@ -36,11 +36,11 @@ class TimedRunner(Thread):
         if speed is None and self._sim_speed is None:
             speed = 1
         if start_date is not None:
-            o_start_date = self._sim_start_time
-            self._sim_start_time = start_date if type(start_date) == float else start_date.timestamp()
+            o_start_date = self._wattson_time
+            self._wattson_time = start_date if type(start_date) == float else start_date.timestamp()
             if o_start_date is not None and start_date != o_start_date:
                 self._default_logger.warning("Different scripts requested different start times: "
-                                             f"{self._sim_start_time} vs {o_start_date}")
+                                             f"{self._wattson_time} vs {o_start_date}")
 
         if speed is not None:
             if self._sim_speed is not None and speed != self._sim_speed:
@@ -55,22 +55,19 @@ class TimedRunner(Thread):
         script: TimedScript
 
         """
-        if self._sim_start_time is not None:
+        if self._wattson_time is not None:
             self._default_logger.info("Updating simulated time at controller")
-            self._controller.set_simulated_start_time(self._sim_start_time, self._sim_speed)
+            self._controller.set_simulated_start_time(self._wattson_time, self._sim_speed)
 
         while not self._controller.coord_client.is_sim_running():
             time.sleep(0.5)
         
-        self._sim_start_time, self._sim_speed = self._controller.get_simulated_start_time()
+        self._wattson_time, self._sim_speed = self._controller.get_simulated_start_time()
 
-        start_datetime = datetime.fromtimestamp(self._start_time)
+        start_datetime = datetime.fromtimestamp(self._wattson_time)
         self._default_logger.info(f"Simulation started at {start_datetime}")
         
         """
-        self._start_time = self._controller.coord_client.get_sim_start_time()
-        if self._sim_start_time is None:
-            self._sim_start_time = time.time()
 
         for script in self._scripts:
             script.setup(self)
@@ -91,7 +88,7 @@ class TimedRunner(Thread):
         """
         ref_time = time.time()
         if apply_sim_offset:
-            ref_time = self._sim_start_time
+            ref_time = self._wattson_time.sim_start_time()
         if script is not None:
             ref_time_script = script.get_simulated_time_info()
             if ref_time_script is not None:
@@ -119,7 +116,7 @@ class TimedRunner(Thread):
         if apply_sim_offset:
             offset = self._controller.get_current_simulated_time()
             in_sim_seconds = at_timestamp - offset
-            in_seconds = in_sim_seconds / self._sim_speed
+            in_seconds = in_sim_seconds / self._wattson_time.speed
         else:
             in_seconds = at_timestamp - ref_time
             in_sim_seconds = in_seconds

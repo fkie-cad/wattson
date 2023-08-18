@@ -68,7 +68,7 @@ class PublisherClient(th.Thread):
             raise RuntimeError(f"Failed to connect to pub server after "
                                f"{self.max_connection_attempts * 2}s.")
 
-        self.status_logger.info(f"Connected to publisher server at {self.server_address}")
+        self.logger.info(f"Connected to publisher server at {self.server_address}")
         super().start()
 
     def run(self):

@@ -1,0 +1,108 @@
+---
+- - :permit
+  - MIT
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:16:44.823332722 Z
+- - :permit
+  - Apache 2.0
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:17:47.894957436 Z
+- - :permit
+  - GPLv3
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:18:30.311913098 Z
+- - :permit
+  - BSD
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:19:06.407316954 Z
+- - :approve
+  - zope.interface
+  - :who: 
+    :why: Uses ZPL 2.1 which is GPLv3 compatible
+    :versions: []
+    :when: 2022-11-07 13:22:21.710360447 Z
+- - :permit
+  - Python Software Foundation License
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:22:53.383958554 Z
+- - :permit
+  - New BSD
+  - :who: 
+    :why: GPLv3 compatible
+    :versions: []
+    :when: 2022-11-07 13:24:37.538702507 Z
+- - :approve
+  - scapy
+  - :who: 
+    :why: Explicitly allows GPLv3
+    :versions: []
+    :when: 2022-11-07 13:25:38.781619815 Z
+- - :approve
+  - c104
+  - :who: 
+    :why: Inherits GPLv3
+    :versions: []
+    :when: 2022-11-07 13:25:55.337748385 Z
+- - :license
+  - python-iptables
+  - Apache 2.0
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:29:36.193967988 Z
+- - :license
+  - PyQt5-Qt5
+  - LGPLv3
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:31:28.961155994 Z
+- - :license
+  - PyQt5-sip
+  - SIP
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:32:52.219565053 Z
+- - :license
+  - PyQtWebEngine-Qt5
+  - LGPLv3
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:33:35.044215739 Z
+- - :license
+  - igraph
+  - GPLv2
+  - :who: 
+    :why: 
+    :versions: []
+    :when: 2022-11-07 13:34:57.566042130 Z
+- - :permit
+  - LGPLv3
+  - :who: 
+    :why: GPLv3 compatible
+    :versions: []
+    :when: 2022-11-07 13:37:00.146718410 Z
+- - :approve
+  - igraph
+  - :who: 
+    :why: Allows GPLv3 (any GPL version >= 2)
+    :versions: []
+    :when: 2022-11-07 13:37:38.676997399 Z
+- - :approve
+  - PyQt5-sip
+  - :who: 
+    :why: Allows GPLv3, GPLv2 and SIP License
+    :versions: []
+    :when: 2022-11-07 13:38:39.693877314 Z

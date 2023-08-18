@@ -348,7 +348,7 @@ class SubscriptionManager(th.Thread):
         self._terminate.set()
 
     def get_RTU_status(self) -> Dict[int, Tuple[str, int, ConnectionState]]:
-        return self._mtu.get_RTU_status()
+        return self._mtu.get_rtu_status()
 
     def get_MTU_cache(self):
         return self._mtu.get_cache()

@@ -7,6 +7,7 @@ import threading as th
 from queue import Empty, Queue
 
 import c104
+import pyprctl
 
 from wattson.hosts.mtu.time_limited_connect import TimeLimitedConnect
 from wattson.iec104.common.config import *
@@ -50,8 +51,11 @@ class IEC104Client(IECClientInterface, th.Thread):
         self.do_clock_sync = kwargs.get("do_clock_sync", True)
         self.add_monitoring_points = False
         self._connect_delay_s = kwargs.get("connect_delay_s", 0)
+        self._reconnect_interval_s = kwargs.get("reconnect_interval_s", 10)
 
         self.logger.info(c104.Init)
+
+        self.name = "c104client"
 
         #self._cb_lock = threading.RLock()
         self._cb_lock = FakeLock()
@@ -79,7 +83,7 @@ class IEC104Client(IECClientInterface, th.Thread):
 
         self.on_receive_datapoint_callback = kwargs.get('on_receive_datapoint')
 
-        self._terminate = False
+        self._terminate = threading.Event()
         self._force_shutdown = False
 
     def get_receive_queue(self) -> Queue:
@@ -100,8 +104,6 @@ class IEC104Client(IECClientInterface, th.Thread):
         self.logger.debug("Start Client")
         self._client.start()
         self.logger.debug("Connect to Servers")
-        # TODO: FIXME! Is this a "valid" solution?
-        #time.sleep(0.02)
         th.Thread.start(self)
 
     def stop(self, force: bool = False):
@@ -111,8 +113,9 @@ class IEC104Client(IECClientInterface, th.Thread):
         :param force: Force the stop regardless of client state.
         :return:
         """
+        self.logger.info("Stopping")
         with self._cb_lock:
-            self._terminate = True
+            self._terminate.set()
             self._force_shutdown = force
 
     def send(self, coa: int, ioa: int, cot: c104.Cot):
@@ -172,6 +175,8 @@ class IEC104Client(IECClientInterface, th.Thread):
             "state": ConnectionState.UNATTEMPTED_TO_CONNECT,
             "connection": None,
             "station": None,
+            "connection_state": c104.ConnectionState.CLOSED,
+            "last_connection_state": c104.ConnectionState.CLOSED,
             "datapoints": {}
         }
         return coa
@@ -198,7 +203,11 @@ class IEC104Client(IECClientInterface, th.Thread):
                 return -1
             return self._get_server(coa)['port']
 
-    def get_connection_state(self, coa: int) -> ConnectionState:
+    def get_connection_state(self, coa) -> c104.ConnectionState:
+        with self._cb_lock:
+            return self._get_server(coa)["connection_state"]
+
+    def get_wattson_connection_state(self, coa: int) -> ConnectionState:
         """
         Returns the connection state of the RTU identified by the given COA.
 
@@ -206,24 +215,18 @@ class IEC104Client(IECClientInterface, th.Thread):
         :raise ValueError: For unknown COA
         :return: The ConnectionState
         """
-        with self._cb_lock:
-            if not self.has_server(coa):
-                raise ValueError(f'Client does not know server with {coa=}')
-            server = self._get_server(coa)
-            self._update_connection_state_if_potentially_closed(server)
-            return server['state']
-
-    def _update_connection_state_if_potentially_closed(self, server: dict):
-        """
-        updates status if a connection-object is available, and if so, if it is established.
-
-        :param server: Client's memory of the server
-        :return: None
-        """
-        if server['state'] == ConnectionState.UNATTEMPTED_TO_CONNECT:
-            return
-        if (conn := server['connection']) is None or not conn.is_connected:
-            server['state'] = ConnectionState.CLOSED
+        state_map = {
+            c104.ConnectionState.CLOSED: ConnectionState.CLOSED,
+            c104.ConnectionState.CLOSED_AWAIT_OPEN: ConnectionState.CLOSED,
+            c104.ConnectionState.CLOSED_AWAIT_RECONNECT: ConnectionState.CLOSED,
+            c104.ConnectionState.OPEN: ConnectionState.INTERRO_DONE,
+            c104.ConnectionState.OPEN_AWAIT_CLOCK_SYNC: ConnectionState.OPEN,
+            c104.ConnectionState.OPEN_AWAIT_CLOSED: ConnectionState.OPEN,
+            c104.ConnectionState.OPEN_AWAIT_INTERROGATION: ConnectionState.INTERRO_STARTED,
+            c104.ConnectionState.OPEN_MUTED: ConnectionState.OPEN
+        }
+        connection_state = self.get_connection_state(coa)
+        return state_map.get(connection_state, ConnectionState.CLOSED)
 
     def connect_server(self, server: Union[str, int, dict]):
         """
@@ -243,6 +246,7 @@ class IEC104Client(IECClientInterface, th.Thread):
             self.logger.debug(f"Setting Connection Callbacks for {server['coa']}")
             server["connection"].on_receive_raw(callable=self._on_receive_raw_callback_wrapper)
             server["connection"].on_send_raw(callable=self._on_send_raw_callback_wrapper)
+            server["connection"].on_state_change(callable=self._on_connection_state_change)
 
             self.logger.debug(f"Adding Station for {server['coa']}")
             server["station"] = server["connection"].add_station(
@@ -288,6 +292,24 @@ class IEC104Client(IECClientInterface, th.Thread):
 
         return True
 
+    def _on_connection_state_change(self, connection: c104.Connection, state: c104.ConnectionState) -> None:
+        ip = connection.ip
+        server = self.find_server_by_ip(ip)
+        if server is None:
+            self.logger.error(f"Cannot find server for connection to {ip=}")
+            return
+        coa = server["coa"]
+        with self._cb_lock:
+            server["last_connection_state"] = server.get("connection_state", c104.ConnectionState.CLOSED)
+            server["connection_state"] = state
+            server["connected"] = state == c104.ConnectionState.OPEN
+            last_state = server["last_connection_state"]
+
+        if last_state != state:
+            self.logger.info(f"RTU {coa}: {state.name} (Connected: {connection.is_connected})")
+        self._on_connection_change_wrapper(coa, server)
+        server["connection_event"].set()
+
     def _on_connection_change_wrapper(self, coa: int, server):
         if self.callbacks.get("on_connection_change") is not None:
             try:
@@ -297,45 +319,47 @@ class IEC104Client(IECClientInterface, th.Thread):
                 self.logger.critical(f"_on_connection_change Error: {e=}")
 
     def _on_receive_raw_callback_wrapper(self, connection: c104.Connection, data: bytes) -> None:
-        #self.logger.info("on_receive_raw acquire")
         with self._cb_lock:
-            #self.logger.info("on_receive_raw got lock")
             try:
                 station: c104.Station = connection.stations[0]
                 coa = station.common_address
-                #self.logger.info("build_apdu")
                 apdu = build_apdu_from_c104_bytes(data)
+
                 if isinstance(apdu, I_FORMAT) and 22 in apdu.ioas:
                     s = f"Pot. bad apdu {apdu} build from\n{data}\n{explain_bytes(data)}"
                     self.logger.critical(s)
 
-                #self.logger.info("Update Connection State")
                 self._update_conn_state_if_interro_APDU(apdu, coa)
 
-                #self.logger.info("Callback on_receive_apdu")
                 self.callbacks['on_receive_apdu'](apdu, coa, True)
             except Exception as e:
                 self.logger.critical(f'On-rcv raw error {e}')
-        #self.logger.info("on_receive_raw released")
 
     def _on_send_raw_callback_wrapper(self, connection: c104.Connection, data: bytes) -> None:
-        #self.logger.info(f"On Send Raw Get Lock")
         with self._cb_lock:
-            #self.logger.info(f"On Send Raw Got Lock")
             try:
                 station: c104.Station = connection.stations[0]
                 coa = station.common_address
-
-                #self.logger.info(f"Build APDU")
                 apdu = build_apdu_from_c104_bytes(data)
-                #self.logger.info(f"On Send Raw Update Connection State")
                 self._update_conn_state_if_interro_APDU(apdu, coa)
-                # self.logger.info(f"ON_SEND_APDU with COA {coa}")
-                #self.logger.info(f"on_send_raw Send APDU")
                 self.callbacks['on_send_apdu'](apdu, coa)
             except Exception as e:
                 self.logger.error(f"{e=}")
-            #self.logger.info(f"On Send Raw Done")
+
+    def server_watchdog(self, server):
+        coa = server["coa"]
+        pyprctl.set_name(f"watchdog-{coa}")
+        while not self._terminate.is_set():
+            server["connection_event"].clear()
+            connection_state = self.get_connection_state(coa)
+
+            if connection_state == c104.ConnectionState.CLOSED:
+                self.logger.info(f"Attempting to connect to {coa}...")
+                self.connect_server(server)
+            elif connection_state == c104.ConnectionState.CLOSED_AWAIT_RECONNECT:
+                self.logger.info(f"Reconnecting to {coa}...")
+                self.connect_server(server)
+            server["connection_event"].wait(self._reconnect_interval_s)
 
     def run(self):
         """
@@ -345,42 +369,28 @@ class IEC104Client(IECClientInterface, th.Thread):
         Continues these tasks until termination is requested, e.g., by the stop method.
         :return:
         """
-        connect_blocker = TimeLimitedConnect(self._connect_delay_s)
 
-        while not self._terminate:
+        while not self._terminate.is_set():
             try:
                 # Check for missing connections
                 connected = 0
                 for coa, server in self._servers.items():
-                    if not self._is_server_connected(server):
-                        coa = int(coa)
-                        # TODO: is this the best moment to notify? Not sure?
-                        if server['state'] not in (ConnectionState.UNATTEMPTED_TO_CONNECT, ConnectionState.CLOSED):
-                            self.callbacks['on_connection_change'](coa, False, server['ip'], server['port'])
+                    if server.get("connection_event") is None:
+                        server["connection_event"] = threading.Event()
+                    if server.get("watchdog") is None:
+                        server["watchdog"] = threading.Thread(name=f"{coa}-watchdog", target=self.server_watchdog, args=(server, ))
+                        server["watchdog"].start()
 
-                        if server["attempted_connect"]:
-                            self.logger.warning(f"No connection to {coa}, reconnecting...")
-                        else:
-                            self.logger.info(f"Attempting to connect to {coa}...")
-                            server["attempted_connect"] = True
-                        connect_blocker.start()
-                        if not self.connect_server(server):
-                            self.logger.error(f"Could not connect to {coa}")
-                        else:
-                            self.callbacks['on_connection_change'](coa, True, server['ip'], server['port'])
-                            self.logger.info(f"Re-established connection to {coa}")
-                            connected += 1
-                    else:
+                    if self._terminate.is_set():
+                        break
+                    if self._is_server_connected(server):
                         connected += 1
-                    old_state = server["connected"]
-                    n_state = self._is_server_connected(server)
-                    if old_state != n_state:
-                        server["connected"] = n_state
-                        self._on_connection_change_wrapper(coa, server)
+
                 if not self.connected_event.is_set() and connected == len(self._servers):
                     self.connected_event.set()
+
                 # Check for unknown datapoints
-                ## Iterate Stations
+                # Iterate Stations
                 try:
                     item = self._send_queue.get(True, CLIENT_UPDATE_INTERVAL_S)
                 except Empty:
@@ -394,9 +404,8 @@ class IEC104Client(IECClientInterface, th.Thread):
                         f"IOA does not exist")
                 else:
                     point = self.get_datapoint(coa, ioa, False)
-                    self.logger.info(f"Sending Point {point}")
+                    self.logger.info(f"Sending Point {point} ({point.value=})")
                     with self._cb_lock:
-                        #self.logger.info(f"Sending of IOA {ioa} to station {coa} (cause {cot})")
                         success = point.transmit(cause=cot)
                         self.logger.info(f"Point Sent: {point=} {success=}")
                         self.on_explicit_control_exit(coa, point, success, cot)
@@ -406,6 +415,10 @@ class IEC104Client(IECClientInterface, th.Thread):
                 self.logger.warn(repr(e))
         self.logger.info("Shutting down")
         self._client.disconnect_all()
+        for coa, server in self._servers.items():
+            if isinstance(server.get("watchdog"), th.Thread):
+                server["connection_event"].set()
+                server.get("watchdog").join()
 
     def has_datapoint(self, coa: int, ioa: int) -> bool:
         """
@@ -490,6 +503,12 @@ class IEC104Client(IECClientInterface, th.Thread):
             return self._servers[str(server)]
         return server
 
+    def find_server_by_ip(self, ip: str) -> Optional[dict]:
+        for coa, server in self._servers.items():
+            if server["ip"] == ip:
+                return server
+        return None
+
     @property
     def coa(self) -> int:
         return self._client.originator_address
@@ -501,22 +520,14 @@ class IEC104Client(IECClientInterface, th.Thread):
     def _on_new_point(self, client: c104.Client, station: c104.Station, io_address: int, point_type: c104.Type) -> None:
         #self.logger.info(f"New Point: {station.common_address}.{io_address} - Acquire Lock")
         with self._cb_lock:
-            #self.logger.info(f"New Point: {station.common_address}.{io_address} - Acquired Lock")
             try:
-                #self.logger.info(f"New Point: {station.common_address}.{io_address} of type {point_type}")
                 point = station.add_point(io_address=io_address, type=point_type)
-                #self.logger.info(f"New Point: {station.common_address}.{io_address} Add on_receive")
                 point.on_receive(callable=self._on_receive_datapoint)
-                #self.logger.info(f"New Point: {station.common_address}.{io_address} Get Server")
                 server = self._get_server(station.common_address)
-                #self.logger.info(f"New Point: {station.common_address}.{io_address} Build C104Point")
                 c_point = C104Point(point)
-                #self.logger.info(f"New Point: {station.common_address}.{io_address} Add Point")
                 server["datapoints"][str(io_address)] = c_point
             except Exception as e:
                 self.logger.error(f"{e=}")
-            #self.logger.info(f"New Point: {station.common_address}.{io_address} Done")
-        #self.logger.info(f"New Point: {station.common_address}.{io_address} Release Lock")
 
     def bind(self):
         pass

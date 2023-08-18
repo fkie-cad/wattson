@@ -2,6 +2,7 @@ import logging
 import queue
 import threading as th
 import time
+from typing import Any
 
 import zmq
 
@@ -13,7 +14,7 @@ from wattson.apps.interface.util.constants import *
 class PublishingServer(th.Thread):
     """ Minimal example for logging the MTUs IEC104 connections """
 
-    def __init__(self, parent_logger: logging.Logger, **kwargs):
+    def __init__(self, parent_logger: logging.Logger, **kwargs: Any):
         """
         TODO
         Args:

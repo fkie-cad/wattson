@@ -1,0 +1,2 @@
+class InvalidNetworkLinkException(Exception):
+    pass

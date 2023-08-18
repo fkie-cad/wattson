@@ -1,0 +1,2 @@
+class NetworkEntityNotFoundException(Exception):
+    pass

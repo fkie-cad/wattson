@@ -31,12 +31,12 @@ Other distributions might work, but you have to install dependencies yourself.
 ```bash
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y python3-pip git gcc make perl
+sudo apt install -y python3-pip git gcc make perl docker.io python3-pyqt5
 ```
 
 
 ### Install Wattson
-This automatically installs Wattson's system dependencies (OVS, Containernet, ...).  
+This automatically installs Wattson's system dependencies via APT and sets up FRRouting for correct use.  
 If you do not want this, skip the second step (`python3 setup.py wattson`). 
 Then, you have to install the dependencies manually.
 
@@ -47,15 +47,15 @@ sudo python3 -m pip install -e ./wattson
 ```
 
 ## Usage
-To start a basic simulation of the cigre_mv scenario, run
+To start a basic simulation, run
 ```bash
-sudo python3 -m wattson wattson/scenarios/cigre_mv
+sudo python3 -m wattson wattson/scenarios/powerowl_example
 ```
 
 ## Contributing
-As Wattson (internally) is undergoing significant refactoring and this public repository does not contain all parts of Wattson due to ethical considerations, making contributions via this repository is not (yet) encouraged.
+Wattson is (internally) undergoing significant refactoring and this public repository does not contain all parts of Wattson due to ethical considerations. 
 
-For problems or suggestions, please open a respective issue.
+This, for any problems or suggestions, please open a respective issue.
 If you can point out the changes to be made to fix your problem, feel free to do so as well.
 
 Patches are then applied to our internal version of Wattson and mirrored back into this repository.

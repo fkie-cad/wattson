@@ -6,7 +6,7 @@ import pandapower
 import yaml
 
 from wattson.powergrid.profiles.profile_loader import ProfileLoader
-from wattson.deployment import PythonDeployment
+from wattson.services.deployment import PythonDeployment
 
 
 class ProfileLoaderDeployment(PythonDeployment):

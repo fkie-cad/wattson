@@ -1,0 +1,2 @@
+class SubnetNotFoundException(Exception):
+    pass

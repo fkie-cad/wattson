@@ -1,6 +1,7 @@
 import logging
 import threading
-from queue import Queue, Empty
+from threading import RLock, Event
+from queue import Empty, Queue
 from typing import Optional, Any, Callable, Dict
 
 
@@ -13,7 +14,7 @@ class AsyncLogger(logging.Logger):
         self.logger.setLevel(level)
         self._queue = Queue()
         self._worker_thread = threading.Thread(target=self._handle_logs)
-        self._terminate = threading.Event()
+        self._terminate = Event()
         self._timeout = kwargs.get("timeout", 0.5)
         self._worker_thread.start()
         if "active_contexts" in kwargs:
@@ -40,20 +41,26 @@ class AsyncLogger(logging.Logger):
 
     def debug(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ..., stacklevel: int = ...,
               extra: Optional[Dict[str, Any]] = ..., **kwargs: Any) -> None:
-        def task():
-            self.logger.debug(msg, **kwargs)
+        task = {
+            "method": "debug",
+            "message": msg
+        }
         self._queue.put(task)
 
     def info(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ..., stacklevel: int = ...,
              extra: Optional[Dict[str, Any]] = ..., **kwargs: Any) -> None:
-        def task():
-            self.logger.info(msg, **kwargs)
+        task = {
+            "method": "info",
+            "message": msg
+        }
         self._queue.put(task)
 
     def warning(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ..., stacklevel: int = ...,
                 extra: Optional[Dict[str, Any]] = ..., **kwargs: Any) -> None:
-        def task():
-            self.logger.warning(msg, **kwargs)
+        task = {
+            "method": "warning",
+            "message": msg
+        }
         self._queue.put(task)
 
     def warn(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ..., stacklevel: int = ...,
@@ -62,20 +69,26 @@ class AsyncLogger(logging.Logger):
 
     def error(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ..., stacklevel: int = ...,
               extra: Optional[Dict[str, Any]] = ..., **kwargs: Any) -> None:
-        def task():
-            self.logger.error(msg, **kwargs)
+        task = {
+            "method": "error",
+            "message": msg
+        }
         self._queue.put(task)
 
     def exception(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ...,
                   stacklevel: int = ..., extra: Optional[Dict[str, Any]] = ..., **kwargs: Any) -> None:
-        def task():
-            self.logger.exception(msg, **kwargs)
+        task = {
+            "method": "exception",
+            "message": msg
+        }
         self._queue.put(task)
 
     def critical(self, msg: Any, *args: Any, exc_info: Any = ..., stack_info: bool = ...,
                  stacklevel: int = ..., extra: Optional[Dict[str, Any]] = ..., **kwargs: Any) -> None:
-        def task():
-            self.logger.critical(msg, **kwargs)
+        task = {
+            "method": "critical",
+            "message": msg
+        }
         self._queue.put(task)
 
     def getChild(self, suffix: str) -> 'AsyncLogger':
@@ -85,7 +98,8 @@ class AsyncLogger(logging.Logger):
     def _handle_logs(self):
         while not self._terminate.is_set() and threading.main_thread().is_alive():
             try:
-                task: Callable = self._queue.get(True, timeout=self._timeout)
-                task()
+                task = self._queue.get(True, timeout=self._timeout)
+                method = getattr(self.logger, task["method"])
+                method(task["message"])
             except Empty:
                 continue

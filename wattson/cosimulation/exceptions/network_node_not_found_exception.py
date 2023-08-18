@@ -1,0 +1,2 @@
+class NetworkNodeNotFoundException(Exception):
+    pass

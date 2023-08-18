@@ -2,8 +2,8 @@ import datetime
 from pathlib import Path
 from typing import Union, Optional
 
-import pandapower
 import pandas as pd
+from powerowl.layers.powergrid import PowerGridModel
 
 from wattson.powergrid.profiles.profile_provider import PowerProfileProvider
 
@@ -11,7 +11,7 @@ from wattson.powergrid.profiles.profile_provider import PowerProfileProvider
 class SimbenchProfileProvider(PowerProfileProvider):
     def __init__(
         self,
-        power_grid: pandapower.pandapowerNet,
+        grid_model: PowerGridModel,
         profiles: dict,
         seed: int = 0,
         noise: str = "0",
@@ -24,7 +24,7 @@ class SimbenchProfileProvider(PowerProfileProvider):
         key=None,
     ):
         super(SimbenchProfileProvider, self).__init__(
-            power_grid,
+            grid_model,
             profiles,
             seed,
             noise,
@@ -39,9 +39,7 @@ class SimbenchProfileProvider(PowerProfileProvider):
 
     def load_profile(self):
         with self.file.open("r") as f:
-            self.logger.info(
-                f"Loading {self.key} profile from {self.file.absolute().__str__()}"
-            )
+            self.logger.debug(f"Loading {self.key} profile from {self.file.absolute().__str__()}")
             return self._normalize_df_profiles(
                 pd.read_csv(f, sep=";", index_col="time")
             )
@@ -53,10 +51,10 @@ class SimbenchProfileProvider(PowerProfileProvider):
             col_name: str = col
             dimension: str = self._default_dimension
             if "_pload" in col:
-                dimension = "p"
+                dimension = "active_power"
                 col_name = col_name.replace("_pload", "")
             if "_qload" in col:
-                dimension = "q"
+                dimension = "reactive_power"
                 col_name = col_name.replace("_qload", "")
             col_map[col] = {"dimension": dimension, "name": col_name}
             normalized[col_name] = {}

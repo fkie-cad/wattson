@@ -10,13 +10,17 @@ from wattson.util.context_logger import ContextLogger
 format = '%(asctime)s - %(name)s - %(levelname)s - %(thread)d.%(process)d -  %(message)s'
 
 
+# Fix numba logging spam
+logging.getLogger('numba').setLevel(logging.WARNING)
+
+
 def _within_xterm() -> bool:
     return "WINDOWID" in os.environ
 
 
-def get_logger(host_name: str, logger_name: str, level: int = logging.INFO,
+def get_logger(host_name: str, logger_name: Optional[str] = None, level: int = logging.INFO,
                active_contexts: Optional[Iterable[str]] = None, use_context_logger: bool = False,
-               use_basic_logger: bool = False, use_async_logger: bool = True, use_fake_logger: bool = False
+               use_basic_logger: bool = True, use_async_logger: bool = False, use_fake_logger: bool = False
                ) -> Union[logging.Logger, ContextLogger, AsyncLogger, BasicLogger]:
     """
     Overwrites logging.get_logger to make it compatible with the ContextLogger
@@ -33,6 +37,9 @@ def get_logger(host_name: str, logger_name: str, level: int = logging.INFO,
     Returns:
         new ContextLogger/logging.Logger
     """
+    if logger_name is None:
+        logger_name = host_name
+
     if use_basic_logger:
         logging.setLoggerClass(BasicLogger)
     logger = logging.getLogger(logger_name)

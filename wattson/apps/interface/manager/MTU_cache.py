@@ -114,7 +114,6 @@ class MessageCache:
             all reference numbers of msgs that are thereby "cancelled or for which an ACT_CON/TERM could have still come
                 but is optional
         """
-        print(f'{coa=} {type(coa)=}')
         ref_nrs = set()
         with self.dp_cache_lock:
             for e in self._active_dps[coa].values():

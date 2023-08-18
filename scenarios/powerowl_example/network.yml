@@ -1,0 +1,2194 @@
+links:
+  '1003':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1003'
+    interfaces:
+    - 994.i0
+    - 614.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1013':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1013'
+    interfaces:
+    - 915.i2
+    - 994.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1025':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1025'
+    interfaces:
+    - 1016.i0
+    - 631.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1035':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1035'
+    interfaces:
+    - 994.i2
+    - 1016.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1047':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1047'
+    interfaces:
+    - 1038.i0
+    - 649.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1057':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1057'
+    interfaces:
+    - 915.i3
+    - 1038.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1069':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1069'
+    interfaces:
+    - 1060.i0
+    - 666.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1079':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1079'
+    interfaces:
+    - 1038.i2
+    - 1060.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1091':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1091'
+    interfaces:
+    - 1082.i0
+    - 697.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1101':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1101'
+    interfaces:
+    - 972.i2
+    - 1082.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1110':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1110'
+    interfaces:
+    - 1060.i2
+    - 1082.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1122':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1122'
+    interfaces:
+    - 1113.i0
+    - 729.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1132':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1132'
+    interfaces:
+    - 1082.i3
+    - 1113.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1144':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1144'
+    interfaces:
+    - 1135.i0
+    - 785.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1154':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1154'
+    interfaces:
+    - 1113.i2
+    - 1135.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1166':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1166'
+    interfaces:
+    - 1157.i0
+    - 816.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1176':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1176'
+    interfaces:
+    - 1135.i2
+    - 1157.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1188':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1188'
+    interfaces:
+    - 1179.i0
+    - 847.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1198':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1198'
+    interfaces:
+    - 937.i2
+    - 1179.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '371':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '371'
+    interfaces:
+    - 361.i0
+    - 363.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '383':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '383'
+    interfaces:
+    - 375.i0
+    - 361.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '397':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '397'
+    interfaces:
+    - 387.i0
+    - 389.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '409':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '409'
+    interfaces:
+    - 401.i0
+    - 387.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '423':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '423'
+    interfaces:
+    - 415.i0
+    - 387.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '437':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '437'
+    interfaces:
+    - 429.i0
+    - 387.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '451':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '451'
+    interfaces:
+    - 443.i0
+    - 387.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '465':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '465'
+    interfaces:
+    - 457.i0
+    - 387.i5
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '481':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '481'
+    interfaces:
+    - 473.i0
+    - 471.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '496':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '496'
+    interfaces:
+    - 488.i0
+    - 471.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '509':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '509'
+    interfaces:
+    - 501.i0
+    - 471.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '522':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '522'
+    interfaces:
+    - 514.i0
+    - 471.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '537':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '537'
+    interfaces:
+    - 529.i0
+    - 527.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '552':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '552'
+    interfaces:
+    - 544.i0
+    - 527.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '565':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '565'
+    interfaces:
+    - 557.i0
+    - 527.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '578':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '578'
+    interfaces:
+    - 570.i0
+    - 527.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '593':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '593'
+    interfaces:
+    - 585.i0
+    - 583.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '609':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '609'
+    interfaces:
+    - 601.i0
+    - 583.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '624':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '624'
+    interfaces:
+    - 616.i0
+    - 614.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '641':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '641'
+    interfaces:
+    - 633.i0
+    - 631.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '659':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '659'
+    interfaces:
+    - 651.i0
+    - 649.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '676':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '676'
+    interfaces:
+    - 668.i0
+    - 666.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '692':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '692'
+    interfaces:
+    - 684.i0
+    - 666.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '707':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '707'
+    interfaces:
+    - 699.i0
+    - 697.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '724':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '724'
+    interfaces:
+    - 716.i0
+    - 697.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '739':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '739'
+    interfaces:
+    - 731.i0
+    - 729.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '754':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '754'
+    interfaces:
+    - 746.i0
+    - 729.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '767':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '767'
+    interfaces:
+    - 759.i0
+    - 729.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '780':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '780'
+    interfaces:
+    - 772.i0
+    - 729.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '795':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '795'
+    interfaces:
+    - 787.i0
+    - 785.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '811':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '811'
+    interfaces:
+    - 803.i0
+    - 785.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '826':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '826'
+    interfaces:
+    - 818.i0
+    - 816.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '842':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '842'
+    interfaces:
+    - 834.i0
+    - 816.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '857':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '857'
+    interfaces:
+    - 849.i0
+    - 847.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '875':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '875'
+    interfaces:
+    - 867.i0
+    - 847.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '889':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '889'
+    interfaces:
+    - 880.i0
+    - 359.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '902':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '902'
+    interfaces:
+    - 893.i0
+    - 363.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '912':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '912'
+    interfaces:
+    - 880.i1
+    - 893.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '924':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '924'
+    interfaces:
+    - 915.i0
+    - 389.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '934':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '934'
+    interfaces:
+    - 893.i2
+    - 915.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '946':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '946'
+    interfaces:
+    - 937.i0
+    - 471.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '959':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '959'
+    interfaces:
+    - 950.i0
+    - 527.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '969':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '969'
+    interfaces:
+    - 937.i1
+    - 950.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '981':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '981'
+    interfaces:
+    - 972.i0
+    - 583.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '991':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '991'
+    interfaces:
+    - 950.i2
+    - 972.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+nodes:
+  '1016':
+    facility_id: '236'
+    facility_name: DSS-4
+    id: '1016'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:c7:0f:97:00:01
+    - id: i1
+      ip: ''
+      mac: 02:c7:0f:97:00:02
+    name: DSS-4-backbone-switch
+    position2d:
+    - 1.125
+    - -22.333333333333332
+    position3d:
+    - 1.125
+    - -22.333333333333332
+    - 2.0
+    role: switch
+    type: switch
+  '1038':
+    facility_id: '260'
+    facility_name: DSS-5
+    id: '1038'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:51:46:d3:00:01
+    - id: i1
+      ip: ''
+      mac: 02:51:46:d3:00:02
+    - id: i2
+      ip: ''
+      mac: 02:51:46:d3:00:03
+    name: DSS-5-backbone-switch
+    position2d:
+    - -1.125
+    - -15.0
+    position3d:
+    - -1.125
+    - -15.0
+    - 2.0
+    role: switch
+    type: switch
+  '1060':
+    facility_id: '265'
+    facility_name: DSS-6
+    id: '1060'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:c6:cb:78:00:01
+    - id: i1
+      ip: ''
+      mac: 02:c6:cb:78:00:02
+    - id: i2
+      ip: ''
+      mac: 02:c6:cb:78:00:03
+    name: DSS-6-backbone-switch
+    position2d:
+    - -1.1916666666666667
+    - -21.666666666666664
+    position3d:
+    - -1.1916666666666667
+    - -21.666666666666664
+    - 2.0
+    role: switch
+    type: switch
+  '1082':
+    facility_id: '275'
+    facility_name: DSS-7
+    id: '1082'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:26:8a:f2:00:01
+    - id: i1
+      ip: ''
+      mac: 02:26:8a:f2:00:02
+    - id: i2
+      ip: ''
+      mac: 02:26:8a:f2:00:03
+    - id: i3
+      ip: ''
+      mac: 02:26:8a:f2:00:04
+    name: DSS-7-backbone-switch
+    position2d:
+    - -2.2416666666666667
+    - -28.333333333333336
+    position3d:
+    - -2.2416666666666667
+    - -28.333333333333336
+    - 2.0
+    role: switch
+    type: switch
+  '1113':
+    facility_id: '285'
+    facility_name: DSS-8
+    id: '1113'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:b8:eb:16:00:01
+    - id: i1
+      ip: ''
+      mac: 02:b8:eb:16:00:02
+    - id: i2
+      ip: ''
+      mac: 02:b8:eb:16:00:03
+    name: DSS-8-backbone-switch
+    position2d:
+    - -2.875
+    - -33.666666666666664
+    position3d:
+    - -2.875
+    - -33.666666666666664
+    - 2.0
+    role: switch
+    type: switch
+  '1135':
+    facility_id: '297'
+    facility_name: DSS-9
+    id: '1135'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:0d:38:a9:00:01
+    - id: i1
+      ip: ''
+      mac: 02:0d:38:a9:00:02
+    - id: i2
+      ip: ''
+      mac: 02:0d:38:a9:00:03
+    name: DSS-9-backbone-switch
+    position2d:
+    - -2.875
+    - -40.33333333333333
+    position3d:
+    - -2.875
+    - -40.33333333333333
+    - 2.0
+    role: switch
+    type: switch
+  '1157':
+    facility_id: '307'
+    facility_name: DSS-10
+    id: '1157'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:7c:c1:0d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:7c:c1:0d:00:02
+    name: DSS-10-backbone-switch
+    position2d:
+    - -0.8750000000000001
+    - -34.33333333333333
+    position3d:
+    - -0.8750000000000001
+    - -34.33333333333333
+    - 2.0
+    role: switch
+    type: switch
+  '1179':
+    facility_id: '317'
+    facility_name: DSS-11
+    id: '1179'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:71:37:cd:00:01
+    - id: i1
+      ip: ''
+      mac: 02:71:37:cd:00:02
+    name: DSS-11-backbone-switch
+    position2d:
+    - 0.425
+    - -28.333333333333336
+    position3d:
+    - 0.425
+    - -28.333333333333336
+    - 2.0
+    role: switch
+    type: switch
+  '359':
+    facility_id: '164'
+    facility_name: Facilities.office
+    id: '359'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:31:25:27:00:01
+    name: Facilities.office-sw-edge
+    position2d:
+    - 0.0
+    - 5.0
+    position3d:
+    - 0.0
+    - 5.0
+    - 1.8
+    role: switch
+    type: switch
+  '361':
+    facility_id: '166'
+    facility_name: Facilities.control-center
+    id: '361'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:c1:38:3a:00:01
+    - id: i1
+      ip: ''
+      mac: 02:c1:38:3a:00:02
+    name: Facilities.control-center-sw-edge
+    position2d:
+    - 1.1201850425154662
+    - 6.120185042515466
+    position3d:
+    - 1.1201850425154662
+    - 6.120185042515466
+    - 1.8
+    role: switch
+    type: switch
+  '363':
+    facility_id: '166'
+    facility_name: Facilities.control-center
+    id: '363'
+    interfaces:
+    - id: i0
+      ip: 172.16.0.1/24
+      mac: 02:b8:c4:ac:00:01
+    - id: i1
+      ip: 172.16.2.1/24
+      mac: 02:b8:c4:ac:00:02
+    name: Facilities.control-center-router
+    position2d:
+    - 1.0
+    - 6.0
+    position3d:
+    - 1.0
+    - 6.0
+    - 1.8
+    role: router
+    type: host
+  '375':
+    facility_id: '166'
+    facility_name: Facilities.control-center
+    id: '375'
+    interfaces:
+    - id: i0
+      ip: 172.16.0.2/24
+      mac: 02:ad:6b:c7:00:01
+    name: MTU 375
+    position2d:
+    - 1.2403700850309325
+    - 6.240370085030932
+    position3d:
+    - 1.2403700850309325
+    - 6.240370085030932
+    - 1.8
+    role: mtu
+    rtu_map:
+      401: 172.16.1.2/24
+      415: 172.16.1.3/24
+      429: 172.16.1.4/24
+      443: 172.16.1.5/24
+      457: 172.16.1.6/24
+      473: 172.16.2.3/24
+      488: 172.16.2.4/24
+      501: 172.16.2.5/24
+      514: 172.16.2.6/24
+      529: 172.16.2.7/24
+      544: 172.16.2.8/24
+      557: 172.16.2.9/24
+      570: 172.16.2.10/24
+      585: 172.16.2.11/24
+      601: 172.16.2.12/24
+      616: 172.16.2.13/24
+      633: 172.16.2.14/24
+      651: 172.16.2.15/24
+      668: 172.16.2.16/24
+      684: 172.16.2.17/24
+      699: 172.16.2.18/24
+      716: 172.16.2.19/24
+      731: 172.16.2.20/24
+      746: 172.16.2.21/24
+      759: 172.16.2.22/24
+      772: 172.16.2.23/24
+      787: 172.16.2.24/24
+      803: 172.16.2.25/24
+      818: 172.16.2.26/24
+      834: 172.16.2.27/24
+      849: 172.16.2.28/24
+      867: 172.16.2.29/24
+    type: host
+  '387':
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '387'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:f3:53:0c:00:01
+    - id: i1
+      ip: ''
+      mac: 02:f3:53:0c:00:02
+    - id: i2
+      ip: ''
+      mac: 02:f3:53:0c:00:03
+    - id: i3
+      ip: ''
+      mac: 02:f3:53:0c:00:04
+    - id: i4
+      ip: ''
+      mac: 02:f3:53:0c:00:05
+    - id: i5
+      ip: ''
+      mac: 02:f3:53:0c:00:06
+    name: TSS-0-sw-edge
+    position2d:
+    - 0.12018504251546618
+    - -5.654930552272259
+    position3d:
+    - 0.12018504251546618
+    - -5.654930552272259
+    - 1.8
+    role: switch
+    type: switch
+  '389':
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '389'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.1/24
+      mac: 02:74:73:fc:00:01
+    - id: i1
+      ip: 172.16.2.2/24
+      mac: 02:74:73:fc:00:02
+    name: TSS-0-router
+    position2d:
+    - 0.0
+    - -5.775115594787725
+    position3d:
+    - 0.0
+    - -5.775115594787725
+    - 1.8
+    role: router
+    type: host
+  '401':
+    coa: 401
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '401'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.2/24
+      mac: 02:1a:44:f8:00:01
+    name: RTU 401
+    position2d:
+    - 0.0
+    - -0.0
+    position3d:
+    - 0.0
+    - -0.0
+    - 1.8
+    role: rtu
+    type: host
+  '415':
+    coa: 415
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '415'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.3/24
+      mac: 02:00:00:65:00:01
+    name: RTU 415
+    position2d:
+    - -1.125
+    - -9.0
+    position3d:
+    - -1.125
+    - -9.0
+    - 1.8
+    role: rtu
+    type: host
+  '429':
+    coa: 429
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '429'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.4/24
+      mac: 02:8c:ae:5b:00:01
+    name: RTU 429
+    position2d:
+    - 1.125
+    - -9.0
+    position3d:
+    - 1.125
+    - -9.0
+    - 1.8
+    role: rtu
+    type: host
+  '443':
+    coa: 443
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '443'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.5/24
+      mac: 02:36:91:5b:00:01
+    name: RTU 443
+    position2d:
+    - -1.125
+    - -6.0
+    position3d:
+    - -1.125
+    - -6.0
+    - 1.8
+    role: rtu
+    type: host
+  '457':
+    coa: 457
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '457'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.6/24
+      mac: 02:b8:ac:ba:00:01
+    name: RTU 457
+    position2d:
+    - 1.125
+    - -6.0
+    position3d:
+    - 1.125
+    - -6.0
+    - 1.8
+    role: rtu
+    type: host
+  '471':
+    facility_id: '194'
+    facility_name: DSS-0
+    id: '471'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:9d:2b:1d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:9d:2b:1d:00:02
+    - id: i2
+      ip: ''
+      mac: 02:9d:2b:1d:00:03
+    - id: i3
+      ip: ''
+      mac: 02:9d:2b:1d:00:04
+    - id: i4
+      ip: ''
+      mac: 02:9d:2b:1d:00:05
+    name: DSS-0-sw-edge
+    position2d:
+    - 0.12499999999999997
+    - -33.666666666666664
+    position3d:
+    - 0.12499999999999997
+    - -33.666666666666664
+    - 1.8
+    role: switch
+    type: switch
+  '473':
+    coa: 473
+    facility_id: '194'
+    facility_name: DSS-0
+    id: '473'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.3/24
+      mac: 02:1c:5f:5b:00:01
+    name: RTU 473
+    position2d:
+    - 0.125
+    - -33.0
+    position3d:
+    - 0.125
+    - -33.0
+    - 1.8
+    role: rtu
+    type: host
+  '488':
+    coa: 488
+    facility_id: '194'
+    facility_name: DSS-0
+    id: '488'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.4/24
+      mac: 02:1c:0c:a4:00:01
+    name: RTU 488
+    position2d:
+    - 0.024999999999999967
+    - -34.0
+    position3d:
+    - 0.024999999999999967
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '501':
+    coa: 501
+    facility_id: '194'
+    facility_name: DSS-0
+    id: '501'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.5/24
+      mac: 02:dd:13:e8:00:01
+    name: RTU 501
+    position2d:
+    - 0.22499999999999998
+    - -34.0
+    position3d:
+    - 0.22499999999999998
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '514':
+    coa: 514
+    facility_id: '194'
+    facility_name: DSS-0
+    id: '514'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.6/24
+      mac: 02:82:45:d8:00:01
+    name: RTU 514
+    position2d:
+    - 0.425
+    - -34.0
+    position3d:
+    - 0.425
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '527':
+    facility_id: '206'
+    facility_name: DSS-1
+    id: '527'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:9e:3d:d0:00:01
+    - id: i1
+      ip: ''
+      mac: 02:9e:3d:d0:00:02
+    - id: i2
+      ip: ''
+      mac: 02:9e:3d:d0:00:03
+    - id: i3
+      ip: ''
+      mac: 02:9e:3d:d0:00:04
+    - id: i4
+      ip: ''
+      mac: 02:9e:3d:d0:00:05
+    name: DSS-1-sw-edge
+    position2d:
+    - 0.05833333333333335
+    - -39.666666666666664
+    position3d:
+    - 0.05833333333333335
+    - -39.666666666666664
+    - 1.8
+    role: switch
+    type: switch
+  '529':
+    coa: 529
+    facility_id: '206'
+    facility_name: DSS-1
+    id: '529'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.7/24
+      mac: 02:a1:14:c5:00:01
+    name: RTU 529
+    position2d:
+    - 0.125
+    - -39.0
+    position3d:
+    - 0.125
+    - -39.0
+    - 1.8
+    role: rtu
+    type: host
+  '544':
+    coa: 544
+    facility_id: '206'
+    facility_name: DSS-1
+    id: '544'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.8/24
+      mac: 02:ea:6e:48:00:01
+    name: RTU 544
+    position2d:
+    - 0.025000000000000022
+    - -40.0
+    position3d:
+    - 0.025000000000000022
+    - -40.0
+    - 1.8
+    role: rtu
+    type: host
+  '557':
+    coa: 557
+    facility_id: '206'
+    facility_name: DSS-1
+    id: '557'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.9/24
+      mac: 02:a3:c1:87:00:01
+    name: RTU 557
+    position2d:
+    - 0.22500000000000003
+    - -40.0
+    position3d:
+    - 0.22500000000000003
+    - -40.0
+    - 1.8
+    role: rtu
+    type: host
+  '570':
+    coa: 570
+    facility_id: '206'
+    facility_name: DSS-1
+    id: '570'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.10/24
+      mac: 02:50:e4:43:00:01
+    name: RTU 570
+    position2d:
+    - 0.42500000000000004
+    - -40.0
+    position3d:
+    - 0.42500000000000004
+    - -40.0
+    - 1.8
+    role: rtu
+    type: host
+  '583':
+    facility_id: '220'
+    facility_name: DSS-2
+    id: '583'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:c5:bc:2c:00:01
+    - id: i1
+      ip: ''
+      mac: 02:c5:bc:2c:00:02
+    - id: i2
+      ip: ''
+      mac: 02:c5:bc:2c:00:03
+    name: DSS-2-sw-edge
+    position2d:
+    - -1.8750000000000002
+    - -38.666666666666664
+    position3d:
+    - -1.8750000000000002
+    - -38.666666666666664
+    - 1.8
+    role: switch
+    type: switch
+  '585':
+    coa: 585
+    facility_id: '220'
+    facility_name: DSS-2
+    id: '585'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.11/24
+      mac: 02:bc:c8:c4:00:01
+    name: RTU 585
+    position2d:
+    - -1.875
+    - -39.0
+    position3d:
+    - -1.875
+    - -39.0
+    - 1.8
+    role: rtu
+    type: host
+  '601':
+    coa: 601
+    facility_id: '220'
+    facility_name: DSS-2
+    id: '601'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.12/24
+      mac: 02:06:79:56:00:01
+    name: RTU 601
+    position2d:
+    - -1.7750000000000001
+    - -40.0
+    position3d:
+    - -1.7750000000000001
+    - -40.0
+    - 1.8
+    role: rtu
+    type: host
+  '614':
+    facility_id: '230'
+    facility_name: DSS-3
+    id: '614'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:a7:29:82:00:01
+    - id: i1
+      ip: ''
+      mac: 02:a7:29:82:00:02
+    name: DSS-3-sw-edge
+    position2d:
+    - 1.075
+    - -15.5
+    position3d:
+    - 1.075
+    - -15.5
+    - 1.8
+    role: switch
+    type: switch
+  '616':
+    coa: 616
+    facility_id: '230'
+    facility_name: DSS-3
+    id: '616'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.13/24
+      mac: 02:38:9a:e7:00:01
+    name: RTU 616
+    position2d:
+    - 1.125
+    - -15.0
+    position3d:
+    - 1.125
+    - -15.0
+    - 1.8
+    role: rtu
+    type: host
+  '631':
+    facility_id: '236'
+    facility_name: DSS-4
+    id: '631'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:57:eb:b7:00:01
+    - id: i1
+      ip: ''
+      mac: 02:57:eb:b7:00:02
+    name: DSS-4-sw-edge
+    position2d:
+    - 1.125
+    - -22.333333333333332
+    position3d:
+    - 1.125
+    - -22.333333333333332
+    - 1.8
+    role: switch
+    type: switch
+  '633':
+    coa: 633
+    facility_id: '236'
+    facility_name: DSS-4
+    id: '633'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.14/24
+      mac: 02:89:78:c6:00:01
+    name: RTU 633
+    position2d:
+    - 1.125
+    - -21.0
+    position3d:
+    - 1.125
+    - -21.0
+    - 1.8
+    role: rtu
+    type: host
+  '649':
+    facility_id: '260'
+    facility_name: DSS-5
+    id: '649'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:14:f8:5a:00:01
+    - id: i1
+      ip: ''
+      mac: 02:14:f8:5a:00:02
+    name: DSS-5-sw-edge
+    position2d:
+    - -1.125
+    - -15.0
+    position3d:
+    - -1.125
+    - -15.0
+    - 1.8
+    role: switch
+    type: switch
+  '651':
+    coa: 651
+    facility_id: '260'
+    facility_name: DSS-5
+    id: '651'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.15/24
+      mac: 02:f0:31:99:00:01
+    name: RTU 651
+    position2d:
+    - -1.125
+    - -15.0
+    position3d:
+    - -1.125
+    - -15.0
+    - 1.8
+    role: rtu
+    type: host
+  '666':
+    facility_id: '265'
+    facility_name: DSS-6
+    id: '666'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:75:d6:03:00:01
+    - id: i1
+      ip: ''
+      mac: 02:75:d6:03:00:02
+    - id: i2
+      ip: ''
+      mac: 02:75:d6:03:00:03
+    name: DSS-6-sw-edge
+    position2d:
+    - -1.1916666666666667
+    - -21.666666666666664
+    position3d:
+    - -1.1916666666666667
+    - -21.666666666666664
+    - 1.8
+    role: switch
+    type: switch
+  '668':
+    coa: 668
+    facility_id: '265'
+    facility_name: DSS-6
+    id: '668'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.16/24
+      mac: 02:60:3c:c4:00:01
+    name: RTU 668
+    position2d:
+    - -1.125
+    - -21.0
+    position3d:
+    - -1.125
+    - -21.0
+    - 1.8
+    role: rtu
+    type: host
+  '684':
+    coa: 684
+    facility_id: '265'
+    facility_name: DSS-6
+    id: '684'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.17/24
+      mac: 02:be:af:7f:00:01
+    name: RTU 684
+    position2d:
+    - -1.0250000000000001
+    - -22.0
+    position3d:
+    - -1.0250000000000001
+    - -22.0
+    - 1.8
+    role: rtu
+    type: host
+  '697':
+    facility_id: '275'
+    facility_name: DSS-7
+    id: '697'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:48:3a:32:00:01
+    - id: i1
+      ip: ''
+      mac: 02:48:3a:32:00:02
+    - id: i2
+      ip: ''
+      mac: 02:48:3a:32:00:03
+    name: DSS-7-sw-edge
+    position2d:
+    - -2.2416666666666667
+    - -28.333333333333336
+    position3d:
+    - -2.2416666666666667
+    - -28.333333333333336
+    - 1.8
+    role: switch
+    type: switch
+  '699':
+    coa: 699
+    facility_id: '275'
+    facility_name: DSS-7
+    id: '699'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.18/24
+      mac: 02:17:16:11:00:01
+    name: RTU 699
+    position2d:
+    - -2.375
+    - -27.0
+    position3d:
+    - -2.375
+    - -27.0
+    - 1.8
+    role: rtu
+    type: host
+  '716':
+    coa: 716
+    facility_id: '275'
+    facility_name: DSS-7
+    id: '716'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.19/24
+      mac: 02:8c:a3:a6:00:01
+    name: RTU 716
+    position2d:
+    - -2.275
+    - -28.0
+    position3d:
+    - -2.275
+    - -28.0
+    - 1.8
+    role: rtu
+    type: host
+  '729':
+    facility_id: '285'
+    facility_name: DSS-8
+    id: '729'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:95:6f:94:00:01
+    - id: i1
+      ip: ''
+      mac: 02:95:6f:94:00:02
+    - id: i2
+      ip: ''
+      mac: 02:95:6f:94:00:03
+    - id: i3
+      ip: ''
+      mac: 02:95:6f:94:00:04
+    - id: i4
+      ip: ''
+      mac: 02:95:6f:94:00:05
+    name: DSS-8-sw-edge
+    position2d:
+    - -2.875
+    - -33.666666666666664
+    position3d:
+    - -2.875
+    - -33.666666666666664
+    - 1.8
+    role: switch
+    type: switch
+  '731':
+    coa: 731
+    facility_id: '285'
+    facility_name: DSS-8
+    id: '731'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.20/24
+      mac: 02:61:99:d0:00:01
+    name: RTU 731
+    position2d:
+    - -2.875
+    - -33.0
+    position3d:
+    - -2.875
+    - -33.0
+    - 1.8
+    role: rtu
+    type: host
+  '746':
+    coa: 746
+    facility_id: '285'
+    facility_name: DSS-8
+    id: '746'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.21/24
+      mac: 02:9f:61:1d:00:01
+    name: RTU 746
+    position2d:
+    - -2.9749999999999996
+    - -34.0
+    position3d:
+    - -2.9749999999999996
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '759':
+    coa: 759
+    facility_id: '285'
+    facility_name: DSS-8
+    id: '759'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.22/24
+      mac: 02:59:90:66:00:01
+    name: RTU 759
+    position2d:
+    - -2.7749999999999995
+    - -34.0
+    position3d:
+    - -2.7749999999999995
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '772':
+    coa: 772
+    facility_id: '285'
+    facility_name: DSS-8
+    id: '772'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.23/24
+      mac: 02:6b:65:06:00:01
+    name: RTU 772
+    position2d:
+    - -2.5749999999999993
+    - -34.0
+    position3d:
+    - -2.5749999999999993
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '785':
+    facility_id: '297'
+    facility_name: DSS-9
+    id: '785'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:ca:15:6d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:ca:15:6d:00:02
+    - id: i2
+      ip: ''
+      mac: 02:ca:15:6d:00:03
+    name: DSS-9-sw-edge
+    position2d:
+    - -2.875
+    - -40.33333333333333
+    position3d:
+    - -2.875
+    - -40.33333333333333
+    - 1.8
+    role: switch
+    type: switch
+  '787':
+    coa: 787
+    facility_id: '297'
+    facility_name: DSS-9
+    id: '787'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.24/24
+      mac: 02:61:24:87:00:01
+    name: RTU 787
+    position2d:
+    - -2.875
+    - -39.0
+    position3d:
+    - -2.875
+    - -39.0
+    - 1.8
+    role: rtu
+    type: host
+  '803':
+    coa: 803
+    facility_id: '297'
+    facility_name: DSS-9
+    id: '803'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.25/24
+      mac: 02:c3:d3:8b:00:01
+    name: RTU 803
+    position2d:
+    - -2.775
+    - -40.0
+    position3d:
+    - -2.775
+    - -40.0
+    - 1.8
+    role: rtu
+    type: host
+  '816':
+    facility_id: '307'
+    facility_name: DSS-10
+    id: '816'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:3f:29:d5:00:01
+    - id: i1
+      ip: ''
+      mac: 02:3f:29:d5:00:02
+    - id: i2
+      ip: ''
+      mac: 02:3f:29:d5:00:03
+    name: DSS-10-sw-edge
+    position2d:
+    - -0.8750000000000001
+    - -34.33333333333333
+    position3d:
+    - -0.8750000000000001
+    - -34.33333333333333
+    - 1.8
+    role: switch
+    type: switch
+  '818':
+    coa: 818
+    facility_id: '307'
+    facility_name: DSS-10
+    id: '818'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.26/24
+      mac: 02:d2:32:30:00:01
+    name: RTU 818
+    position2d:
+    - -0.875
+    - -33.0
+    position3d:
+    - -0.875
+    - -33.0
+    - 1.8
+    role: rtu
+    type: host
+  '834':
+    coa: 834
+    facility_id: '307'
+    facility_name: DSS-10
+    id: '834'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.27/24
+      mac: 02:7d:bb:6b:00:01
+    name: RTU 834
+    position2d:
+    - -0.7749999999999999
+    - -34.0
+    position3d:
+    - -0.7749999999999999
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '847':
+    facility_id: '317'
+    facility_name: DSS-11
+    id: '847'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:08:9e:d0:00:01
+    - id: i1
+      ip: ''
+      mac: 02:08:9e:d0:00:02
+    - id: i2
+      ip: ''
+      mac: 02:08:9e:d0:00:03
+    name: DSS-11-sw-edge
+    position2d:
+    - 0.425
+    - -28.333333333333336
+    position3d:
+    - 0.425
+    - -28.333333333333336
+    - 1.8
+    role: switch
+    type: switch
+  '849':
+    coa: 849
+    facility_id: '317'
+    facility_name: DSS-11
+    id: '849'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.28/24
+      mac: 02:b5:d9:c2:00:01
+    name: RTU 849
+    position2d:
+    - 0.125
+    - -27.0
+    position3d:
+    - 0.125
+    - -27.0
+    - 1.8
+    role: rtu
+    type: host
+  '867':
+    coa: 867
+    facility_id: '317'
+    facility_name: DSS-11
+    id: '867'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.29/24
+      mac: 02:aa:2e:1a:00:01
+    name: RTU 867
+    position2d:
+    - 0.225
+    - -28.0
+    position3d:
+    - 0.225
+    - -28.0
+    - 1.8
+    role: rtu
+    type: host
+  '880':
+    facility_id: '164'
+    facility_name: Facilities.office
+    id: '880'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:dc:4f:c9:00:01
+    - id: i1
+      ip: ''
+      mac: 02:dc:4f:c9:00:02
+    name: Facilities.office-backbone-switch
+    position2d:
+    - 0.0
+    - 5.0
+    position3d:
+    - 0.0
+    - 5.0
+    - 2.0
+    role: switch
+    type: switch
+  '893':
+    facility_id: '166'
+    facility_name: Facilities.control-center
+    id: '893'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:f3:4f:ea:00:01
+    - id: i1
+      ip: ''
+      mac: 02:f3:4f:ea:00:02
+    - id: i2
+      ip: ''
+      mac: 02:f3:4f:ea:00:03
+    name: Facilities.control-center-backbone-switch
+    position2d:
+    - 1.0
+    - 6.0
+    position3d:
+    - 1.0
+    - 6.0
+    - 2.0
+    role: switch
+    type: switch
+  '915':
+    facility_id: '168'
+    facility_name: TSS-0
+    id: '915'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:fa:24:42:00:01
+    - id: i1
+      ip: ''
+      mac: 02:fa:24:42:00:02
+    - id: i2
+      ip: ''
+      mac: 02:fa:24:42:00:03
+    - id: i3
+      ip: ''
+      mac: 02:fa:24:42:00:04
+    name: TSS-0-backbone-switch
+    position2d:
+    - 0.0
+    - -5.775115594787725
+    position3d:
+    - 0.0
+    - -5.775115594787725
+    - 2.0
+    role: switch
+    type: switch
+  '937':
+    facility_id: '194'
+    facility_name: DSS-0
+    id: '937'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:f8:37:d0:00:01
+    - id: i1
+      ip: ''
+      mac: 02:f8:37:d0:00:02
+    - id: i2
+      ip: ''
+      mac: 02:f8:37:d0:00:03
+    name: DSS-0-backbone-switch
+    position2d:
+    - 0.12499999999999997
+    - -33.666666666666664
+    position3d:
+    - 0.12499999999999997
+    - -33.666666666666664
+    - 2.0
+    role: switch
+    type: switch
+  '950':
+    facility_id: '206'
+    facility_name: DSS-1
+    id: '950'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:e1:28:b5:00:01
+    - id: i1
+      ip: ''
+      mac: 02:e1:28:b5:00:02
+    - id: i2
+      ip: ''
+      mac: 02:e1:28:b5:00:03
+    name: DSS-1-backbone-switch
+    position2d:
+    - 0.05833333333333335
+    - -39.666666666666664
+    position3d:
+    - 0.05833333333333335
+    - -39.666666666666664
+    - 2.0
+    role: switch
+    type: switch
+  '972':
+    facility_id: '220'
+    facility_name: DSS-2
+    id: '972'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:fb:18:38:00:01
+    - id: i1
+      ip: ''
+      mac: 02:fb:18:38:00:02
+    - id: i2
+      ip: ''
+      mac: 02:fb:18:38:00:03
+    name: DSS-2-backbone-switch
+    position2d:
+    - -1.8750000000000002
+    - -38.666666666666664
+    position3d:
+    - -1.8750000000000002
+    - -38.666666666666664
+    - 2.0
+    role: switch
+    type: switch
+  '994':
+    facility_id: '230'
+    facility_name: DSS-3
+    id: '994'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:f3:2d:cc:00:01
+    - id: i1
+      ip: ''
+      mac: 02:f3:2d:cc:00:02
+    - id: i2
+      ip: ''
+      mac: 02:f3:2d:cc:00:03
+    name: DSS-3-backbone-switch
+    position2d:
+    - 1.075
+    - -15.5
+    position3d:
+    - 1.075
+    - -15.5
+    - 2.0
+    role: switch
+    type: switch

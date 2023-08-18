@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandapower
+from powerowl.layers.powergrid import PowerGridModel
 
 from wattson.util import get_logger
 
@@ -9,7 +10,7 @@ from wattson.util import get_logger
 class PowerProfileProvider:
     def __init__(
         self,
-        power_grid: pandapower.pandapowerNet,
+        grid_model: PowerGridModel,
         profiles: dict,
         seed: int = 0,
         noise: str = "0",
@@ -39,7 +40,7 @@ class PowerProfileProvider:
         if self._base_dir is None:
             self._base_dir = Path(__file__).parent.joinpath("default_profiles")
         self.profiles = profiles
-        self.power_grid = power_grid
+        self.grid_model = grid_model
         self.seed = seed
         self.noise = noise
         if not interpolate:
@@ -54,7 +55,7 @@ class PowerProfileProvider:
         self.date_format = "%m-%d"
         self.time_format = "%H:%M:%S"
         self.simbench_date_format = "%d.%m.%Y %H:%M"
-        self._default_dimension = "p"
+        self._default_dimension = "active_power"
 
         self._day_cache = {}
         self._base_values = {}

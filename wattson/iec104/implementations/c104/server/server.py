@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import c104
 
+from wattson.time import WattsonTimeType
 from wattson.util import log_contexts
 
 from wattson.iec104.common.config import *
@@ -50,8 +51,9 @@ class IEC104Server(IECServerInterface):
             self.set_datapoints()
 
     def _set_points_periodic(self):
-        ref_time = self.rtu.manager.get_sim_start_time()
-        offset = time.time() - ref_time
+        wattson_time = self.rtu.wattson_client.get_wattson_time()
+        ref_time = wattson_time.start_timestamp(WattsonTimeType.WALL)
+        offset = wattson_time.time() - ref_time
         self.logger.info(f"Simulation is running for {offset} seconds?")
         delay = self.periodic_updates_start - offset
         if delay > 0:

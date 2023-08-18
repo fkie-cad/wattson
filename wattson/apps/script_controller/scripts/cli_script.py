@@ -6,8 +6,8 @@ if TYPE_CHECKING:
     from wattson.apps.script_controller import ScriptControllerApp
 
 from wattson.apps.script_controller.interface import SoloScript
-from wattson.deployment.cli.messages import CommandMessage, SystemMessage, SystemMessageType
-from wattson.deployment.cli.server.server import CLIServer
+from wattson.services.deployment.cli import CommandMessage, SystemMessage, SystemMessageType
+from wattson.services.deployment.cli.server.server import CLIServer
 
 
 class CLIScript(SoloScript):
@@ -80,7 +80,7 @@ class CLIScript(SoloScript):
                 value = cmd[3]
                 value = self._parse_value(value)
                 if self.validate_set_cmd(coa, ioa, value):
-                    self.controller.set_dp(int(coa), int(ioa), value)
+                    self.controller.set_data_point(int(coa), int(ioa), value)
                     self.cli_server.send_unblock()
                 else:
                     self.cli_server.print("Invalid COA, IOA or VALUE")
@@ -94,7 +94,7 @@ class CLIScript(SoloScript):
                 coa: str = cmd[1]
                 ioa: str = cmd[2]
                 if coa.isdigit() and ioa.isdigit():
-                    val = self.controller.get_dp(int(coa), int(ioa))
+                    val = self.controller.get_data_point(int(coa), int(ioa))
                     self.cli_server.print(f"{coa}.{ioa}  -  {val}")
                     self.cli_server.send_unblock()
             else:

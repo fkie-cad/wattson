@@ -23,7 +23,7 @@ from wattson.iec104.common import ConnectionState
 
 class CombiClient(th.Thread):
     """
-    Implements the Comand & Subscription client, as well as combining
+    Implements the Command & Subscription client, as well as combining
     them with local caching, filtering, and callback functionality.
     Each incoming msg from the publishing client is divided into one of four categories:
         1. Update on a previously send command from this client(/app implementing it)
@@ -63,7 +63,7 @@ class CombiClient(th.Thread):
         def __str__(self):
             return str(self.msg)
 
-    def __init__(self, node_id: str, logger: Optional[logging.Logger] = None, **kwargs):
+    def __init__(self, node_id: str, logger: Optional[logging.Logger] = None, **kwargs: Any):
         """
         Args:
             node_id: host's node ID
@@ -168,6 +168,7 @@ class CombiClient(th.Thread):
         self.ref_lock = th.Lock()
         self.reference_prefix = ""
         self._reference_cnt = 0
+
         self.cmd_client = CommandClient(self.mtu_ip, self.cmd_port, node_id=self.node_id,
                                         logger=self.logger, log_name="CmdClient",
                                         status_logger=self.status_logger.get_child("command-client"),

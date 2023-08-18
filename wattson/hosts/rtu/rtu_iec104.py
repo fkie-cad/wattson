@@ -21,6 +21,7 @@ class RtuIec104:
         self.periodic_update_ms = kwargs.get("periodic_update_ms", SERVER_UPDATE_PERIOD_MS)
         self.periodic_update_start = kwargs.get("periodic_update_start", 0)
         self.periodic_updates_enable = kwargs.get("periodic_updates_enable", True)
+        self.allowed_mtu_ips = kwargs.get("allowed_mtu_ips", True)
         if not self.periodic_updates_enable:
             self.logger.info("Globally disabling periodic updates")
         self.server = None
@@ -67,7 +68,8 @@ class RtuIec104:
                                             )
 
         def on_connect(server, ip: str):
-            self.logger.info(f"Client {ip} connecting")
+            allowed = self.allowed_mtu_ips is True or ip in self.allowed_mtu_ips
+            self.logger.info(f"Client {ip} attempting to connect. {allowed=} ({self.allowed_mtu_ips})")
             return True
 
         # Does not yet send End-of-Interro

@@ -1,0 +1,2 @@
+class InvalidSimulationControlQueryException(Exception):
+    pass

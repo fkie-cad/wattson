@@ -4,7 +4,7 @@ import numbers
 from pathlib import Path
 from typing import Optional, Union
 
-import pandapower
+from powerowl.layers.powergrid import PowerGridModel
 
 from wattson.powergrid.profiles.profile_provider import PowerProfileProvider
 
@@ -12,7 +12,7 @@ from wattson.powergrid.profiles.profile_provider import PowerProfileProvider
 class SeasonedProfileProvider(PowerProfileProvider):
     def __init__(
             self,
-            power_grid: pandapower.pandapowerNet,
+            grid_model: PowerGridModel,
             profiles: dict,
             seed: int = 0,
             noise: str = "0",
@@ -25,7 +25,7 @@ class SeasonedProfileProvider(PowerProfileProvider):
             key=None,
     ):
         super(SeasonedProfileProvider, self).__init__(
-            power_grid,
+            grid_model,
             profiles,
             seed,
             noise,
@@ -40,9 +40,7 @@ class SeasonedProfileProvider(PowerProfileProvider):
 
     def load_profile(self):
         with self.file.open("r") as f:
-            self.logger.info(
-                f"Loading {self.key} profile from {self.file.absolute().__str__()}"
-            )
+            self.logger.debug(f"Loading {self.key} profile from {self.file.absolute().__str__()}")
             profile_meta = json.load(f)
             if self.key in profile_meta:
                 return self._normalize_json_profiles(profile_meta[self.key])

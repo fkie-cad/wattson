@@ -50,25 +50,25 @@ class LaborScript(SoloScript):
         self._sleep_next()
         # Set Active Power to 30%
         logger.info("Setting Power of Fronius CL (COA 4) to 30%")
-        self.controller.set_dp(coa=4, ioa=204983, value=30)
-        self.controller.set_dp(coa=4, ioa=204986, value=True)
+        self.controller.set_data_point(coa=4, ioa=204983, value=30)
+        self.controller.set_data_point(coa=4, ioa=204986, value=True)
 
 
         self._sleep_next()
         # Set Active Power to 50%
         logger.info("Setting Power of Fronius CL (COA 4) to 50%")
-        self.controller.set_dp(coa=4, ioa=204983, value=50)
-        self.controller.set_dp(coa=4, ioa=204986, value=True)
+        self.controller.set_data_point(coa=4, ioa=204983, value=50)
+        self.controller.set_data_point(coa=4, ioa=204986, value=True)
 
         self._sleep_next()
         # Set Sunny Island to Discharging with 21%
         logger.info("Setting Sunny Island to -3kW (COA 2)")
-        self.controller.set_dp(coa=2, ioa=197825, value=-3000)
+        self.controller.set_data_point(coa=2, ioa=197825, value=-3000)
 
         self._sleep_next()
         # Set Sunny Island to Discharging with 42%
         logger.info("Setting Sunny Island to -6kW (COA 2)")
-        self.controller.set_dp(coa=2, ioa=197825, value=-6000)
+        self.controller.set_data_point(coa=2, ioa=197825, value=-6000)
 
         if self.include_attacks:
             self._run_attacks()
@@ -87,12 +87,12 @@ class LaborScript(SoloScript):
 
         self._sleep_next()
         logger.info("Setting Fronius CL to 100%")
-        self.controller.set_dp(coa=4, ioa=204983, value=100)
-        self.controller.set_dp(coa=4, ioa=204986, value=True)
+        self.controller.set_data_point(coa=4, ioa=204983, value=100)
+        self.controller.set_data_point(coa=4, ioa=204986, value=True)
 
         self._sleep_next()
         logger.info("Setting Sunny Island to 42% (Charging)")
-        self.controller.set_dp(coa=2, ioa=197825, value=6000)
+        self.controller.set_data_point(coa=2, ioa=197825, value=6000)
 
     def _skip_attacks(self):
         self.logger.info("Skipping attacks (waiting 2 steps)")

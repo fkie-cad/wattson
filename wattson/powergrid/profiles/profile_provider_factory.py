@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Union, Optional
 
 import pandapower
+from powerowl.layers.powergrid import PowerGridModel
 
 from wattson.powergrid.profiles.profile_provider_interface import PowerProfileProviderInterface
 
@@ -9,7 +10,7 @@ from wattson.powergrid.profiles.profile_provider_interface import PowerProfilePr
 class ProfileProviderFactory:
     def __init__(
         self,
-        power_grid: pandapower.pandapowerNet,
+        grid_model: PowerGridModel,
         profiles: dict,
         seed: int = 0,
         noise: str = "0",
@@ -20,7 +21,7 @@ class ProfileProviderFactory:
         base_dir: Optional[Path] = None,
     ):
         self.interface = None
-        self.power_grid = power_grid
+        self.power_grid = grid_model
         self.profiles = profiles
         self.seed = seed
         self.noise = noise
@@ -34,7 +35,7 @@ class ProfileProviderFactory:
         if self.interface:
             return self.interface
         self.interface = PowerProfileProviderInterface(
-            power_grid=self.power_grid,
+            grid_model=self.power_grid,
             profiles=self.profiles,
             seed=self.seed,
             noise=self.noise,

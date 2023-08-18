@@ -2,7 +2,7 @@ import logging
 import queue
 import threading as th
 import time
-from typing import List, Dict, Union, TYPE_CHECKING, Optional
+from typing import List, Dict, Union, TYPE_CHECKING, Optional, Any
 from collections import Counter
 
 import zmq
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class CommandServer(th.Thread):
     """ minimal example for receiving commands from other apps for the MTU """
 
-    def __init__( self, sub_manager: 'SubscriptionManager', **kwargs):
+    def __init__( self, sub_manager: 'SubscriptionManager', **kwargs: Any):
         """
         Args:
             sub_manager: Subscription Manager this server is designated to run for
@@ -97,7 +97,7 @@ class CommandServer(th.Thread):
             while not self._terminate.is_set():
                 if sock.poll(self._poll_time + 2000):
                     json_msg = sock.recv_json()
-                    self.logger.critical(f'Rcvd {json_msg=}')
+                    # self.logger.critical(f'Rcvd {json_msg=}')
                 else:
                     self.logger.debug('no msg')
                     continue

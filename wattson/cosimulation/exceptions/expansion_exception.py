@@ -1,0 +1,2 @@
+class ExpansionException(Exception):
+    pass

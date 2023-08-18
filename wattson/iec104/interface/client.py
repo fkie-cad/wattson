@@ -100,7 +100,7 @@ class IECClientInterface(ABC):
         ...
 
     @abstractmethod
-    def get_connection_state(self, coa: int) -> ConnectionState:
+    def get_wattson_connection_state(self, coa: int) -> ConnectionState:
         ...
 
     def wait_for_connection(self, timeout: float = MTU_DEFAULT_CONNECTION_WAIT_S):
@@ -175,3 +175,4 @@ class IECClientInterface(ABC):
         :param qpm:
         """
         raise NotImplementedError()
+

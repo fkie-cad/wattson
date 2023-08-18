@@ -1,0 +1,2 @@
+class NamespaceNotFoundException(Exception):
+    pass

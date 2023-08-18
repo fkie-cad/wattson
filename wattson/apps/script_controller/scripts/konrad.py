@@ -70,12 +70,12 @@ class KonradsTestScript(SoloScript):
 
         self._sleep_next()
         logger.info("Setting Fronius CL to 100%")
-        self.controller.set_dp(coa=4, ioa=204983, value=100)
-        self.controller.set_dp(coa=4, ioa=204986, value=True)
+        self.controller.set_data_point(coa=4, ioa=204983, value=100)
+        self.controller.set_data_point(coa=4, ioa=204986, value=True)
 
         self._sleep_next()
         logger.info("Setting Sunny Island to 42% (Charging)")
-        self.controller.set_dp(coa=2, ioa=197825, value=6000)
+        self.controller.set_data_point(coa=2, ioa=197825, value=6000)
 
     def _skip_attacks(self):
         self.logger.info("Skipping attacks (waiting 2 steps)")
@@ -110,9 +110,9 @@ class KonradsTestScript(SoloScript):
             ioa = int(parts[2])
             val = float(parts[3])
             self.logger.info(f"Setting {coa}.{ioa} to {val}")
-            self.controller.set_dp(coa=coa, ioa=ioa, value=val)
+            self.controller.set_data_point(coa=coa, ioa=ioa, value=val)
         elif parts[0] == "get" and len(parts) == 3:
             coa = int(parts[1])
             ioa = int(parts[2])
-            val = self.controller.get_dp(coa=coa, ioa=ioa)
+            val = self.controller.get_data_point(coa=coa, ioa=ioa)
             self.logger.info(f"Read {coa}.{ioa} with value {val}")

@@ -1,10 +1,6 @@
 from typing import Dict
-import time
 
-import pandas
-
-from wattson.deployment import PythonDeployment
-from wattson.hosts.rtu.rtu import RTU
+from wattson.services.deployment import PythonDeployment
 
 
 class GenericDeployment(PythonDeployment):

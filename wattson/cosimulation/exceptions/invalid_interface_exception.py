@@ -1,0 +1,2 @@
+class InvalidInterfaceException(Exception):
+    pass

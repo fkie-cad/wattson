@@ -1,11 +1,11 @@
 import importlib
 import importlib.util
+import inspect
 import ipaddress
 import hashlib
-import os
 import pickle
-import shutil
 import sys
+import traceback
 from pathlib import Path
 
 import psutil, time
@@ -104,38 +104,20 @@ def dynamic_load_class(classpath: str):
     return ocls
 
 
-def get_console_and_shell(pid: int, allow_missing: bool = False):
-    wattson_process = psutil.Process(pid)
-    known_terminals = ["xterm", "kitty", "gnome-terminal", "gnome-terminal-server", "konsole"]
-    known_shells = ["sh", "ksh", "bash", "csh", "tcsh", "fish"]
-    terminal = None
-    shell = None
-    for p in wattson_process.parents():
-        if p.name() in known_terminals:
-            terminal = p.exe()
-        elif p.name() in known_shells:
-            shell = p.exe()
-        if terminal is not None and shell is not None:
-            break
-    if terminal is None:
-        terminal = "xterm"
-    if "gnome-terminal-server" in terminal:
-        terminal = shutil.which("gnome-terminal")
-    if shell is None:
-        shell = "/bin/bash"
-    if shutil.which(shell) is None:
-        if allow_missing:
-            shell = False
-        else:
-            print("Could not find a shell to execute")
-            return False
-    if shutil.which(terminal) is None:
-        if allow_missing:
-            terminal = False
-        else:
-            print("Could not find a terminal to open")
-            return False
-    return terminal, shell
+def dynamic_get_classes_from_file(file: Path) -> list:
+    try:
+        spec = importlib.util.spec_from_file_location("dynamic.loader", file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        classes = []
+        for name, obj in inspect.getmembers(module):
+            if inspect.isclass(obj):
+                if obj.__module__ == "dynamic.loader":
+                    classes.append(obj)
+        return classes
+    except Exception as e:
+        traceback.print_exception(e)
+        return []
 
 
 def get_object_size(_element) -> Tuple[float, str]:

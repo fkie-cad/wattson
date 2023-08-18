@@ -1,0 +1,2792 @@
+elements:
+  bus:
+    0:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 0
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - &id001 !!python/object/apply:numpy.dtype
+              args:
+              - f8
+              - false
+              - true
+              state: !!python/tuple
+              - 3
+              - <
+              - null
+              - null
+              - null
+              - -1
+              - -1
+              - 0
+            - !!binary |
+              AAAAAAAAHEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - &id002 !!python/object/apply:numpy.dtype
+              args:
+              - i8
+              - false
+              - true
+              state: !!python/tuple
+              - 3
+              - <
+              - null
+              - null
+              - null
+              - -1
+              - -1
+              - 0
+            - !!binary |
+              EAAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 0.0
+          - -0.0
+          type: BUSBAR
+          voltage_niveau: 110000.0
+          zone: CIGRE_MV
+      facility_id: 168
+      facility_name: TSS-0
+      index: 0
+      type: bus
+    1:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 1
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAEEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              DwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -1.125
+          - -9.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 168
+      facility_name: TSS-0
+      index: 1
+      type: bus
+    2:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 2
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAEEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              DQAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -1.125
+          - -15.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 260
+      facility_name: DSS-5
+      index: 2
+      type: bus
+    3:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 3
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAEEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              CwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -1.125
+          - -21.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 265
+      facility_name: DSS-6
+      index: 3
+      type: bus
+    4:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 4
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAABEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              CQAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -2.375
+          - -27.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 275
+      facility_name: DSS-7
+      index: 4
+      type: bus
+    5:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 5
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAA8D8=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              BwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -2.875
+          - -33.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 285
+      facility_name: DSS-8
+      index: 5
+      type: bus
+    6:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 6
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAA8D8=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              AwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -2.875
+          - -39.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 297
+      facility_name: DSS-9
+      index: 6
+      type: bus
+    7:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 7
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAIEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              AwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -0.875
+          - -33.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 307
+      facility_name: DSS-10
+      index: 7
+      type: bus
+    8:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 8
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAIEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              BQAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 0.125
+          - -27.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 317
+      facility_name: DSS-11
+      index: 8
+      type: bus
+    9:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 9
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAGEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              BQAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 0.125
+          - -33.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 194
+      facility_name: DSS-0
+      index: 9
+      type: bus
+    10:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 10
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAEEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              BQAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 0.125
+          - -39.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 206
+      facility_name: DSS-1
+      index: 10
+      type: bus
+    11:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 11
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAEEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              BwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - -1.875
+          - -39.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 220
+      facility_name: DSS-2
+      index: 11
+      type: bus
+    12:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 12
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAJEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              DwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 1.125
+          - -9.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 168
+      facility_name: TSS-0
+      index: 12
+      type: bus
+    13:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 13
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAJEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              CwAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 1.125
+          - -15.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 230
+      facility_name: DSS-3
+      index: 13
+      type: bus
+    14:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        GENERIC:
+          name: Bus 14
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          voltage: .nan
+          voltage_angle: 0
+        PROPERTY:
+          geo_position: !!python/tuple
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id001
+            - !!binary |
+              AAAAAAAAJEA=
+          - !!python/object/apply:numpy.core.multiarray.scalar
+            - *id002
+            - !!binary |
+              BQAAAAAAAAA=
+          maximum_voltage: 1.1
+          minimum_voltage: 0.9
+          position: !!python/tuple
+          - 1.125
+          - -21.0
+          type: BUSBAR
+          voltage_niveau: 20000.0
+          zone: CIGRE_MV
+      facility_id: 236
+      facility_name: DSS-4
+      index: 14
+      type: bus
+  external_grid:
+    0:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          target_voltage: 1.03
+          target_voltage_angle: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: null
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.0
+          maximum_active_power: null
+          maximum_reactive_power: null
+          maximum_short_circuit_impedance_rx_ratio: 0.1
+          maximum_short_circuit_power_provision: 5000.0
+          maximum_zero_sequence_rx_ratio: null
+          maximum_zero_sequence_x0x_ratio: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          minimum_short_circuit_impedance_rx_ratio: 0.1
+          minimum_short_circuit_power_provision: 5000.0
+      facility_id: 168
+      facility_name: TSS-0
+      index: 0
+      type: external_grid
+  line:
+    0:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 1-2
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.1
+          length: 2820.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.2
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 0
+      type: line
+    1:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 2-3
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.2
+          length: 4420.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.3
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 1
+      type: line
+    2:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 3-4
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.3
+          length: 610.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.4
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 2
+      type: line
+    3:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 4-5
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.4
+          length: 560.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.5
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 3
+      type: line
+    4:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 5-6
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.5
+          length: 1540.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.6
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 4
+      type: line
+    5:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 7-8
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.7
+          length: 1670.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.8
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 5
+      type: line
+    6:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 8-9
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.8
+          length: 320.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.9
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 6
+      type: line
+    7:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 9-10
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.9
+          length: 770.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.10
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 7
+      type: line
+    8:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 10-11
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.10
+          length: 330.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.11
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 8
+      type: line
+    9:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 3-8
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.3
+          length: 1300.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.8
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 9
+      type: line
+    10:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 12-13
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 10.09679
+          from_bus: bus.12
+          length: 4890.0
+          maximum_current: 195.0
+          position-sequence: null
+          reactance_per_km: 0.366
+          resistance_per_km: 0.51
+          to_bus: bus.13
+          type: OVERHEAD_LINE
+          type_name: OHL_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 10
+      type: line
+    11:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 13-14
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 10.09679
+          from_bus: bus.13
+          length: 2990.0
+          maximum_current: 195.0
+          position-sequence: null
+          reactance_per_km: 0.366
+          resistance_per_km: 0.51
+          to_bus: bus.14
+          type: OVERHEAD_LINE
+          type_name: OHL_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 11
+      type: line
+    12:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 6-7
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.6
+          length: 240.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.7
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 12
+      type: line
+    13:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 11-4
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 151.1749
+          from_bus: bus.11
+          length: 490.0
+          maximum_current: 145.0
+          position-sequence: null
+          reactance_per_km: 0.716
+          resistance_per_km: 0.501
+          to_bus: bus.4
+          type: UNDERGROUND_CABLE
+          type_name: CABLE_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 13
+      type: line
+    14:
+      attributes:
+        CONFIGURATION: {}
+        ESTIMATION:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        GENERIC:
+          name: Line 14-8
+          observable: true
+        MEASUREMENT:
+          active_power_from: .nan
+          active_power_loss: .nan
+          active_power_to: .nan
+          current: .nan
+          current_from: .nan
+          current_to: .nan
+          loading: .nan
+          reactive_power_from: .nan
+          reactive_power_loss: .nan
+          reactive_power_to: .nan
+          voltage_angle_from: .nan
+          voltage_angle_to: .nan
+          voltage_from: .nan
+          voltage_to: .nan
+        PROPERTY:
+          capacitance_per_km: 10.09679
+          from_bus: bus.14
+          length: 2000.0
+          maximum_current: 195.0
+          position-sequence: null
+          reactance_per_km: 0.366
+          resistance_per_km: 0.51
+          to_bus: bus.8
+          type: OVERHEAD_LINE
+          type_name: OHL_CIGRE_MV
+          zero_sequence_capacitance_per_km: .nan
+          zero_sequence_reactance_per_km: .nan
+          zero_sequence_resistance_per_km: .nan
+      facility_id: null
+      facility_name: null
+      index: 14
+      type: line
+  load:
+    0:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 14994000.0
+          target_reactive_power: 3044661.5575462645
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R1
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.1
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 15300000.0
+      facility_id: 168
+      facility_name: TSS-0
+      index: 0
+      type: load
+    1:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 276450.0
+          target_reactive_power: 69284.90095251643
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R3
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.3
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 285000.0
+      facility_id: 265
+      facility_name: DSS-6
+      index: 1
+      type: load
+    2:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 431650.0
+          target_reactive_power: 108181.68745217475
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R4
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.4
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 445000.0
+      facility_id: 275
+      facility_name: DSS-7
+      index: 2
+      type: load
+    3:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 727500.0
+          target_reactive_power: 182328.686717148
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R5
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.5
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 750000.0
+      facility_id: 285
+      facility_name: DSS-8
+      index: 3
+      type: load
+    4:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 548049.9999999999
+          target_reactive_power: 137354.2773269184
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R6
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.6
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 565000.0
+      facility_id: 297
+      facility_name: DSS-9
+      index: 4
+      type: load
+    5:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 586850.0
+          target_reactive_power: 147078.473951833
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R8
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.8
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 605000.0
+      facility_id: 317
+      facility_name: DSS-11
+      index: 5
+      type: load
+    6:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 475300.0
+          target_reactive_power: 119121.40865520341
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R10
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.10
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 490000.0
+      facility_id: 206
+      facility_name: DSS-1
+      index: 6
+      type: load
+    7:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 329800.00000000006
+          target_reactive_power: 82655.67131177387
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R11
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.11
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 340000.0
+      facility_id: 220
+      facility_name: DSS-2
+      index: 7
+      type: load
+    8:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 14994000.0
+          target_reactive_power: 3044661.5575462645
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R12
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.12
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 15300000.0
+      facility_id: 168
+      facility_name: TSS-0
+      index: 8
+      type: load
+    9:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 208549.99999999997
+          target_reactive_power: 52267.55685891588
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load R14
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.14
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 215000.0
+      facility_id: 236
+      facility_name: DSS-4
+      index: 9
+      type: load
+    10:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 4845000.0
+          target_reactive_power: 1592474.4895915918
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI1
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.1
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 5100000.0
+      facility_id: 168
+      facility_name: TSS-0
+      index: 10
+      type: load
+    11:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 225250.0
+          target_reactive_power: 139597.41222529885
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI3
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.3
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 265000.0
+      facility_id: 265
+      facility_name: DSS-6
+      index: 11
+      type: load
+    12:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 76500.0
+          target_reactive_power: 47410.441887837325
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI7
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.7
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 90000.0
+      facility_id: 307
+      facility_name: DSS-10
+      index: 12
+      type: load
+    13:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 573750.0
+          target_reactive_power: 355578.31415878003
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI9
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.9
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 675000.0
+      facility_id: 194
+      facility_name: DSS-0
+      index: 13
+      type: load
+    14:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 68000.0
+          target_reactive_power: 42142.61501141095
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI10
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.10
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 80000.0
+      facility_id: 206
+      facility_name: DSS-1
+      index: 14
+      type: load
+    15:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 5016000.0
+          target_reactive_power: 1648679.4715771778
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI12
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.12
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 5280000.0
+      facility_id: 168
+      facility_name: TSS-0
+      index: 15
+      type: load
+    16:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 34000.0
+          target_reactive_power: 21071.307505705474
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI13
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.13
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 40000.0
+      facility_id: 230
+      facility_name: DSS-3
+      index: 16
+      type: load
+    17:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          scaling: 1.0
+          target_active_power: 331500.0
+          target_reactive_power: 205445.24818062843
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Load CI14
+          observable: false
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.14
+          connection_type: WYE
+          constant_current: 0.0
+          constant_impedance: 0.0
+          controllable: false
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 390000.0
+      facility_id: 236
+      facility_name: DSS-4
+      index: 17
+      type: load
+  sgen:
+    0:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 20000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 3
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.3
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 20000.0
+      facility_id: 265
+      facility_name: DSS-6
+      index: 0
+      type: sgen
+    1:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 20000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 4
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.4
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 20000.0
+      facility_id: 275
+      facility_name: DSS-7
+      index: 1
+      type: sgen
+    2:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 30000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 5
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.5
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 30000.0
+      facility_id: 285
+      facility_name: DSS-8
+      index: 2
+      type: sgen
+    3:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 30000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 6
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.6
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 30000.0
+      facility_id: 297
+      facility_name: DSS-9
+      index: 3
+      type: sgen
+    4:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 30000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 8
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.8
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 30000.0
+      facility_id: 317
+      facility_name: DSS-11
+      index: 4
+      type: sgen
+    5:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 30000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 9
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.9
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 30000.0
+      facility_id: 194
+      facility_name: DSS-0
+      index: 5
+      type: sgen
+    6:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 40000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 10
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.10
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 40000.0
+      facility_id: 206
+      facility_name: DSS-1
+      index: 6
+      type: sgen
+    7:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 10000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: PV 11
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.11
+          controllable: true
+          generator_type: PHOTOVOLTAIC
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 10000.0
+      facility_id: 220
+      facility_name: DSS-2
+      index: 7
+      type: sgen
+    8:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 1500000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: WKA 7
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.7
+          controllable: true
+          generator_type: WIND
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 1500000.0
+      facility_id: 307
+      facility_name: DSS-10
+      index: 8
+      type: sgen
+    9:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 33000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Residential fuel cell 1
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.5
+          controllable: true
+          generator_type: FUEL_CELL_RESIDENTIAL
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 33000.0
+      facility_id: 285
+      facility_name: DSS-8
+      index: 9
+      type: sgen
+    10:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 310000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: CHP diesel 1
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.9
+          controllable: true
+          generator_type: COMBINED_HEATING_AND_POWER_DIESEL
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 310000.0
+      facility_id: 194
+      facility_name: DSS-0
+      index: 10
+      type: sgen
+    11:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 212000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Fuel cell 1
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.9
+          controllable: true
+          generator_type: FUEL_CELL
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 212000.0
+      facility_id: 194
+      facility_name: DSS-0
+      index: 11
+      type: sgen
+    12:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          target_active_power: 14000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+        GENERIC:
+          name: Residential fuel cell 2
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+        PROPERTY:
+          bus: bus.10
+          controllable: true
+          generator_type: FUEL_CELL_RESIDENTIAL
+          maximum_active_power: null
+          maximum_reactive_power: null
+          minimum_active_power: null
+          minimum_reactive_power: null
+          nominal_power: 14000.0
+      facility_id: 206
+      facility_name: DSS-1
+      index: 12
+      type: sgen
+  storage:
+    0:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          state_of_charge: 0
+          target_active_power: 600000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          state_of_charge: 0
+        GENERIC:
+          name: Battery 1
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          state_of_charge: 0
+        PROPERTY:
+          bus: bus.5
+          controllable: true
+          maximum_active_power: 600000.0
+          maximum_charge: .nan
+          maximum_reactive_power: null
+          minimum_active_power: -600000.0
+          minimum_charge: 0.0
+          minimum_reactive_power: null
+          nominal_power: 200000.0
+          type: Battery
+      facility_id: 285
+      facility_name: DSS-8
+      index: 0
+      type: storage
+    1:
+      attributes:
+        CONFIGURATION:
+          cos_phi: null
+          in_service: true
+          scaling: 1.0
+          state_of_charge: 0
+          target_active_power: 200000.0
+          target_reactive_power: 0.0
+        ESTIMATION:
+          active_power: .nan
+          reactive_power: .nan
+          state_of_charge: 0
+        GENERIC:
+          name: Battery 2
+          observable: true
+        MEASUREMENT:
+          active_power: .nan
+          reactive_power: .nan
+          state_of_charge: 0
+        PROPERTY:
+          bus: bus.10
+          controllable: true
+          maximum_active_power: 200000.0
+          maximum_charge: .nan
+          maximum_reactive_power: null
+          minimum_active_power: -200000.0
+          minimum_charge: 0.0
+          minimum_reactive_power: null
+          nominal_power: 200000.0
+          type: Battery
+      facility_id: 206
+      facility_name: DSS-1
+      index: 1
+      type: storage
+  switch:
+    0:
+      attributes:
+        CONFIGURATION:
+          closed: true
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: null
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.6
+          controllable: true
+          element: line.12
+          maximum_current: .nan
+          type: LOAD_BREAK_SWITCH
+      facility_id: 297
+      facility_name: DSS-9
+      index: 0
+      type: switch
+    1:
+      attributes:
+        CONFIGURATION:
+          closed: false
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: S2
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.7
+          controllable: true
+          element: line.12
+          maximum_current: .nan
+          type: LOAD_BREAK_SWITCH
+      facility_id: 307
+      facility_name: DSS-10
+      index: 1
+      type: switch
+    2:
+      attributes:
+        CONFIGURATION:
+          closed: false
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: S3
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.4
+          controllable: true
+          element: line.13
+          maximum_current: .nan
+          type: LOAD_BREAK_SWITCH
+      facility_id: 275
+      facility_name: DSS-7
+      index: 2
+      type: switch
+    3:
+      attributes:
+        CONFIGURATION:
+          closed: true
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: null
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.11
+          controllable: true
+          element: line.13
+          maximum_current: .nan
+          type: LOAD_BREAK_SWITCH
+      facility_id: 220
+      facility_name: DSS-2
+      index: 3
+      type: switch
+    4:
+      attributes:
+        CONFIGURATION:
+          closed: false
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: S1
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.8
+          controllable: true
+          element: line.14
+          maximum_current: .nan
+          type: LOAD_BREAK_SWITCH
+      facility_id: 317
+      facility_name: DSS-11
+      index: 4
+      type: switch
+    5:
+      attributes:
+        CONFIGURATION:
+          closed: true
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: null
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.14
+          controllable: true
+          element: line.14
+          maximum_current: .nan
+          type: LOAD_BREAK_SWITCH
+      facility_id: 236
+      facility_name: DSS-4
+      index: 5
+      type: switch
+    6:
+      attributes:
+        CONFIGURATION:
+          closed: true
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: null
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.0
+          controllable: true
+          element: trafo.0
+          maximum_current: .nan
+          type: CIRCUIT_BREAKER
+      facility_id: 168
+      facility_name: TSS-0
+      index: 6
+      type: switch
+    7:
+      attributes:
+        CONFIGURATION:
+          closed: true
+          in_service: true
+        ESTIMATION:
+          is_closed: true
+        GENERIC:
+          name: null
+          observable: true
+        MEASUREMENT:
+          is_closed: true
+        PROPERTY:
+          bus: bus.0
+          controllable: true
+          element: trafo.1
+          maximum_current: .nan
+          type: CIRCUIT_BREAKER
+      facility_id: 168
+      facility_name: TSS-0
+      index: 7
+      type: switch
+  trafo:
+    0:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          tap_position: .nan
+        ESTIMATION:
+          active_power_hv: .nan
+          active_power_loss: .nan
+          active_power_lv: .nan
+          current_hv: .nan
+          current_lv: .nan
+          loading: .nan
+          reactive_power_hv: .nan
+          reactive_power_loss: .nan
+          reactive_power_lv: .nan
+          voltage_angle_hv: .nan
+          voltage_angle_lv: .nan
+          voltage_hv: .nan
+          voltage_lv: .nan
+        GENERIC:
+          name: Trafo 0-1
+          observable: true
+        MEASUREMENT:
+          active_power_hv: .nan
+          active_power_loss: .nan
+          active_power_lv: .nan
+          current_hv: .nan
+          current_lv: .nan
+          loading: .nan
+          reactive_power_hv: .nan
+          reactive_power_loss: .nan
+          reactive_power_lv: .nan
+          voltage_angle_hv: .nan
+          voltage_angle_lv: .nan
+          voltage_hv: .nan
+          voltage_lv: .nan
+        PROPERTY:
+          angle_tap_step: .nan
+          controllable: true
+          hv_bus: bus.0
+          iron_power_loss: 0.0
+          lv_bus: bus.1
+          magnetizing_ration: .nan
+          maximum_load: .nan
+          nominal_power: 25000000.0
+          open_loop_loss: 0.0
+          parallel: 1
+          phase_shift: 30.0
+          short_circuit_voltage: 12.00107
+          short_circuit_voltage_real: 0.16
+          std_type: null
+          tap_maximum: .nan
+          tap_minimum: .nan
+          tap_neutral: .nan
+          tap_phase_shifter: false
+          tap_side: NONE
+          vector_group: NONE
+          voltage_niveau_hv: 110000.0
+          voltage_niveau_lv: 20000.0
+          voltage_tap_step: .nan
+          zero_sequence_magnetizing_ration: .nan
+          zero_sequence_short_circuit_impedance: .nan
+          zero_sequence_short_circuit_voltage: .nan
+          zero_sequence_short_circuit_voltage_real: .nan
+      facility_id: 168
+      facility_name: TSS-0
+      index: 0
+      type: trafo
+    1:
+      attributes:
+        CONFIGURATION:
+          in_service: true
+          tap_position: .nan
+        ESTIMATION:
+          active_power_hv: .nan
+          active_power_loss: .nan
+          active_power_lv: .nan
+          current_hv: .nan
+          current_lv: .nan
+          loading: .nan
+          reactive_power_hv: .nan
+          reactive_power_loss: .nan
+          reactive_power_lv: .nan
+          voltage_angle_hv: .nan
+          voltage_angle_lv: .nan
+          voltage_hv: .nan
+          voltage_lv: .nan
+        GENERIC:
+          name: Trafo 0-12
+          observable: true
+        MEASUREMENT:
+          active_power_hv: .nan
+          active_power_loss: .nan
+          active_power_lv: .nan
+          current_hv: .nan
+          current_lv: .nan
+          loading: .nan
+          reactive_power_hv: .nan
+          reactive_power_loss: .nan
+          reactive_power_lv: .nan
+          voltage_angle_hv: .nan
+          voltage_angle_lv: .nan
+          voltage_hv: .nan
+          voltage_lv: .nan
+        PROPERTY:
+          angle_tap_step: .nan
+          controllable: true
+          hv_bus: bus.0
+          iron_power_loss: 0.0
+          lv_bus: bus.12
+          magnetizing_ration: .nan
+          maximum_load: .nan
+          nominal_power: 25000000.0
+          open_loop_loss: 0.0
+          parallel: 1
+          phase_shift: 30.0
+          short_circuit_voltage: 12.00107
+          short_circuit_voltage_real: 0.16
+          std_type: null
+          tap_maximum: .nan
+          tap_minimum: .nan
+          tap_neutral: .nan
+          tap_phase_shifter: false
+          tap_side: NONE
+          vector_group: NONE
+          voltage_niveau_hv: 110000.0
+          voltage_niveau_lv: 20000.0
+          voltage_tap_step: .nan
+          zero_sequence_magnetizing_ration: .nan
+          zero_sequence_short_circuit_impedance: .nan
+          zero_sequence_short_circuit_voltage: .nan
+          zero_sequence_short_circuit_voltage_real: .nan
+      facility_id: 168
+      facility_name: TSS-0
+      index: 1
+      type: trafo
+kwargs: {}

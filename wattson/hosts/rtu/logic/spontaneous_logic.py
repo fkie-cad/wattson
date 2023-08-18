@@ -45,6 +45,7 @@ class SpontaneousLogic(RTULogic):
         super().configure()
 
     def _send_spontaneous(self, ioa, identifier, state_id: Optional[str]):
+        self.logger.info(f"Sending spontaneous: {ioa} // {identifier}")
         server: IECServerInterface = self.rtu.get_104_socket()
         point = server.get_datapoint(ioa)
         point.value = self.rtu.manager.get_value(

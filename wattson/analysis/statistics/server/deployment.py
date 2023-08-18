@@ -1,9 +1,8 @@
 from pathlib import Path
 from typing import Dict
-import time
 
 from wattson.analysis.statistics.server.statistic_server import StatisticServer
-from wattson.deployment import PythonDeployment
+from wattson.services.deployment import PythonDeployment
 
 
 class StatisticServerDeployment(PythonDeployment):

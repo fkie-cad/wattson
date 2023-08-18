@@ -1,10 +1,15 @@
 import datetime
+import sys
+import traceback
 from pathlib import Path
 from typing import Optional, Union, Tuple
 
 import numpy as np
 import pandapower
 import pandas as pd
+from powerowl.layers.powergrid import PowerGridModel
+from powerowl.layers.powergrid.elements import GridElement
+from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 
 from wattson.powergrid.profiles.interpolation import Interpolation
 from wattson.powergrid.profiles.seasoned_profile_provider import SeasonedProfileProvider
@@ -15,7 +20,7 @@ from wattson.util import get_logger, translate_value
 class PowerProfileProviderInterface:
     def __init__(
         self,
-        power_grid: pandapower.pandapowerNet,
+        grid_model: PowerGridModel,
         profiles: dict,
         seed: int = 0,
         noise: str = "0",
@@ -45,7 +50,7 @@ class PowerProfileProviderInterface:
         if self._base_dir is None:
             self._base_dir = Path(__file__).parent.joinpath("default_profiles")
         self.profiles = profiles
-        self.power_grid = power_grid
+        self.grid_model = grid_model
         self.seed = seed
         self.noise = noise
         if not interpolate:
@@ -89,10 +94,10 @@ class PowerProfileProviderInterface:
                 )
                 continue
 
-            self.logger.info(f"Loading {key} profile from {file.absolute().__str__()}")
+            self.logger.debug(f"Loading {key} profile from {file.absolute().__str__()}")
             if file.suffix == ".json":
                 provider = SeasonedProfileProvider(
-                    self.power_grid,
+                    self.grid_model,
                     self.profiles,
                     self.seed,
                     self.noise,
@@ -107,7 +112,7 @@ class PowerProfileProviderInterface:
                 self._profiles[key] = provider.load_profile()
             elif file.suffix == ".csv":
                 provider = SimbenchProfileProvider(
-                    self.power_grid,
+                    self.grid_model,
                     self.profiles,
                     self.seed,
                     self.noise,
@@ -123,12 +128,13 @@ class PowerProfileProviderInterface:
             else:
                 self.logger.error(f"File {file.name} is not supported")
 
-    def get_value(
-        self, element_type, element_index, date_time, dimension: str = "p"
-    ) -> Optional[float]:
+    def get_value(self, element: GridElement, date_time, dimension: str = "active_power") -> Optional[float]:
+        element_type = element.prefix
         element_profile = self._default_classes[element_type]["_default"]
-        if "profile" in self.power_grid[element_type]:
-            element_profile = self.power_grid[element_type].at[element_index, "profile"]
+        try:
+            element_profile = element.get_property_value("profile")
+        except KeyError:
+            pass
 
         if element_type not in self._profiles or self._profiles[element_type] is None:
             return None
@@ -140,17 +146,23 @@ class PowerProfileProviderInterface:
             value = self._get_weighted_value(
                 date_time, profile, dimension, (element_type, element_profile)
             )
-            value = self._scale_value(element_type, element_index, value)
-            value = self._add_noise(element_type, element_profile, value)
+            value = self._scale_value(element, value)
+            value = self._add_noise(element, element_profile, value)
+        except Exception as e:
+            self.logger.error(f"{e=}")
+            self.logger.error(traceback.print_exception(*sys.exc_info()))
         finally:
             return value
 
-    def _scale_value(self, element_type, element_index, value, dimension: str = "p"):
+    def _scale_value(self, element: GridElement, value, dimension: str = "active_power"):
         # Scale the value according to the element's specification (i.e., max power)
+        element_type = element.prefix
+        element_index = element.index
         ref_value = self._base_values[element_type][element_index][dimension]
         return ref_value * value
 
-    def _add_noise(self, element_type, element_class, value):
+    def _add_noise(self, element: GridElement, element_class, value):
+        element_type = element.prefix
         if isinstance(self.noise, dict):
             noise = self.noise.get(element_type)
             if isinstance(noise, dict):
@@ -158,11 +170,14 @@ class PowerProfileProviderInterface:
         else:
             noise = self.noise
 
+        # TODO: Re-enable noise
+        noise = None
         if isinstance(noise, str) and len(noise) > 1:
             if noise[-1] == "%":
                 percentage = float(noise[:-1])
                 noise = (percentage / 100) * value
             else:
+                # TODO: Scaling
                 value = translate_value(value, "p_mw")
         else:
             noise = 0
@@ -171,13 +186,7 @@ class PowerProfileProviderInterface:
             return np.random.normal(value, noise)
         return value
 
-    def _get_weighted_value(
-        self,
-        date_time: datetime.datetime,
-        profile: dict,
-        dimension: str,
-        cache_key: Tuple,
-    ) -> float:
+    def _get_weighted_value(self, date_time: datetime.datetime, profile: dict, dimension: str, cache_key: Tuple) -> float:
         day_str = date_time.strftime(self.date_format)
         data = profile[day_str]
         interpolation = self._get_interpolation(
@@ -209,10 +218,10 @@ class PowerProfileProviderInterface:
         # Store base power values of all elements
         for element_type in ["load", "sgen"]:
             self._base_values[element_type] = {}
-            for index, row in self.power_grid[element_type].iterrows():
-                self._base_values[element_type][index] = {
-                    "p": get_max_p_mw(row),
-                    "q": get_max_q_mvar(row),
+            for element in self.grid_model.get_elements_by_type(element_type):
+                self._base_values[element_type][element.index] = {
+                    "active_power": get_max_active_power(element),
+                    "reactive_power": get_max_reactive_power(element),
                 }
 
     def get_file(self, key, value) -> Path:
@@ -229,37 +238,33 @@ class PowerProfileProviderInterface:
             return Path(value)
 
 
-def get_max_p_mw(row):
-    if max_p_mw_exists(row):
-        return row["max_p_mw"]
-    if col_exists_and_filled(row, "p_installed"):
-        return row["p_installed"]
-    if col_exists_and_filled(row, "sn_mva"):
-        return row["sn_mva"]
-    return row["p_mw"]
+def get_max_active_power(element: GridElement):
+    if max_active_power_exists(element):
+        return element.get_property_value("maximum_active_power")
+    if property_exists_and_filled(element, "nominal_power"):
+        return element.get_property_value("nominal_power")
+    return element.get_config_value("target_active_power")
 
 
-def get_max_q_mvar(row):
-    if max_p_mw_exists(row):
-        return row["max_q_mvar"]
-    if col_exists_and_filled(row, "q_installed"):
-        return row["q_installed"]
-    if col_exists_and_filled(row, "sn_mva"):
-        return row["sn_mva"]
-    return row["q_mvar"]
+def get_max_reactive_power(element: GridElement):
+    if max_reactive_power_exists(element):
+        return element.get_property_value("maximum_reactive_power")
+    if property_exists_and_filled(element, "nominal_power"):
+        return element.get_property_value("nominal_power")
+    return element.get_config_value("target_reactive_power")
 
 
-def max_q_mvar_exists(row):
-    return col_exists_and_filled(row, "max_q_mvar")
+def max_active_power_exists(element):
+    return property_exists_and_filled(element, "maximum_reactive_power")
 
 
-def col_exists_and_filled(row, col) -> bool:
+def property_exists_and_filled(element: GridElement, property_name) -> bool:
     return (
-        col in row
-        and not pd.isnull(row[col])
-        and not np.isnan(row[col])
+        element.has(GridValueContext.PROPERTY, property_name)
+        and not pd.isnull(element.get_config_value(property_name))
+        and not np.isnan(element.get_config_value(property_name))
     )
 
 
-def max_p_mw_exists(row):
-    return col_exists_and_filled(row, "max_p_mw")
+def max_reactive_power_exists(element):
+    return property_exists_and_filled(element, "maximum_active_power")

@@ -42,7 +42,6 @@ class DataPointManager:
             self.logger = get_logger("DataPointManager", f"DataPointManager at {host}")
         self._init_providers()
         self.logger.info(f"Initialized DataPointManager on host {self.host}")
-        self._sim_start_time = time.time()
 
     def get_data_points(self):
         return self.data_point_objects
@@ -53,9 +52,6 @@ class DataPointManager:
     def get_data_point_dict(self, identifier: str) -> Optional[Dict]:
         return self.data_points.get(identifier)
 
-    def get_sim_start_time(self):
-        return self._sim_start_time
-
     def block_reads(self):
         self._allow_reads.set()
 
@@ -64,7 +60,7 @@ class DataPointManager:
 
     def get_value(self, identifier: str, disable_cache: bool = False, state_id: Optional[str] = None) -> DataPointValue:
         """
-        Get's the current value of a data point by combining all involved provider values.
+        Gets the current value of a data point by combining all involved provider values.
         :param identifier: The data point identifier
         :param disable_cache: Whether to request cache prevention for all providers
         :param state_id: An optional state id (if supported by provider) to request a potentially older or pinned
@@ -77,6 +73,7 @@ class DataPointManager:
         if len(source_values) == 0 and "coupling" not in dp:
             if "value" in dp:
                 return dp["value"]
+            self.logger.warning(f"Data point {identifier=} has no source values")
             return None
         source_values["DP_ID"] = identifier
         if "coupling" in dp:
@@ -179,11 +176,6 @@ class DataPointManager:
             self.logger.info(f"Initializing Provider of type {provider_type}")
             provider.start()
             provider.add_on_change(self._on_change)
-            start_time = provider.get_sim_start_time()
-            if start_time is not None:
-                self._sim_start_time = start_time
-                dt = datetime.datetime.utcfromtimestamp(start_time).replace(tzinfo=pytz.UTC)
-                self.logger.info(f"Got simulated time start: {dt.isoformat()}")
 
     def _get_source_values(self, dp: dict, disable_cache: bool = False,
                            state_id: Optional[str] = None) -> Dict[str, DataPointValue]:
@@ -244,9 +236,11 @@ class DataPointManager:
 
     def _init_provider(self, provider_type: str) -> DataPointProvider:
         # Dynamically try to load the provider
+        provider_type = provider_type.lower()
+        provider_name = "".join([s.capitalize() for s in provider_type.split("_")])
         try:
             module = f"wattson.datapoints.providers.{provider_type}_provider"
-            cls = f"{provider_type.capitalize()}Provider"
+            cls = f"{provider_name}Provider"
             m = importlib.import_module(module)
             provider_cls: Type[DataPointProvider] = getattr(m, cls)
             config = self.provider_conf.get(provider_type, {})

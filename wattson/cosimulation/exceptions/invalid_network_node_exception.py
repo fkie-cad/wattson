@@ -1,0 +1,2 @@
+class InvalidNetworkNodeException(Exception):
+    pass

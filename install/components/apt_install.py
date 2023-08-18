@@ -26,7 +26,7 @@ class AptInstall(ComponentInstall):
             task.warning(f"You might have to install them yourself")
             task.failed()
         else:
-            uname = self.last_stdout[0]
+            uname = self._last_stdout[0]
             self.linux_headers = f"linux-headers-{uname}"
             task.success()
 
@@ -36,13 +36,14 @@ class AptInstall(ComponentInstall):
            "net-tools", "libcap-ng-utils", "libcap-ng-dev", "libssl-dev", "libexpat-dev", "bison",
            "help2man", "libssl-dev", "python3-zope.interface", "python3-twisted", "xterm",
            "socat", "gfortran", "libopenblas-dev", "liblapack-dev", "ninja-build", "graphviz",
-           "libgraphviz-dev", "graphviz-dev", "pkg-config",
+           "libgraphviz-dev", "graphviz-dev", "pkg-config", "docker.io", "python3-pyqt5"
 
            "dpkg-dev", "lintian", "devscripts", "fakeroot", "debhelper", "dh-autoreconf", "uuid-runtime",
            "autoconf", "automake", "libtool", "python3-all", "dh-python", "xdg-utils", "groff", "netcat", "curl",
            "ethtool", "libunbound-dev", "libunbound8", "libcap-ng-dev", "libssl-dev", "openssl",
            "python3-pyftpdlib",
-           "python3-flake8", "lftp", "swig", "dsniff", "dbus-x11"
+           "python3-flake8", "lftp", "swig", "dsniff", "dbus-x11", "openvswitch-switch",
+            "frr", "frr-pythontools"
         ]
         if self.linux_headers is not None:
             packages.append(self.linux_headers.strip())
@@ -55,7 +56,7 @@ class AptInstall(ComponentInstall):
         ]
 
     def get_apt_removals(self) -> List[str]:
-        return ["python3-psutil", "python3-pyqt5"]
+        return ["python3-psutil"]
 
     def prepare_tasks(self, operation: InstallOperation):
         if operation == InstallOperation.INSTALL:
@@ -70,10 +71,28 @@ class AptInstall(ComponentInstall):
             self.main_task.add_subtask(f"Uninstalling conflicting Packages", uninstall)
             self.main_task.add_subtask("Installing APT Dependencies", self.install_apt)
             self.main_task.add_subtask("Installing PIP Dependencies", self.install_pip)
+            self.main_task.add_subtask("Setting up FRRouting", self._fix_frrouting)
         elif operation == InstallOperation.UNINSTALL:
             self.main_task.skip_done()
             self.main_task.warning(f"Wattson won't uninstall your APT packages")
         self.prepared = True
+
+    def _fix_frrouting(self, task: Task):
+        if not Path("/usr/sbin/ospfd").exists():
+            cmd = ["ln", "-s", "/usr/lib/frr/ospfd", "/usr/sbin/ospfd"]
+            if not self.exec([cmd], task=task):
+                task.failed()
+                return
+        if not Path("/usr/sbin/zebra").exists():
+            cmd = ["ln", "-s", "/usr/lib/frr/zebra", "/usr/sbin/zebra"]
+            if not self.exec([cmd], task=task):
+                task.failed()
+                return
+        cmd = ["usermod", "-aG", "frrvty", "root"]
+        if not self.exec([cmd], task=task):
+            task.failed()
+            return
+        task.success()
 
     def install(self) -> bool:
         if not self.prepared:

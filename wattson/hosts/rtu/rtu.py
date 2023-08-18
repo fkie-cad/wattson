@@ -3,12 +3,12 @@ from typing import Type, Optional
 import logging
 
 from wattson.analysis.statistics.client.statistic_client import StatisticClient
+from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.datapoints.manager import DataPointManager
 from wattson.hosts.rtu.rtu_iec104 import RtuIec104
 from wattson.hosts.rtu.rtu_logic import RTULogic
 
 from wattson.iec104.common import SERVER_UPDATE_PERIOD_MS
-from wattson.powergrid import CoordinationClient
 
 from wattson.util import apply_args_from_kwargs, get_logger
 
@@ -37,12 +37,14 @@ class RTU:
         self.ip = ""
         self.hostname = ""
         self.coa = 0
+        self.entity_id = kwargs.get("entity_id")
         self.iec_server_class = iec_server_class
         self.data_point_list = server_datapoints
         self.data_point_dict = {p["identifier"]: p for p in server_datapoints}
         self._stop_event = Event()
+        self._allowed_mtu_ips = kwargs.get("allowed_mtu_ips", True)
 
-        self.power_net = kwargs.get("power_net")
+        # self.power_grid = kwargs.get("power_grid")
 
         # print(f' Kwargs: {kwargs}' )
 
@@ -64,6 +66,7 @@ class RTU:
                 use_async_logger=False
             )
         self.logger.info(f"Starting RTU {self.coa}")
+        self.logger.info(f"Primary IP: {self.ip}")
 
         self.statistics_config = kwargs.get("statistics", {})
 
@@ -75,11 +78,15 @@ class RTU:
         self.statistics.start()
         self.statistics.log("start")
 
-        coord_ip = kwargs.get("coord_ip", None)
-        self.coord_client = None
-        if coord_ip is not None:
-            self.coord_client = CoordinationClient(
-                coord_ip, node_id=f"RTU.{self.coa}.MAIN"
+        self.wattson_client: Optional[WattsonClient] = None
+        self.wattson_client_config = kwargs.get("wattson_client_config")
+        if self.wattson_client_config is not None:
+            self.logger.info("Creating Wattson Client")
+            self.wattson_client = WattsonClient(
+                query_server_socket_string=self.wattson_client_config["query_socket"],
+                publish_server_socket_string=self.wattson_client_config["publish_socket"],
+                namespace=None,
+                client_name=self.entity_id
             )
 
         self.fields = kwargs.get("fields", None)
@@ -109,10 +116,16 @@ class RTU:
                 },
                 "pandapower": {
                     "host": str(self.hostname),
-                    "coordinator_ip": coord_ip,
+                    "wattson_client": self.wattson_client,
                     "cache_decay": 5,
                     "statistics": self.statistics,
                     # "statistics_config": self.statistics_config,
+                },
+                "power_grid": {
+                    "host": str(self.hostname),
+                    "wattson_client": self.wattson_client,
+                    "cache_decay": 5,
+                    "statistics": self.statistics,
                 },
                 "register": {"host": str(self.hostname)},
                 "copy": {"host": str(self.hostname)},
@@ -126,8 +139,9 @@ class RTU:
         return f"RTU {self.hostname}"
 
     def start(self):
-        if self.coord_client is not None:
-            self.coord_client.start()
+        if self.wattson_client is not None:
+            self.wattson_client.start()
+            self.wattson_client.register(self.entity_id)
         self.logger.info(f"Starting {self.__str__()}")
         self.manager.start()
         self.logger.info("RTU Data Point Manager ready, starting Protocol Sockets")
@@ -189,7 +203,8 @@ class RTU:
             periodic_update_ms=self.periodic_update_ms,
             periodic_update_start=self.periodic_update_start,
             periodic_updates_enable=self.periodic_updates_enable,
-            port=self.iec104_port
+            port=self.iec104_port,
+            allowed_mtu_ips=self._allowed_mtu_ips
         )
         rtu_iec104.setup_socket()
         self.protocol_sockets["60870-5-104"] = rtu_iec104
@@ -200,6 +215,5 @@ class RTU:
     #     )
 
     def wait(self):
-        self.logger.info("Waiting for Stop Event")
         self._stop_event.wait()
         self.logger.info("Got Stop Event")

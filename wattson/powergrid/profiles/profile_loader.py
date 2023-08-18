@@ -15,44 +15,39 @@ import logging
 import threading
 import time
 from pathlib import Path
-from typing import Union, Optional, Dict
+from typing import Union, Optional, Dict, List, Callable
 
-import pandapower
+from powerowl.layers.powergrid import PowerGridModel
+from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 
-from wattson.powergrid.client.coordination_client import CoordinationClient
-from wattson.powergrid.common.events import PROFILES_READY
-from wattson.powergrid.messages.request_response_message import RequestResponseMessage
+from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.powergrid.profiles.profile_provider_factory import ProfileProviderFactory
+from wattson.time import WattsonTime, WattsonTimeType
 from wattson.util import get_logger
 
 
 # noinspection PyMethodMayBeStatic
 class ProfileLoader(threading.Thread):
-    def __init__(self, coord_addr: str, power_grid: pandapower.pandapowerNet,
-                 profiles: dict, seed: int = 0, noise: str = "0", interval: float = 1,
-                 interpolate: Union[bool, str] = False, speed: float = 1.0, stop: Union[Dict, float, int, bool] = False,
-                 start_datetime: Union[bool, str] = False,
-                 profile_path: Optional[str] = None,
-                 profile_dir: str = "default_profiles"):
+    def __init__(self, grid_model: 'PowerGridModel', apply_updates_callback: Optional[Callable[[List[Dict]], None]],
+                 wattson_time: dict, profiles: dict, seed: int = 0, noise: str = "0", interval: float = 1,
+                 interpolate: Union[bool, str] = False, stop: Union[Dict, float, int, bool] = False,
+                 profile_path: Optional[str] = None, profile_dir: str = "default_profiles"):
 
         super().__init__()
 
+        self._apply_updates_callback = apply_updates_callback
+
         self.logger = get_logger("TimeSeries", "Wattson.Profiles")
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
 
-        self.power_grid = power_grid
-        self._simulated_time_diverges = False
-        if not start_datetime:
-            self.start_datetime = datetime.datetime.now()
-        else:
-            self.start_datetime = datetime.datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S")
-            self._simulated_time_diverges = True
+        self._wattson_time_config = wattson_time
+        self._wattson_client: Optional[WattsonClient] = None
+        self._wattson_time: Optional[WattsonTime] = None
+        self._create_wattson_time()
 
-        self._simulated_time_diverges |= speed != 1
-        self.speed = speed
-        self._start_time = time.time()
-        self.sim_time = self.start_datetime
-        self.start_timestamp = time.time()
+        self.ready_event = threading.Event()
+
+        self.grid_model = grid_model
 
         self.stop_config = {
             "sgen": False,
@@ -66,7 +61,7 @@ class ProfileLoader(threading.Thread):
             self.stop_config["sgen"] = stop.get("sgen", False)
             self.stop_config["load"] = stop.get("load", False)
 
-        self.logger.info(f"Stop Config: {repr(self.stop_config)}")
+        self.logger.debug(f"Stop Config: {repr(self.stop_config)}")
 
         if not interpolate:
             interpolate_parts = [False]
@@ -83,32 +78,56 @@ class ProfileLoader(threading.Thread):
             base_path = Path(profile_path)
         base_path = base_path.joinpath(profile_dir)
 
-        self._profile_provider_factory = ProfileProviderFactory(power_grid=power_grid, profiles=profiles, seed=seed,
-                                                                noise=noise, interpolate=interpolate_parts[0],
-                                                                step_size_sec=step_size_sec, step_interpolation_type=step_type,
-                                                                base_dir=base_path)
+        self._profile_provider_factory = ProfileProviderFactory(
+            grid_model=self.grid_model, profiles=profiles, seed=seed,
+            noise=noise, interpolate=interpolate_parts[0],
+            step_size_sec=step_size_sec, step_interpolation_type=step_type,
+            base_dir=base_path)
         self._profile_provider = self._profile_provider_factory.get_interface()
-        #self._profile_provider = PowerProfileProviderInterface(power_grid=power_grid, profiles=profiles, seed=seed,
-        #                                                       noise=noise, interpolate=interpolate_parts[0],
-        #                                                       step_size_sec=step_size_sec, step_interpolation_type=step_type,
-        #                                                       base_dir=base_path)
 
         self.interval = interval
         self._terminate = threading.Event()
-        self.coord_client = CoordinationClient(coord_addr)
+
+    def _create_wattson_time(self):
+        wattson_time_mode = self._wattson_time_config.get("mode", "standalone")
+        wattson_time_speed = self._wattson_time_config.get("speed", None)
+        wattson_time_datetime = self._wattson_time_config.get("start_datetime", False)
+        wattson_time_ref_wall = time.time()
+        if wattson_time_datetime is False:
+            wattson_time_ref_sim = None
+        else:
+            wattson_time_ref_sim = datetime.datetime.strptime(wattson_time_datetime, "%Y-%m-%d %H:%M:%S").timestamp()
+
+        if wattson_time_mode == "standalone":
+            if wattson_time_speed is None:
+                wattson_time_speed = 1
+            self._wattson_time = WattsonTime(
+                wall_clock_reference=wattson_time_ref_wall,
+                sim_clock_reference=wattson_time_ref_sim,
+                speed=wattson_time_speed
+            )
+        else:
+            self._wattson_client = WattsonClient(client_name="profile-loader", namespace="auto")
+            self._wattson_client.start()
+            self._wattson_client.require_connection()
+            if wattson_time_mode in ["fork", "sync"]:
+                if wattson_time_mode == "fork":
+                    self._wattson_time = self._wattson_client.get_wattson_time(enable_synchronization=False)
+                elif wattson_time_mode == "sync":
+                    self._wattson_time = self._wattson_client.get_wattson_time(enable_synchronization=True)
+
+                if wattson_time_speed is not None:
+                    self._wattson_time.set_speed(wattson_time_speed)
+                if wattson_time_ref_sim is not None:
+                    self._wattson_time.set_sim_clock_reference(wattson_time_ref_sim)
 
     def start(self):
-        self.coord_client.start()
-        if self._simulated_time_diverges:# and False:
-            self.coord_client.get_response(RequestResponseMessage(request={
-                "type": "SET_SIMULATED_TIME_INFO",
-                "start_time": self.start_datetime.timestamp(),
-                "speed": self.speed
-            }))
         super().start()
 
     def stop(self):
         self._terminate.set()
+        if self._wattson_client is not None:
+            self._wattson_client.stop()
 
     def run(self):
         first_run = True
@@ -117,9 +136,11 @@ class ProfileLoader(threading.Thread):
             self.logger.debug(f"Step: {self._step}")
             start_time = time.time()
             # Forward Time according to speed and start date
-            self._advance_time()
-            self.logger.debug(f"Simulation Time: {self.sim_time.strftime('%Y-%m-%d %H:%M:%S')}")
+            self.logger.debug(f"Simulation Time: {self._wattson_time.to_local_datetime(WattsonTimeType.SIM).strftime('%Y-%m-%d %H:%M:%S')}")
             # Update values of loads and generators
+
+            updates = []
+
             for element_type in ["load", "sgen"]:
                 stop_step = self.stop_config.get(element_type, False)
                 if stop_step is True:
@@ -136,22 +157,28 @@ class ProfileLoader(threading.Thread):
                             self.stop_config[element_type] = True
                             continue
 
-                for index, row in self.power_grid[element_type].iterrows():
-                    value = self._profile_provider.get_value(element_type, index, self.sim_time)
+                dimension = "active_power"
+                for element in self.grid_model.get_elements_by_type(element_type):
+                    value = self._profile_provider.get_value(element, self._wattson_time.to_local_datetime(WattsonTimeType.SIM), dimension=dimension)
                     if value is None:
                         continue
                     lw = False
                     if element_type == "sgen":
                         lw = True
+                    if lw:
+                        self.logger.info(f"{element.get_identifier()}: {dimension}={value}")
+                    # TODO: Update in Grid
+                    updates.append({
+                        "element": element,
+                        "value_context": GridValueContext.CONFIGURATION,
+                        "value_name": "target_active_power",
+                        "value": value
+                    })
 
-                    self.coord_client.update_value(table=element_type,
-                                                   column="p_mw",
-                                                   index=index,
-                                                   value=str(value),
-                                                   log_worthy=lw)
+            self._apply_updates(updates)
 
             if first_run:
-                self.coord_client.trigger_event(PROFILES_READY)
+                self.ready_event.set()
             end_time = time.time()
             runtime = end_time - start_time
             diff = max(0.0, self.interval - runtime)
@@ -159,10 +186,8 @@ class ProfileLoader(threading.Thread):
             time.sleep(diff)
 
     def _get_sim_time_passed(self):
-        real_time_passed = time.time() - self.start_timestamp
-        sim_time_passed = real_time_passed * self.speed
-        return sim_time_passed
+        return self._wattson_time.passed_sim_clock_seconds()
 
-    def _advance_time(self):
-        sim_time_passed = self._get_sim_time_passed()
-        self.sim_time = self.start_datetime + datetime.timedelta(seconds=sim_time_passed)
+    def _apply_updates(self, updates: List[Dict]):
+        if self._apply_updates_callback is not None:
+            self._apply_updates_callback(updates)

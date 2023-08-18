@@ -3,7 +3,7 @@ from typing import List, Union
 import networkx
 import pandapower as pp
 
-from wattson.topology.constants import MANAGEMENT_SWITCH
+from wattson.cosimulation.simulators.network.constants import MANAGEMENT_SWITCH
 
 
 def get_powergrid_size(grid: pp.pandapowerNet) -> float:

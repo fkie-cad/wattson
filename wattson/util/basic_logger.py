@@ -21,6 +21,7 @@ class BasicLogger(logging.Logger):
             **kwargs
         ) -> None:
         if not self.fake:
+            # print(f"{msg}")
             super()._log(level, msg, args, exc_info, extra, stack_info, stacklevel)
 
     def getChild(self, suffix: str):

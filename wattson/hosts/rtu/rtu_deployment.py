@@ -1,18 +1,10 @@
-import json
-import sys
 from pathlib import Path
 from typing import Dict
-import time
 
-import pandas
-
-import wattson
-from wattson.deployment import PythonDeployment
-from wattson.hosts.rtu.logic.test_logic import TestLogic
+from wattson.services.deployment import PythonDeployment
 from wattson.hosts.rtu.rtu import RTU
-# from wattson.hosts.rtu_modbus.modbus_client import MODBUS_Ccleint
 from wattson.util.misc import dynamic_load_class_from_file, dynamic_load_class
-from wattson.hosts.rtu.logic.spontaneous_logic import SpontaneousLogic
+
 
 class RtuDeployment(PythonDeployment):
     def __init__(self, configuration: Dict):
@@ -27,19 +19,24 @@ class RtuDeployment(PythonDeployment):
             # self.modbus_server_class = MODBUS_CLIENT
 
         self.net = None
-        if "powernet" in configuration:
-            self.net = self.load_powernet("powernet")
-        self.coordinator_ip = self.config["coordinator_mgm"]
+        if "power_grid" in configuration:
+            self.net = self.load_power_grid("power_grid")
+        print(list(self.config.keys()))
+
+        self.wattson_client_config = self.config.get("wattson_client_config")
+
         self.nodeid = self.config["nodeid"]
+        self.entity_id = self.config["entityid"]
         self.coa = self.config["coa"]
         self.ip_address = self.config["ip"]
         self.datapoints = self.config["datapoints"]
+        self.allowed_mtu_ips = self.config.get("allowed_mtu_ips", True)
         self.periodic_update_ms = int(self.config["periodic_update_ms"])
         self.do_periodic_updates = self.config.get("do_periodic_updates", True)
-        self.fields = self.config["fields"]
+        self.fields = self.config.get("fields", {})
         self.scenario_path = Path(self.config["scenario_path"])
         # TODO SET BACK IF ELSE in seconds
-        self.periodic_update_start_at = self.config.get("periodic_update_start", {}).get(self.nodeid, 0)
+        self.periodic_update_start_at = self.config.get("periodic_update_start", 0)
         self.statistics = self.config.get("statistics", {})
         self.rtu_logics = []
         self.rtu = None
@@ -73,8 +70,9 @@ class RtuDeployment(PythonDeployment):
             self.iec_server_class,
             self.datapoints,
             coa=int(self.coa),
+            entity_id=self.entity_id,
             ip=self.ip_address,
-            coord_ip=self.coordinator_ip,
+            wattson_client_config=self.wattson_client_config,
             hostname=self.nodeid,
             fields=self.fields,
             periodic_update_ms=self.periodic_update_ms,
@@ -82,10 +80,10 @@ class RtuDeployment(PythonDeployment):
             periodic_update_start=self.periodic_update_start_at,
             logics=self.rtu_logics,
             statistics=self.statistics,
-            power_net=self.net
+            power_grid=self.net,
+            allowed_mtu_ips=self.allowed_mtu_ips
         )
         self.rtu.start()
-        print("Waiting for RTU to terminate")
         self.rtu.wait()
         print("RTU terminated")
         return

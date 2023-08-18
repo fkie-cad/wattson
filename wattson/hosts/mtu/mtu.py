@@ -7,6 +7,8 @@ from typing import Dict, Tuple, Type, List, Optional, Any, Union
 import pathlib
 
 from wattson.analysis.statistics.client.statistic_client import StatisticClient
+from wattson.cosimulation.control.interface.wattson_client import WattsonClient
+from wattson.cosimulation.control.messages.wattson_event import WattsonEvent
 from wattson.util import (
     get_logger, log_contexts,
     UnsupportedError, InvalidIEC104Error
@@ -45,7 +47,7 @@ class MTU:
         :param coord_ip: IP address of the coordinator
         """
         self.node_id = str(kwargs.get("node_id", "mtuX"))
-        self.coa = int(kwargs.get("coa", 1))
+        self.entity_id = kwargs.get("entity_id", "mtuX")
         self.datapoints = datapoints
         self.coa_map = {}
         self.data_point_cache = {}
@@ -58,7 +60,7 @@ class MTU:
         self._connect_delay_s = kwargs.get("iec104_connect_delay", 0)
 
         self.logger = get_logger(self.node_id, "Wattson.MTU", level=logging.INFO, use_context_logger=False,
-                                 use_basic_logger=True, use_async_logger=False, use_fake_logger=False)
+                                 use_basic_logger=False, use_async_logger=True, use_fake_logger=False)
         self.statistics = StatisticClient(ip=statistics_server, host=self.node_id, logger=self.logger)
         self.statistics.start()
 
@@ -67,9 +69,9 @@ class MTU:
                 coa = dp["protocol_data"]["coa"]
                 if coa not in self.coa_map:
                     for host, node in self.rtus.items():
-                        if int(node["coa"]) == int(coa):
-                            self.coa_map[str(coa)] = host
-                            break
+                        #if int(node["coa"]) == int(coa):
+                        self.coa_map[str(coa)] = host
+                        break
         # mapping coa -> responsible 104 Client connection
         # available contexts for MTU: setup, on_send, on_receive
         self.active_contexts = {log_contexts.C_CS, log_contexts.C_IC,
@@ -77,6 +79,7 @@ class MTU:
 
         self.do_general_interrogation = kwargs.get("do_general_interrogation", True)
         self.do_clock_sync = kwargs.get("do_clock_sync", True)
+        self._enable_rtu_connection_state_observation = kwargs.get("enable_rtu_connection_state_observation", False)
 
         self.iec_client = client_class(
             mtu=self,
@@ -120,15 +123,18 @@ class MTU:
                 self.iec_client.add_server(ip, coa, port=port)
 
         self.notify_coordinator = kwargs.get("notify_coordinator", True)
-        if (coord_ip := kwargs.get('coord_ip')) is None:
-            self.coord_client = None
-        else:
-            self.coord_client: wattson.powergrid.CoordinationClient = wattson.powergrid.CoordinationClient(
-                coord_ip,
-                node_id=self.node_id
+        self.wattson_client: Optional[WattsonClient] = None
+        self.wattson_client_config = kwargs.get("wattson_client_config")
+        if self.wattson_client_config is not None:
+            self.wattson_client = WattsonClient(
+                query_server_socket_string=self.wattson_client_config["query_socket"],
+                publish_server_socket_string=self.wattson_client_config["publish_socket"],
+                namespace=None,
+                client_name=self.entity_id
             )
 
         self._is_stopped = th.Event()
+        # self._watchdog_thread = threading.Thread(target=self._watchdog)
 
     def __str__(self):
         return f"MTU: {self.data_point_count()} known IOS"
@@ -152,19 +158,26 @@ class MTU:
         Returns:
             Total count of dps known to the MTU
         """
-        sum = 0
+        return len(self.datapoints)
+        """sum = 0
         for dps in self.datapoints.values():
             sum += len(dps)
-        return sum
+        return sum"""
 
-    def get_RTU_status(self) -> Dict[int, Tuple[str, int, ConnectionState]]:
+    def get_rtu_status(self) -> Dict[int, Tuple[str, int, ConnectionState]]:
         """ Checks connection status for all RTUs """
         status = {coa: (self.iec_client.get_server_IP(coa), self.iec_client.get_server_port(coa),
-                        self.iec_client.get_connection_state(coa).name) for coa in self._rtus}
+                        self.iec_client.get_wattson_connection_state(coa).name) for coa in self._rtus}
         return status
 
     def get_cache(self) -> Dict[str, Dict[str, Any]]:
         return copy.deepcopy(self.data_point_cache)
+
+    def _watchdog(self):
+        while not self._is_stopped.is_set():
+            self.logger.info(f"Still alive...")
+            time.sleep(10)
+        self.logger.info(f"Stopping Watchdog")
 
     def cast_datapoints(self):
         """ TODO: add info like writeable, ACT-Status, etc.  to datapoints"""
@@ -172,20 +185,19 @@ class MTU:
         return cast_dp
 
     def start(self):
-        if self.coord_client is not None:
-            self.coord_client.start()
-
-            t0 = time.time()
-            if self.coord_client.check_connection():
-                self.logger.info("Connection to Coordinator successful, replied "
-                                 "after {:.2f} seconds".format(time.time() - t0))
-            else:
-                self.logger.warning("Unable to query data from Coordinator!!")
-
-            self.coord_client.wait_for_start_event()
-            self.logger.info("Received global start, starting IEC-104 client")
+        if self.wattson_client is not None:
+            self.wattson_client.start()
+            self.wattson_client.require_connection()
+            self.logger.info(f"Registering to WattsonServer with {self.entity_id=}")
+            if not self.wattson_client.register():
+                self.logger.warning("Could not register to WattsonServer")
+            self.logger.info(f"Waiting for start event")
+            self.wattson_client.event_wait(WattsonEvent.START)
+            self.logger.info("Received Start Event")
         else:
             self.logger.info("No coordinator attached, skipping timing synchronisation")
+
+        # self._watchdog_thread.start()
 
         self.logger.info(f"starting Subscription Manager on IP {self.publishing_server.server_address}")
         self.subscription_manager.start()
@@ -199,14 +211,13 @@ class MTU:
         self.logger.info("Starting IEC104 Client")
         self.iec_client.start()
 
-        if self.coord_client is not None:
+        if self.wattson_client is not None:
             connected = False
             while not connected and not self._is_stopped.is_set():
                 connected = self.iec_client.wait_for_connection()
             if connected and self.notify_coordinator:
-                self.coord_client: wattson.powergrid.CoordinationClient
                 self.logger.info("Triggering MTU_READY_EVENT")
-                self.coord_client.trigger_event(MTU_READY_EVENT)
+                self.wattson_client.event_set(MTU_READY_EVENT)
 
         self.ready_event.set()
 
@@ -271,6 +282,7 @@ class MTU:
         self.statistics.log(event_name=str(coa), event_class="apdu.monitoring", value="receive")
         try:
             self.subscription_manager.on_receive_apdu(apdu, raw_callback, coa=coa)
+            pass
         except (UnsupportedError, InvalidIEC104Error) as e:
             # TODO: Notify subscribers of errors?
             self.logger.warning(f"Ignoring rcvd APDU for subMgr: {apdu}. \n{e}")
@@ -292,11 +304,11 @@ class MTU:
             else:
                 self.statistics.log(str(rtu_coa), event_class="apdu.control.request", value="send")
 
-
         self.logger.debug(f"send (to {rtu_coa}): {apdu}")
         self.statistics.log(str(rtu_coa), event_class="apdu.control", value="send")
         try:
             self.subscription_manager.on_send_apdu(apdu, rtu_coa)
+            pass
         except (UnsupportedError, InvalidIEC104Error) as e:
             # TODO: notify subscribers of errors?
             self.logger.warning(f"Ignoring send APDU for subMgr {apdu}. \n{e}")
@@ -315,25 +327,64 @@ class MTU:
             None
         """
         if not connected:
-            self.logger.warning(f"No longer connected to RTU {coa}")
+            # self.logger.warning(f"No longer connected to RTU {coa}")
+            self._notify_rtu_connection_state(str(coa), "connection_lost")
         else:
-            self.logger.info(f"Connected to RTU {coa}")
+            # self.logger.info(f"Connected to RTU {coa}")
+            self._notify_rtu_connection_state(str(coa), "connection_established")
         self.subscription_manager.on_connection_change(coa, connected, ip, port)
+
+    def _notify_rtu_connection_state(self, rtu: str, event_type: str):
+        if self.wattson_client is not None and self._enable_rtu_connection_state_observation:
+            from wattson.cosimulation.control.messages.wattson_notification import WattsonNotification
+            from wattson.cosimulation.simulators.network.messages.wattson_network_notificaction_topics import WattsonNetworkNotificationTopic
+            notification = WattsonNotification(
+                    notification_topic=WattsonNetworkNotificationTopic.NODE_CUSTOM_EVENT,
+                    notification_data={
+                        "event_context": "mtu",
+                        "event_type": event_type,
+                        "rtu_entity_id": str(rtu)
+                    }
+                )
+            notification.recipients = ["*"]
+            self.wattson_client.notify(notification=notification)
 
     def stop(self):
         """
         Stop everything.
         """
         if not self._is_stopped.is_set():
+            self.logger.info(f"Stopping MTU")
             self._is_stopped.set()
+
             self.iec_client.stop()
             self.subscription_manager.stop()
             self.command_server.stop()
             self.publishing_server.stop()
             self.statistics.stop()
+            if self.wattson_client is not None:
+                self.wattson_client.stop(0)
+
+            #if self._watchdog_thread is not None:
+            #    self.logger.info(f"  Waiting for Watchdog")
+            #    self._watchdog_thread.join(10)
+            self.logger.info(f"  Waiting for IECClient")
+            if hasattr(self.iec_client, "join"):
+                self.iec_client.join()
+            self.logger.info(f"  Waiting for Subscription Manager")
+            self.subscription_manager.join()
+            self.logger.info(f"  Waiting for CommandServer")
+            self.command_server.join()
+            self.logger.info(f"  Waiting for PublishingServer")
+            self.publishing_server.join()
+            self.logger.info(f"  Waiting for StatisticsClient")
+            self.statistics.join()
+            if self.wattson_client is not None:
+                self.logger.info(f"  Waiting for Wattson    Client")
+                self.wattson_client.join()
 
     def get_single_RTU_conn_status(self, rtu_id: int) -> ConnectionState:
-        return self.iec_client.get_connection_state(rtu_id)
+        return self.iec_client.get_wattson_connection_state(rtu_id)
 
     @property
     def subscription_policy(self):

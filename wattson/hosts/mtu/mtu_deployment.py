@@ -1,6 +1,6 @@
 import time
 
-from wattson.deployment import PythonDeployment
+from wattson.services.deployment import PythonDeployment
 from wattson.hosts.mtu.mtu import MTU
 
 
@@ -14,10 +14,12 @@ class MtuDeployment(PythonDeployment):
             #from wattson.iec104.implementations.pyiec104.client import IEC104Master
             from wattson.iec104.implementations.c104.client import IEC104Client
             self.iec_client_class = IEC104Client
-        self.coordinator_ip = self.config["coordinator_mgm"]
+
+        self.wattson_client_config = self.config.get("wattson_client_config")
+
         self.statistics = self.config.get("statistics")
         self.nodeid = self.config["nodeid"]
-        self.coa = self.config["coa"]
+        self.entity_id = self.config["entityid"]
         self.ip_address = self.config["ip"]
         self.rtus = self.config["rtus"]
         self.datapoints = self.config["datapoints"]
@@ -31,15 +33,16 @@ class MtuDeployment(PythonDeployment):
             self.iec_client_class,
             self.datapoints,
             node_id=self.nodeid,
-            coa=self.coa,
+            entity_id=self.entity_id,
             rtus=self.rtus,
             do_general_interrogation=self.do_general_interrogation,
             do_clock_sync=self.do_clock_sync,
-            coord_ip=self.coordinator_ip,
+            wattson_client_config=self.wattson_client_config,
             max_rtus=None,
             primary_ip=self.ip_address,
             statistics=self.statistics,
-            iec104_connect_delay=self.iec104_connect_delay
+            iec104_connect_delay=self.iec104_connect_delay,
+            enable_rtu_connection_state_observation=True
         )
         self.mtu.start()
         while True:

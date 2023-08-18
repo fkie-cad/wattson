@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, Callable, Optional, TYPE_CHECKING, Any, List
+from typing import Union, Callable, Optional, TYPE_CHECKING, Any, List, Set, Iterable
 
 from wattson.datapoints.interface import DataPointValue
 if TYPE_CHECKING:
@@ -24,11 +24,8 @@ class DataPointProvider(ABC):
     def add_on_change(self, callback: Optional[Callable[[str, DataPointValue, str, str], None]]):
         self.callbacks.append(callback)
 
-    def add_filter_ids(self, ids):
+    def add_filter_ids(self, ids: Iterable):
         self.filter_ids.update(ids)
-
-    def get_sim_start_time(self) -> Optional[float]:
-        return None
 
     @abstractmethod
     def get_value(self, identifier: str, provider_id: int, disable_cache: bool = False,

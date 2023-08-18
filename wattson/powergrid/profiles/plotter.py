@@ -22,7 +22,7 @@ class ProfilePlotter:
                                                       **kwargs)
         self.provider = self.profile_provider_factory.get_interface()
 
-        #self.provider = PowerProfileProviderInterface(power_grid, profiles, seed=seed, noise=noise, interpolate=interpolate,
+        #self.provider = PowerProfileProviderInterface(simulator, profiles, seed=seed, noise=noise, interpolate=interpolate,
         #                                              **kwargs)
 
     def plot(self, start_date: datetime, end_date: datetime, elements: PlotterElementCollection, resolution=1000):

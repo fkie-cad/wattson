@@ -9,6 +9,7 @@ class PatchedOVSSwitch(mininet.node.OVSSwitch):
     def __init__(self, *args, **kwargs):
         kwargs["batch"] = True
         self._started = False
+        kwargs["failMode"] = "standalone"
         super().__init__(*args, **kwargs)
 
     def vsctl( self, *args, **kwargs ):
@@ -24,9 +25,8 @@ class PatchedOVSSwitch(mininet.node.OVSSwitch):
 
     def bridgeOpts(self):
         opts = super().bridgeOpts()
-        if self.params.get("rstp", False) and self.failMode == 'standalone':
-            print("Enabling RSTP")
-            opts += ' stp_enable=true'
+        if self.params.get("rstp", True) and self.failMode == 'standalone':
+            opts += ' rstp_enable=true'
         return opts
 
     def attach( self, intf):
@@ -39,6 +39,8 @@ class PatchedOVSSwitch(mininet.node.OVSSwitch):
             raise Exception('OVS kernel switch does not work in a namespace')
 
         int(self.dpid, 16)  # DPID must be a hex string
+        if self.shell is None:
+            self.startShell()
 
         # Command to add interfaces
         intfs = [' -- add-port %s %s' % (self.deployed_name, intf) +
@@ -67,14 +69,13 @@ class PatchedOVSSwitch(mininet.node.OVSSwitch):
         self.vsctl(cargs +
                    ' -- add-br %s' % self.deployed_name +
                    ' -- set bridge %s controller=[%s]' % (self.deployed_name, cids) +
-                   self.bridgeOpts() +
-                   ''.join(intfs))
+                   self.bridgeOpts())
 
         # Add Interfaces - make sure to not exceed command length limit
-        """while len(intfs) > 0:
+        while len(intfs) > 0:
             part = intfs[:20]
             intfs = intfs[20:]
-            self.vsctl("".join(part))"""
+            self.vsctl("".join(part))
         # If necessary, restore TC config overwritten by OVS
         if not self.batch:
             for intf in self.intfList():

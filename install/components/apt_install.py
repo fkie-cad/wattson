@@ -36,9 +36,8 @@ class AptInstall(ComponentInstall):
            "net-tools", "libcap-ng-utils", "libcap-ng-dev", "libssl-dev", "libexpat-dev", "bison",
            "help2man", "libssl-dev", "python3-zope.interface", "python3-twisted", "xterm",
            "socat", "gfortran", "libopenblas-dev", "liblapack-dev", "ninja-build", "graphviz",
-           "libgraphviz-dev", "graphviz-dev", "pkg-config", "docker.io", "python3-pyqt5"
-
-           "dpkg-dev", "lintian", "devscripts", "fakeroot", "debhelper", "dh-autoreconf", "uuid-runtime",
+           "libgraphviz-dev", "graphviz-dev", "pkg-config", "docker.io", "python3-pyqt5",
+            "dpkg-dev", "lintian", "devscripts", "fakeroot", "debhelper", "dh-autoreconf", "uuid-runtime",
            "autoconf", "automake", "libtool", "python3-all", "dh-python", "xdg-utils", "groff", "netcat", "curl",
            "ethtool", "libunbound-dev", "libunbound8", "libcap-ng-dev", "libssl-dev", "openssl",
            "python3-pyftpdlib",

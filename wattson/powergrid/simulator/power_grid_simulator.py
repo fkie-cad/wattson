@@ -286,9 +286,12 @@ class PowerGridSimulator(PhysicalSimulator):
                     continue
                 # Create VCC configuration
                 # TODO: Dynamically assign the MTU!
-                vcc_configuration = VccDefaultConfiguration()
-                from wattson.apps.gui.deployment import GuiDeployment
-                node.add_service(WattsonPythonService(GuiDeployment, vcc_configuration, node))
+                try:
+                    vcc_configuration = VccDefaultConfiguration()
+                    from wattson.apps.gui.deployment import GuiDeployment
+                    node.add_service(WattsonPythonService(GuiDeployment, vcc_configuration, node))
+                except ImportError:
+                    self.logger.warning(f"Cannot add VCC service as the module cannot be found")
 
     def _fill_configuration_store(self):
         # MTU Options

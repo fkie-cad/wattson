@@ -41,8 +41,7 @@ setup(
         'numba==0.57.1',
         'numpy>=1.21.5',
         'packaging==20.3',
-        #'pandapower==2.13.2', # Not yet released but contains critical bug fix
-        'pandapower @ git+https://github.com/e2nIEE/pandapower.git',
+        'pandapower==2.14.1',
         'powerowl @ git+https://github.com/fkie-cad/powerowl.git',
         'pandas==1.3.4',
         'psutil==5.7.0',
@@ -63,7 +62,7 @@ setup(
         'pyzmq==20.0.0',
         'scapy==2.4.4',
         'scipy>=1.11.2',
-        'setuptools>=65.5.1',
+        'setuptools>=65.5.1,<71.0.0',
         'shapely',
         'sqlalchemy==1.3.16',
         'tabulate',

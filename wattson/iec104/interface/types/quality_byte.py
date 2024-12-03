@@ -11,7 +11,6 @@ class QualityByte:
         self._substituded = QualityBit.SUBSTITUTED in self.bits
         self._blocked = QualityBit.BLOCKED in self.bits
         self._elapsed_time_invalid = QualityBit.ELAPSED_TIME_INVALID in self.bits
-        self._reserved = QualityBit.RESERVED in self.bits
         self._overflow = QualityBit.OVERFLOW in self.bits
 
     def __str__(self):
@@ -43,10 +42,6 @@ class QualityByte:
     @property
     def has_invalid_elapsed_time(self):
         return self._elapsed_time_invalid
-
-    @property
-    def is_reserved(self):
-        return self._reserved
 
     @property
     def is_overflow(self):

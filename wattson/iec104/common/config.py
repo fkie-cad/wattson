@@ -4,7 +4,7 @@ IOA_LENGTH = 3
 SERVER_DEFAULT_PORT = 2404
 SERVER_TICK_RATE_MS = 2000
 # interval in seconds used to send periodic updates (COT=1) from server to client
-SERVER_UPDATE_PERIOD_S = 10
+SERVER_UPDATE_PERIOD_S = 40     # Originally 10
 SERVER_UPDATE_PERIOD_MS = SERVER_UPDATE_PERIOD_S * 1000
 
 CLIENT_COMMAND_TIMEOUT_MS = 2000
@@ -27,12 +27,13 @@ SUPPORTED_ASDU_TYPES = {1, 3, 5, 7, 13} \
                        | {100, 102, 103, 113}
 # short floating point = IEE float
 
+# IEC 104 connection parameters (in # of APDUs and in seconds)
 APCI_PARAMETERS = {
     'k': 12,
-    'w': 8,
-    't0': 10,
+    'w': 8,         # Originally 8
+    't0': 10,       # Originally 10
     't1': 15,
-    't2': 10,
+    't2': 340,      # Originally 100
     't3': 20,
 }
 

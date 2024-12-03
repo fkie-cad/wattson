@@ -23,6 +23,8 @@ from wattson.powergrid.profiles.profile_loader import ProfileLoader
 from wattson.powergrid.simulator.messages.power_grid_query_type import PowerGridQueryType
 from wattson.powergrid.simulator.threads.export_thread import ExportThread
 from wattson.services.wattson_python_service import WattsonPythonService
+from wattson.services.wattson_pcap_service import WattsonPcapService
+from wattson.services.configuration import ServiceConfiguration
 from wattson.cosimulation.simulators.physical.physical_simulator import PhysicalSimulator
 from wattson.powergrid.simulator.default_configurations.mtu_default_configuration import \
     MtuDefaultConfiguration
@@ -40,6 +42,7 @@ from wattson.powergrid.simulator.messages.power_grid_query import PowerGridQuery
 from wattson.powergrid.simulator.threads.simulation_thread import SimulationThread
 from wattson.util.events.multi_event import MultiEvent
 from wattson.util.events.queue_event import QueueEvent
+from wattson.iec104.common.config import SERVER_UPDATE_PERIOD_MS
 
 
 class PowerGridSimulator(PhysicalSimulator):
@@ -277,6 +280,9 @@ class PowerGridSimulator(PhysicalSimulator):
                 mtu_configuration = MtuDefaultConfiguration()
                 from wattson.hosts.mtu import MtuDeployment
                 node.add_service(WattsonPythonService(MtuDeployment, mtu_configuration, node))
+                # Add pcap services by default for all interfaces of the MTU
+                for interface in node.get_interfaces():
+                    node.add_service(WattsonPcapService(interface=interface, service_configuration=ServiceConfiguration(), network_node=node))
                 rtu_map = node.config.get("rtu_map", {})
                 self._rtu_map[node.entity_id] = {rtu_id: {"coa": rtu_id, "ip": rtu_ip.split("/")[0]} for rtu_id, rtu_ip in rtu_map.items()}
                 self._required_sim_control_clients.add(node.entity_id)
@@ -304,7 +310,7 @@ class PowerGridSimulator(PhysicalSimulator):
         })
         self._configuration_store.register_configuration("do_periodic_updates", True)
         self._configuration_store.register_configuration("periodic_update_start", 0)
-        self._configuration_store.register_configuration("periodic_update_ms", 10000)
+        self._configuration_store.register_configuration("periodic_update_ms", SERVER_UPDATE_PERIOD_MS)
         self._configuration_store.register_configuration("allowed_mtu_ips", True)
         # General
         self._configuration_store.register_configuration("coas", lambda node, store: self._common_addresses)

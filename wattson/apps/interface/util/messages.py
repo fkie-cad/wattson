@@ -18,6 +18,7 @@ from wattson.iec104.common import ConnectionState
 from wattson.iec104.common.config import SUPPORTED_ASDU_TYPES
 from wattson.iec104.interface.types import MsgDirection, TypeID, COT, IEC_PARAMETER_SINGLE_VALUE
 from wattson.iec104.interface.apdus import I_FORMAT, APDU
+from wattson.iec104.interface.types import IECValue
 
 COA = Union[int, str]
 IOA = Union[int, str]
@@ -318,7 +319,7 @@ class ProcessInfoMonitoring(IECMsg):
     # send with empty val_map and cot == 10 to mark end of packets about that typeID
     # during general interro
     coa: int
-    val_map: Dict[IOA, Union[bool, int, float, Tuple]]
+    val_map: Dict[IOA, IECValue]
     ts_map: Dict[int, int]
     type_ID: Union[int, TypeID]
     cot: int
@@ -353,7 +354,7 @@ class ProcessInfoControl(IECMsg):
     # COT necessary if the MTU sends a set-command not communicated over a subscriber
     coa: COA
     type_ID: int
-    val_map: Dict[IOA, Union[bool, int, float]]
+    val_map: Dict[IOA, IECValue]
     reference_nr: str = UNSET_REFERENCE_NR
     max_tries: int = DEFAULT_MAX_TRIES
     queue_on_collision: bool = False
@@ -539,7 +540,7 @@ class PeriodicUpdate(ProcessInfoMonitoring):
     def __init__(
             self,
             coa: int,
-            val_map: Dict[IOA, Union[bool, int, float, Tuple]],
+            val_map: Dict[IOA, IECValue],
             ts_map: Dict[int, int],
             type_ID: Union[int, TypeID],
             reference_nr: str,

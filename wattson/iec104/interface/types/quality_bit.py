@@ -13,7 +13,6 @@ class QualityBit(IntEnum):
     SUBSTITUTED = 0x20
     BLOCKED = 0x10
     ELAPSED_TIME_INVALID = 0x08
-    RESERVED = 0x04
     OVERFLOW = 0x01
 
     # only indirectly used, not part of iec101

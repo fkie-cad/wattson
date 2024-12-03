@@ -13,6 +13,7 @@ from wattson.iec104.common.config import *
 from wattson.iec104.interface.types import COT
 from wattson.iec104.interface.server import IECServerInterface
 from wattson.iec104.implementations.c104 import C104Point, build_apdu_from_c104_bytes
+from wattson.iec104.common.config import APCI_PARAMETERS 
 
 if TYPE_CHECKING:
     from wattson.hosts.rtu.rtu import RTU
@@ -31,7 +32,15 @@ class IEC104Server(IECServerInterface):
         if self.periodic_updates_start < 0:
             self.periodic_updates_start = self.periodic_updates_start % self.periodic_updates_ms
 
-        self.server = c104.add_server(ip=ip, port=port, tick_rate_ms=tick_rate_ms)
+        self.server = c104.Server(ip=ip, port=port, tick_rate_ms=tick_rate_ms)
+        # Set w, k, t0, t1, t2, t3 parameters
+        self.server.protocol_parameters.send_window_size = APCI_PARAMETERS["k"]
+        self.server.protocol_parameters.receive_window_size = APCI_PARAMETERS["w"]
+        self.server.protocol_parameters.connection_timeout = APCI_PARAMETERS["t0"] * 1000
+        self.server.protocol_parameters.message_timeout = APCI_PARAMETERS["t1"] * 1000
+        self.server.protocol_parameters.confirm_interval = APCI_PARAMETERS["t2"] * 1000
+        self.server.protocol_parameters.keep_alive_interval = APCI_PARAMETERS["t3"] * 1000
+        
         self.station = self.server.add_station(common_address=rtu.coa)
 
         self._periodic_update_points_queue = []
@@ -165,21 +174,21 @@ class IEC104Server(IECServerInterface):
                                cause: c104.Umc) -> None:
         self.callbacks["on_unexpected_msg"](server, message, cause)
 
-    def _on_receive(self, point: c104.Point, previous_state: dict,
+    def _on_receive(self, point: c104.Point, previous_info: c104.Information,
                     message: c104.IncomingMessage) -> c104.ResponseState:
-        prev_point = C104Point.parse_to_previous_point(previous_state, point)
+        prev_point = C104Point.parse_to_previous_point(previous_info, point)
         success = self.callbacks["on_receive"](C104Point(point), prev_point, message)
         return c104.ResponseState.SUCCESS if success else c104.ResponseState.FAILURE
 
-    def _on_setpoint_command(self, point: c104.Point, previous_state: dict,
+    def _on_setpoint_command(self, point: c104.Point, previous_info: c104.Information,
                              message: c104.IncomingMessage) -> c104.ResponseState:
-        prev_point = C104Point.parse_to_previous_point(previous_state, point)
+        prev_point = C104Point.parse_to_previous_point(previous_info, point)
         success = self.callbacks["on_setpoint_command"](C104Point(point), prev_point, message)
         return c104.ResponseState.SUCCESS if success else c104.ResponseState.FAILURE
 
-    def _on_step_command(self, point: c104.Point, previous_state: dict,
+    def _on_step_command(self, point: c104.Point, previous_info: c104.Information,
                          message: c104.IncomingMessage) -> bool:
-        prev_point = C104Point.parse_to_previous_point(previous_state, point)
+        prev_point = C104Point.parse_to_previous_point(previous_info, point)
         return self.callbacks["on_step_command"](C104Point(point), prev_point, message)
 
     def _on_before_read(self, point: c104.Point) -> None:

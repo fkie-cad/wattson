@@ -70,7 +70,7 @@ class IEC104Client(IECClientInterface, th.Thread):
 
         self._org = org
         self._servers = {}
-        self._client = c104.add_client(
+        self._client = c104.Client(
             tick_rate_ms=CLIENT_TICKRATE_MS,
             command_timeout_ms=CLIENT_COMMAND_TIMEOUT_MS
         )
@@ -220,9 +220,7 @@ class IEC104Client(IECClientInterface, th.Thread):
             c104.ConnectionState.CLOSED_AWAIT_OPEN: ConnectionState.CLOSED,
             c104.ConnectionState.CLOSED_AWAIT_RECONNECT: ConnectionState.CLOSED,
             c104.ConnectionState.OPEN: ConnectionState.INTERRO_DONE,
-            c104.ConnectionState.OPEN_AWAIT_CLOCK_SYNC: ConnectionState.OPEN,
             c104.ConnectionState.OPEN_AWAIT_CLOSED: ConnectionState.OPEN,
-            c104.ConnectionState.OPEN_AWAIT_INTERROGATION: ConnectionState.INTERRO_STARTED,
             c104.ConnectionState.OPEN_MUTED: ConnectionState.OPEN
         }
         connection_state = self.get_connection_state(coa)
@@ -242,6 +240,13 @@ class IEC104Client(IECClientInterface, th.Thread):
                 port=server["port"],
                 init=self.c104_init
             )
+            # IEC104 Connection parameters
+            server["connection"].protocol_parameters.send_window_size = APCI_PARAMETERS["k"]
+            server["connection"].protocol_parameters.receive_window_size = APCI_PARAMETERS["w"]
+            server["connection"].protocol_parameters.connection_timeout = APCI_PARAMETERS["t0"] * 1000
+            server["connection"].protocol_parameters.message_timeout = APCI_PARAMETERS["t1"] * 1000
+            server["connection"].protocol_parameters.confirm_interval = APCI_PARAMETERS["t2"] * 1000
+            server["connection"].protocol_parameters.keep_alive_interval = APCI_PARAMETERS["t3"] * 1000
 
             self.logger.debug(f"Setting Connection Callbacks for {server['coa']}")
             server["connection"].on_receive_raw(callable=self._on_receive_raw_callback_wrapper)
@@ -481,15 +486,15 @@ class IEC104Client(IECClientInterface, th.Thread):
             server["datapoints"][str(ioa)].value = value
             return True
 
-    def _on_receive_datapoint(self, point: c104.Point, previous_state: dict,
+    def _on_receive_datapoint(self, point: c104.Point, previous_info: c104.Information,
                               message: c104.IncomingMessage) -> c104.ResponseState:
         # TODO: What happens during on_receive on client-side if return False?!
         with self._cb_lock:
             try:
                 if self.callbacks['on_receive_datapoint'] is not None:
                     p = C104Point(point)
-                    previous_state = C104Point.parse_to_previous_point(previous_state, point)
-                    success = self.callbacks['on_receive_datapoint'](p, previous_state, message)
+                    previous_info = C104Point.parse_to_previous_point(previous_info, point)
+                    success = self.callbacks['on_receive_datapoint'](p, previous_info, message)
                     return c104.ResponseState.SUCCESS if success else c104.ResponseState.FAILURE
                 return c104.ResponseState.NONE
             except Exception as e:

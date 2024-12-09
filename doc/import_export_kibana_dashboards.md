@@ -14,7 +14,7 @@ curl -X POST <elk-container-ip>:<kibana-port>/api/saved_objects/_export -o dashb
       "id": "<dashboard-id>"
     }
   ]
-}'
+} -u "<name>:<password>"'
 ```
 The dashboard id can be found in the URL when the dashboard is open in kibana.
 
@@ -22,6 +22,6 @@ The dashboard id can be found in the URL when the dashboard is open in kibana.
 
 1. Upload dashboard to ES index
 ```shell
-curl -X POST <elk-container-ip>:<kibana-port>/api/saved_objects/_import?createNewCopies=true -H "kbn-xsrf: true" --form file=@dashboard.ndjson
+curl -X POST <elk-container-ip>:<kibana-port>/api/saved_objects/_import?createNewCopies=true -H "kbn-xsrf: true" --form file=@dashboard.ndjson -u "<name>:<password>"
 ```
 2. Open dashboard in kibana

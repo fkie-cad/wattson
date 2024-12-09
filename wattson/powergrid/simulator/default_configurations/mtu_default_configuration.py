@@ -20,5 +20,6 @@ class MtuDefaultConfiguration(ServiceConfiguration):
             "do_clock_sync": "!do_clock_sync",
             "statistics": "!statistics",
             "scenario_path": "!scenario_path",
+            "mtu_logic": "!mtu_logic"
         })
         self.priority.set_local(2)

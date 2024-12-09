@@ -8,6 +8,10 @@ class WattsonNetworkQueryType(str, enum.Enum):
     CONNECT_NODES = "connect-nodes"
 
     SET_INTERFACE_IP = "set-interface-ip"
+    SET_INTERFACE_UP = "set-interface-up"
+    SET_INTERFACE_DOWN = "set-interface-down"
+    REMOVE_INTERFACE = "remove-interface"
+    CREATE_INTERFACE = "create-interface"
 
     GET_LINKS = "get-links"
     GET_LINK_MODEL = "get-link-model"
@@ -24,6 +28,7 @@ class WattsonNetworkQueryType(str, enum.Enum):
 
     NODE_ACTION = "node-action"
     GET_ENTITY = "get-entity"
+    PROCESS_ACTION = "process-action"
 
     UPDATE_NODE_CONFIGURATION = "update-node-configuration"
     GET_UNUSED_IP = "get-unused-ip"

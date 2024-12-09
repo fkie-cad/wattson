@@ -10,15 +10,19 @@ import ctypes
 import os
 import sys
 import threading
+import traceback
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Optional, Tuple, List, Union, Callable, Any
 
 import wattson.util
+from wattson.networking.namespaces.nested_argument import NestedArgument
 
 
 class Namespace:
     NAMESPACE_PATH_VAR: Path = Path("/var/run/netns/")
     NAMESPACE_PATH_RUN: Path = Path("/run/netns/")
+    NAMESPACE_PATH_ETC: Path = Path("/etc/netns/")
 
     def __init__(self, name: str, logger: Optional[logging.Logger] = None):
         self.name = name
@@ -38,6 +42,10 @@ class Namespace:
         if self._call_pool is not None:
             self._call_pool.close()
 
+    @property
+    def is_network_namespace(self) -> bool:
+        return True
+
     def create(self, clean: bool = True) -> bool:
         """
         Creates a new networking namespace with the specified name
@@ -46,7 +54,49 @@ class Namespace:
         """
         if clean:
             self.clean()
-        return self._exec(f"ip netns add {self.name}")[0]
+        success = self._exec(f"ip netns add {self.name}")[0]
+        # Create directories and files
+        Namespace.NAMESPACE_PATH_ETC.joinpath(self.name).mkdir(parents=True, exist_ok=True)
+        shutil.copy(Path("/etc/resolv.conf"), Namespace.NAMESPACE_PATH_ETC.joinpath(self.name).joinpath("resolv.conf"))
+        # Reserve ports
+        reserved_ports = ["2404", "51000-51010"]
+        try:
+            self.logger.debug(f"Reserving ports: {', '.join(reserved_ports)}")
+            subprocess.check_call(f"sysctl net.ipv4.ip_local_reserved_ports={','.join(reserved_ports)}",
+                                  shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except CalledProcessError:
+            self.logger.error(f"Could not reserve ports.")
+        return success
+
+    def set_name_servers(self, servers: List[str], search_domain: Optional[str] = None):
+        lines = []
+        for server in servers:
+            lines.append(f"nameserver {server}")
+        if search_domain is not None:
+            lines.append(f"search {search_domain}")
+        return self._write_to_file(Path("/etc/resolv.conf"), "\n".join(lines))
+
+    def _write_to_file(self, file_path: Path, content: str) -> bool:
+        content = shlex.quote(content)
+        code0, _ = self.exec(["/bin/bash", "-c", f"echo {content} > {str(file_path.absolute())}"])
+        return code0
+
+    def _read_from_file(self, file_path: Path) -> Optional[str]:
+        code0, lines = self.exec(["cat", str(file_path.absolute())])
+        if code0:
+            return "\n".join(lines)
+        return None
+
+    def file_put_contents(self, file_path: Path, content: str) -> bool:
+        try:
+            self._write_to_file(file_path, content)
+        except Exception as e:
+            self.logger.error(traceback.format_exc())
+            return False
+        return True
+
+    def file_get_contents(self, file_path: Path) -> Optional[str]:
+        return self._read_from_file(file_path=file_path)
 
     def clean(self) -> bool:
         """
@@ -79,15 +129,15 @@ class Namespace:
             pid = os.getpid()
         raise NotImplementedError("Moving processes between namespaces is not (yet) supported")
 
-    def exec(self, command: Union[str, List[str]]) -> Tuple[bool, List[str]]:
+    def exec(self, command: Union[str, List[str]], **kwargs) -> Tuple[bool, List[str]]:
         """
         Executes a command in the network namespace
         :param command:
         :return:
         """
-        if isinstance(command, list):
-            command = " ".join(command)
-        cmd = f"ip netns exec {self.name} {command}"
+        if isinstance(command, str):
+            command = shlex.split(command)
+        cmd = ["ip", "netns", "exec", self.name] + command
         return self._exec(cmd)
 
     def popen(self, cmd: Union[str, List[str]], **kwargs) -> subprocess.Popen:
@@ -97,19 +147,26 @@ class Namespace:
         :param kwargs:
         :return: Popen
         """
+        # print(f"Default namespace POpen {cmd}")
         netns_cmd = kwargs.pop("wrap_command", f"ip netns exec {self.name}")
         stdout = kwargs.pop("stdout", sys.stdout)
         stderr = kwargs.pop("stderr", sys.stderr)
-        if isinstance(cmd, list):
-            cmd = " ".join(cmd)
+
+        if isinstance(netns_cmd, str):
+            netns_cmd = shlex.split(netns_cmd)
+        if isinstance(cmd, str):
+            cmd = shlex.split(cmd)
+
+        final_cmd = cmd
+
+        popen_class = kwargs.pop("popen", subprocess.Popen)
+
+        env = kwargs.pop("env", os.environ.copy())
 
         as_user = kwargs.pop("as_user", None)
         as_user_cmd = " "
         if as_user is not None:
-            as_user_cmd = f" sudo -Eu {as_user} "
-        env = kwargs.pop("env", os.environ.copy())
-
-        if as_user is not None:
+            final_cmd = ["sudo", "-Eu", as_user, NestedArgument(final_cmd)]
             pw_record = pwd.getpwnam(as_user)
             env["HOME"] = pw_record.pw_dir
             env["LOGNAME"] = pw_record.pw_name
@@ -117,14 +174,15 @@ class Namespace:
 
         kwargs["env"] = env
 
-        use_shlex = kwargs.pop("shlex", True)
         shell = kwargs.pop("shell", False)
-        if shell:
-            cmd = f"{os.environ['SHELL']} -c '{cmd}'"
-        cmd = netns_cmd + as_user_cmd + cmd
-        if use_shlex:
-            cmd = shlex.split(cmd)
-        return subprocess.Popen(cmd, stdout=stdout, stderr=stderr, **kwargs)
+        if shell is not False:
+            if shell is True:
+                shell = os.environ.get('SHELL', "/bin/bash")
+            final_cmd = [shell, "-c", str(NestedArgument(final_cmd))]
+
+        final_cmd = netns_cmd + final_cmd
+
+        return popen_class(final_cmd, stdout=stdout, stderr=stderr, **kwargs)
 
     def exists(self) -> bool:
         """
@@ -147,7 +205,9 @@ class Namespace:
             stdout = subprocess.PIPE
         if stderr is None:
             stderr = subprocess.STDOUT
-        p = subprocess.Popen(shlex.split(cmd), stdout=stdout, stderr=stderr, universal_newlines=True)
+        if isinstance(cmd, str):
+            cmd = shlex.split(cmd)
+        p = subprocess.Popen(cmd, stdout=stdout, stderr=stderr, universal_newlines=True)
         output, error = p.communicate()
         lines = []
         for line in output.splitlines():

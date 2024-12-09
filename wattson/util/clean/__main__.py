@@ -3,6 +3,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 import psutil
@@ -79,13 +80,23 @@ def clean_docker():
             container.remove(force=True)
 
 
+def _clear_ovs_bridge(bridge):
+    subprocess.run(f"ovs-vsctl --if-exists del-br {bridge}", shell=True)
+    print(f"{bridge}", end="  ", flush=True)
+
+
 def clean_network():
     print(f"Cleaning up Wattson Network")
     print("  Switches")
     bridges = subprocess.check_output("ovs-vsctl --timeout=1 list-br", shell=True).decode().strip().splitlines()
+    print(f"    Found {len(bridges)} switches")
+    threads = []
     for bridge in bridges:
-        print(f"{bridge}", end="  ")
-        subprocess.run(f"ovs-vsctl --if-exists del-br {bridge}", shell=True)
+        t = threading.Thread(target=_clear_ovs_bridge, args=(bridge,), daemon=True)
+        threads.append(t)
+        t.start()
+    for t in threads:
+        t.join()
     if len(bridges):
         print("")
     # clean.cleanup()

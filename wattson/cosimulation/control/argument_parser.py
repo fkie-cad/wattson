@@ -18,8 +18,10 @@ def get_argument_parser() -> argparse.ArgumentParser:
                         help="The file to look into for extensions. Defaults to extensions.yml")
 
     # Artifact Directory
-    parser.add_argument("--artifact-directory", type=str, default=None,
+    parser.add_argument("--artifact-directory", "--working-directory", "-d", type=str, default=None,
                         help="The folder to use for artifacts for the simulation run. If not given, an automatic hierarchy is created")
+    parser.add_argument("--physical-export", action="store_true", help="Set to enable exports for the physical simulator")
+    parser.add_argument("--ccx-export", type=str, default=None, help="Provide a file name (jsonl) to enable notification export in the CCX")
 
     # Dynamic Scenarios
     parser.add_argument("--update-scenario", "-u", action="store_true",
@@ -37,9 +39,9 @@ def get_argument_parser() -> argparse.ArgumentParser:
                         help="The file to reed the random seed from. Use file.txt@LINE to specify a line")
 
     # Network Deployment
-    parser.add_argument("--start-delay", "-d", type=float,
+    parser.add_argument("--start-delay", type=float,
                         help="Delay (seconds, float) between network start and host deployment", default=0)
-    parser.add_argument("--deploy-wait", "-w", type=float, help="Delay (seconds, float) between each host deployment",
+    parser.add_argument("--deploy-wait", type=float, help="Delay (seconds, float) between each host deployment",
                         default=0.0)
     parser.add_argument("--cpu-wait-timeout", "-cw", type=float, default=10,
                         help="Delay (seconds, float) to wait for the CPU threshold")
@@ -48,8 +50,12 @@ def get_argument_parser() -> argparse.ArgumentParser:
 
     # Network Options
     parser.add_argument("--pcap", action="append", default=[], help="Set one or multiple hosts to start pcap recording")
+    parser.add_argument("--empty-net", action="store_true", help="Set to skip loading the communication network (Will still create the management network)")
+    parser.add_argument("--no-net", action="store_true", help="Set to skip network creation")
 
     # Utils
+    parser.add_argument("--clean", "--clean", "-c", action="store_true", help="Set to only clean up any potential running instances")
     parser.add_argument("--no-cli", action="store_true", help="Disable Wattson's default CLI")
-
+    parser.add_argument("--export-notification-topic", "-en", action="append", default=[], help="Notification topics to mark for export")
+    parser.add_argument("--notification-topic-history", "-nh", action="append", default=[], help="Notification topics to preserve history for")
     return parser

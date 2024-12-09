@@ -1,4 +1,5 @@
-from typing import Optional, Callable, List, Dict, TYPE_CHECKING
+from pathlib import Path
+from typing import Optional, Callable, List, Dict, TYPE_CHECKING, Union, Type
 
 import time
 from wattson.cosimulation.control.messages.wattson_notification import WattsonNotification
@@ -11,6 +12,7 @@ from wattson.cosimulation.simulators.network.messages.wattson_network_query_type
 from wattson.services.configuration import ServiceConfiguration
 from wattson.services.service_priority import ServicePriority
 from wattson.services.wattson_remote_service_representation import WattsonRemoteServiceRepresentation
+from wattson.services.wattson_service import WattsonService
 from wattson.services.wattson_service_interface import WattsonServiceInterface
 
 if TYPE_CHECKING:
@@ -23,6 +25,7 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
     """
     def __init__(self, wattson_client: 'WattsonClient', service_id: Optional[int] = None, auto_sync: bool = True):
         self._configuration: Optional[ServiceConfiguration] = None
+        self._expanded_configuration: Optional[ServiceConfiguration] = None
         self._deployment_class_name: Optional[str] = None
 
         self._id = service_id
@@ -33,10 +36,42 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
         if self.id is not None and auto_sync:
             self.synchronize(True)
 
+    def call(self, method, **kwargs):
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.SERVICE_ACTION,
+            query_data={
+                "service_id": self.id,
+                "action": "call",
+                "params": {"method": method, "kwargs": kwargs}
+            }
+        )
+        self.wattson_client.query(query)
+        if query.response.is_successful():
+            self.sync_from_remote_representation(query.response.data.get("service"))
+        return query.response.is_successful()
+
+    def callable_methods(self) -> dict[str, dict]:
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.SERVICE_ACTION,
+            query_data={
+                "service_id": self.id,
+                "action": "callable_methods",
+                "params": {}
+            }
+        )
+        self.wattson_client.query(query)
+        if query.response.is_successful():
+            self.sync_from_remote_representation(query.response.data.get("service"))
+        return query.response.data
+
     @property
     def configuration(self) -> Optional[ServiceConfiguration]:
         return self._configuration
 
+    @property
+    def expanded_configuration(self) -> Optional[ServiceConfiguration]:
+        return self._expanded_configuration
+    
     @property
     def deployment_class_name(self) -> Optional[str]:
         return self._deployment_class_name
@@ -85,13 +120,15 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
         self.synchronize()
         return self._state.get("priority")
 
-    def start(self) -> bool:
+    def start(self, refresh_config: bool = False) -> bool:
         query = WattsonNetworkQuery(
             query_type=WattsonNetworkQueryType.SERVICE_ACTION,
             query_data={
                 "service_id": self.id,
                 "action": "start",
-                "params": {}
+                "params": {
+                    "refresh_config": refresh_config
+                }
             }
         )
         self.wattson_client.query(query)
@@ -126,11 +163,20 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
             promise.on_resolve(callback)
             return True
 
-    def restart(self) -> bool:
-        return self.stop() and self.start()
+    def restart(self, refresh_config: bool = False) -> bool:
+        return self.stop() and self.start(refresh_config=refresh_config)
 
     def kill(self) -> bool:
-        pass
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.SERVICE_ACTION,
+            query_data={
+                "service_id": self.id,
+                "action": "kill",
+                "params": {}
+            }
+        )
+        response = self.wattson_client.query(query)
+        return response.is_successful()
 
     def is_running(self) -> bool:
         self.synchronize()
@@ -164,6 +210,8 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
         self._sync_time = time.time()
         priority_representation: WattsonRemoteRepresentation = service_info["priority"]
         self._state["priority"] = priority_representation.to_wattson_remote_object(wattson_client=self.wattson_client)
+        self._configuration = ServiceConfiguration(service_info["configuration"])
+        self._expanded_configuration = ServiceConfiguration(service_info["expanded_configuration"])
         return True
 
     def get_info(self) -> Dict:
@@ -176,6 +224,38 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
             "Priority": self.get_priority().get_global()
         }
 
+    def expand_configuration(self) -> ServiceConfiguration:
+        return self._state.get("expanded_configuration", ServiceConfiguration())
+
+    def get_configuration(self) -> ServiceConfiguration:
+        return self._state.get("configuration", ServiceConfiguration())
+
+    def set_configuration(self, configuration: Union[Dict, ServiceConfiguration]) -> bool:
+        self._state["configuration"] = configuration
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.SERVICE_ACTION,
+            query_data={
+                "service_id": self.id,
+                "action": "update_service_configuration",
+                "params": {
+                    "configuration": configuration
+                }
+            }
+        )
+        response = self.wattson_client.query(query)
+        if response.is_successful():
+            self.sync_from_remote_representation(response.data["service"])
+            return True
+        return False
+
     def from_service_configuration(self, deployment_class_path: str, configuration: ServiceConfiguration) -> bool:
         self._deployment_class_name = deployment_class_path
         self._configuration = configuration
+        return True
+
+    def get_artifact_paths(self) -> Dict[str, Path]:
+        self.synchronize()
+        return self._state.get("artifact_paths", {})
+
+    def get_original_class(self) -> Type[WattsonService]:
+        return self._state.get("original_class", WattsonService)

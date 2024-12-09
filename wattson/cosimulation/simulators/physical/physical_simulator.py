@@ -20,6 +20,10 @@ class PhysicalSimulator(Simulator, abc.ABC):
         self.logger = get_logger(self.__class__.__name__, self.__class__.__name__)
         self._ready_event = threading.Event()
 
+    @classmethod
+    def get_simulator_type(cls) -> str:
+        return "physical"
+
     def set_simulator_ready_event(self):
         self._ready_event.set()
 
@@ -34,10 +38,10 @@ class PhysicalSimulator(Simulator, abc.ABC):
         PhysicalSimulator.typed_simulators[scenario_type] = simulator_class
 
     @staticmethod
-    def from_scenario_type(scenario_type: str) -> 'PhysicalSimulator':
+    def from_scenario_type(scenario_type: str, **kwargs) -> 'PhysicalSimulator':
         simulator_class = PhysicalSimulator.typed_simulators.get(
             scenario_type, PhysicalSimulator.typed_simulators["default"]
         )
         if isinstance(simulator_class, str):
             simulator_class = wattson.util.dynamic_load_class(simulator_class)
-        return simulator_class()
+        return simulator_class(**kwargs)

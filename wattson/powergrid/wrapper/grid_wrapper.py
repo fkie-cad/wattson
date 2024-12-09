@@ -1,30 +1,30 @@
 import copy
 import csv
-import datetime
 import fnmatch
 import json
 import logging
 import pathlib
 import pickle
 import queue
-import sys
 import threading
 import time
 from pathlib import Path
-from typing import Callable, Optional, List, Dict, Any, Union
+from typing import Callable, Optional, List, Dict, Any
 
-import pandas as pd
-import pytz
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import GridElement
 from powerowl.layers.powergrid.values.grid_value import GridValue
 from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
+from powerowl.simulators.pandapower import PandaPowerGridModel
 
 from wattson.apps.interface.util import messages
+from wattson.hosts.ccx.protocols import CCXProtocol
+from wattson.powergrid.wrapper.panda_power_state_estimator import PandaPowerStateEstimator
 from wattson.powergrid.wrapper.power_owl_measurement import PowerOwlMeasurement
 from wattson.powergrid.wrapper.state_estimator import StateEstimator
 from wattson.time import WattsonTime, WattsonTimeType
 from wattson.util import get_logger
+from wattson.util.events.queue_event import QueueEvent
 from wattson.util.time.virtual_time import VirtualTime
 
 
@@ -37,6 +37,11 @@ class GridWrapper:
         # The virtual time is used to synchronize actions with arbitrary time-speeds
         self.virtual_time = kwargs.get("virtual_time", VirtualTime.get_instance())
 
+        if kwargs.get("disable_measurement_sources", False):
+            self._clear_source_values(GridValueContext.MEASUREMENT)
+        if kwargs.get("disable_estimation_sources", False):
+            self._clear_source_values(GridValueContext.ESTIMATION)
+
         self.data_points = datapoints
         self.logger = logger
         if self.logger is None:
@@ -48,6 +53,9 @@ class GridWrapper:
         self._stop_export_event = threading.Event()
         self._export_thread = None
         self._export_wattson_time = None
+
+        self._on_estimation_started_callbacks: List[Callable[[str], None]] = []
+        self._on_estimation_done_callbacks: List[Callable[[str, bool, Optional[str]], None]] = []
 
         self._last_power_flow = 0
         self._power_flow_required = threading.Event()
@@ -101,9 +109,30 @@ class GridWrapper:
             self.start_state_estimation(self._state_estimation_name)
         if self._automatic_power_flow:
             self.start_power_flow_loop()
+        self._init_on_set_callbacks()
 
-    def get_data_point(self, coa, ioa):
-        key = f"{coa}.{ioa}"
+    def _init_on_set_callbacks(self):
+        for grid_element in self.power_grid_model.get_elements():
+            for _, grid_value in grid_element.get_grid_values():
+                grid_value.add_on_set_callback(self._on_grid_value_set)
+
+    def _clear_source_values(self, context: GridValueContext):
+        for grid_element in self.power_grid_model.get_elements():
+            for _, grid_value in grid_element.get_grid_values(context=context):
+                grid_value.source = None
+
+    def get_data_point(self, identifier: str):
+        if identifier in self._dp_cache:
+            return self._dp_cache[identifier]
+        for host, data_points in self.data_points.items():
+            for data_point in data_points:
+                if data_point["identifier"] == identifier:
+                    self._dp_cache[identifier] = data_point
+                    return data_point
+        return None
+
+    def get_iec104_data_point(self, coa, ioa):
+        key = f"IEC104.{coa}.{ioa}"
         if key in self._dp_cache:
             return self._dp_cache[key]
         for host, dps in self.data_points.items():
@@ -131,6 +160,12 @@ class GridWrapper:
                 grid_values.append(grid_value)
         return grid_values
 
+    def get_first_grid_value_for_data_point(self, data_point) -> Optional[GridValue]:
+        grid_values = self.get_grid_values_for_data_point(data_point=data_point)
+        if len(grid_values) == 0:
+            return None
+        return grid_values[0]
+
     def update_iec104_value(self, coa, ioa, value) -> bool:
         """
         Updates all GridValues associated with the given COA and IOA to the given value.
@@ -141,17 +176,20 @@ class GridWrapper:
         @return:
         """
         changed = False
-        data_point = self.get_data_point(coa, ioa)
+        data_point = self.get_iec104_data_point(coa, ioa)
         if data_point is not None:
-            type_id = self._dp_get_type_id(data_point)
-            cot = self._dp_get_cot(data_point)
+            type_id = self.dp_get_type_id(data_point)
+            cot = self.dp_get_cot(data_point)
             if type_id == 45:
                 value = bool(value)
             grid_values = self.get_grid_values_for_data_point(data_point)
             with self.lock:
                 for grid_value in grid_values:
                     old_value = grid_value.get_value()
-                    self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
+                    # TODO: Check if "set_value" is ok here or if we (again) need raw_set_value
+                    changed |= grid_value.set_value(value)
+
+                    # self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
                     # Add measurements to state estimators
                     timeout = False
                     if cot == 1:
@@ -159,6 +197,61 @@ class GridWrapper:
                     measurement = PowerOwlMeasurement(grid_value, value, timeout, self.virtual_time.time())
                     for estimator_info in self._state_estimators.values():
                         estimator_info["estimator"].measure(measurement)
+        return changed
+
+    def handle_data_point_update(self, data_point_identifier: str, value: Any, protocol_name: str, protocol_data: Optional[Dict] = None):
+        changed = False
+
+        try:
+            data_point = self.get_data_point(data_point_identifier)
+            export_data = {}
+            export_host = data_point.get("host", "catchAll")
+            if data_point is None:
+                self.logger.warning(f"Unknown data point {data_point_identifier} - cannot handle update")
+                return False
+            if protocol_name == CCXProtocol.IEC104:
+                if protocol_data is not None:
+                    coa = protocol_data["coa"]
+                    ioa = protocol_data["ioa"]
+                else:
+                    iec104info = self.get_104_info(data_point)
+                    if iec104info is None:
+                        self.logger.error(f"Invalid IEC104 data point: {data_point_identifier} - cannot handle update")
+                        return False
+                    coa = iec104info["coa"]
+                    ioa = iec104info["ioa"]
+                export_data["ioa"] = ioa
+                export_data["coa"] = coa
+                if export_host == "catchAll":
+                    export_data = f"{coa}"
+                changed = self.update_iec104_value(coa, ioa, value)
+            elif protocol_name == CCXProtocol.IEC61850_MMS:
+                self.logger.warning(f"IEC 61850-MMS is not yet implemented - cannot handle update")
+                return False
+            else:
+                self.logger.error(f"Unknown protocol {protocol_name} - cannot handle update")
+                return False
+
+            # Update data point timings
+            if self._dp_timing_enabled:
+                # NIY
+                pass
+
+            # Export measurements
+            if self._export_measurements:
+                ref_time: WattsonTime = self._export_measurements_wattson_time_callback()
+                self._export_measurements_queue.put(
+                    {
+                        "identifier": data_point_identifier,
+                        "host": export_host,
+                        "value": value,
+                        "data": export_data,
+                        "sim-time": ref_time.sim_clock_time(),
+                        "clock-time": ref_time.wall_clock_time()
+                    }
+                )
+        except Exception as e:
+            self.logger.error(f"{e=}")
         return changed
 
     def handle_measurement(self, update: messages.ProcessInfoMonitoring):
@@ -184,7 +277,7 @@ class GridWrapper:
                 ref_time: WattsonTime = self._export_measurements_wattson_time_callback()
                 val_map = copy.deepcopy(update.val_map)
                 self._export_measurements_queue.put({
-                    "coa": coa,
+                    "host": coa,
                     "value_map": val_map,
                     "sim-time": ref_time.sim_clock_time(),
                     "clock-time": ref_time.wall_clock_time()
@@ -241,6 +334,12 @@ class GridWrapper:
         self._dp_timing_thread = threading.Thread(target=self._timing_monitoring_loop)
         self._dp_timing_thread.start()
 
+    def add_on_estimation_started_callback(self, callback: Callable[[str], None]):
+        self._on_estimation_started_callbacks.append(callback)
+
+    def add_on_estimation_done_callback(self, callback: Callable[[str, bool], None]):
+        self._on_estimation_done_callbacks.append(callback)
+
     def start_state_estimation(self, name: str,
                                estimation_mode: Optional[str] = None,
                                measurement_decay: Optional[float] = None,
@@ -260,25 +359,32 @@ class GridWrapper:
                 self.logger.warning(f"StateEstimator '{name}' is already running")
                 return False
 
-            self._state_estimators[name] = {
-                "estimator": StateEstimator(
-                    power_net=self.power_grid_model.to_external(),
-                    update_required=threading.Event(),
-                    pnet_lock=self._power_flow_lock,
-                    estimation_done_callback=self._estimation_done,
-                    estimation_started_callback=self._estimation_started,
-                    estimation_mode=estimation_mode,
-                    measurement_decay=measurement_decay,
-                    virtual_time=self.virtual_time,
-                    name=name
-                ),
-                "name": name,
-                "export": export,
-                "wattson_time": wattson_time,
-                "folder": export_folder
-            }
-            self.logger.info(f"Starting StateEstimator {name} with mode {estimation_mode}")
-            self._state_estimators[name]["estimator"].start()
+            if not isinstance(self.power_grid_model, PandaPowerGridModel):
+                self.logger.error("Cannot start state estimator. Only PandaPowerGridModel supported.")
+            else:
+                self._state_estimators[name] = {
+                    "estimator": PandaPowerStateEstimator(
+                        power_grid_model=self.power_grid_model,
+                        # update_required=threading.Event(),
+                        update_required=QueueEvent(max_queue_interval_s=10),
+                        pnet_lock=self._power_flow_lock,
+                        estimation_done_callback=self._estimation_done,
+                        estimation_started_callback=self._estimation_started,
+                        estimation_mode=estimation_mode,
+                        measurement_decay=measurement_decay,
+                        virtual_time=self.virtual_time,
+                        fault_detection=False,
+                        name=name,
+                    ),
+                    "name": name,
+                    "export": export,
+                    "wattson_time": wattson_time,
+                    "folder": export_folder
+                }
+                self.logger.info(f"Starting StateEstimator {name} with mode {estimation_mode}")
+                self._state_estimators[name]["estimator"].add_on_element_update_callback(self._notify_on_element_update)
+                self._state_estimators[name]["estimator"].start()
+
         if export:
             self.logger.info(f"Starting StateEstimation Export for {name} to {export_folder}")
             if self._export_se_thread is None:
@@ -310,14 +416,14 @@ class GridWrapper:
         while not self._stop_export_measurement_event.is_set():
             try:
                 update = self._export_measurements_queue.get(block=True, timeout=1)
-                coa = update["coa"]
-                handle = self._export_measurements_files.get(coa)
+                host = update["host"]
+                handle = self._export_measurements_files.get(host)
                 if handle is None:
-                    self.logger.debug(f"Creating measurement export file for COA {coa}")
-                    file: pathlib.Path = self._export_measurements_root.joinpath(f"measurements-{coa}.jsonl")
+                    self.logger.debug(f"Creating measurement export file for Host {host}")
+                    file: pathlib.Path = self._export_measurements_root.joinpath(f"measurements-{host}.jsonl")
                     file.touch(0o755, exist_ok=True)
                     handle = open(file=file, mode="w")
-                    self._export_measurements_files[coa] = handle
+                    self._export_measurements_files[host] = handle
                 handle.write(json.dumps(update) + "\n")
                 handle.flush()
             except queue.Empty:
@@ -340,7 +446,7 @@ class GridWrapper:
                 e: 'StateEstimator' = estimator_info["estimator"]
                 wattson_time = estimator_info["wattson_time"]
                 folder = estimator_info["folder"]
-                self.export(e.power_net, folder, wattson_time)
+                self.export(e.power_grid_model.to_primitive_dict(), folder, wattson_time)
 
     def _periodic_export_loop(self):
         last_export = 0
@@ -399,14 +505,24 @@ class GridWrapper:
         estimator_info["estimator"].join()
         return True
 
-    def _estimation_done(self, name: str, success: bool):
-        self.logger.debug(f"SE for {name}: {success=}")
+    def _estimation_done(self, name: str, success: bool, used_algorithm: Optional[str] = None):
+        self.logger.debug(f"SE for {name}: {success=} - {used_algorithm=}")
+        try:
+            for callback in self._on_estimation_done_callbacks:
+                callback(name, success, used_algorithm)
+        except Exception as e:
+            self.logger.error(f"Failed to handle estimation done callback: {e=}")
         if success and self._state_estimators.get(name, {}).get("export", False):
             self.logger.debug(f"Scheduling export for {name}")
             self._export_se_queue.put(name)
 
     def _estimation_started(self, name: str):
         self.logger.debug(f"Started Estimation {name}")
+        try:
+            for callback in self._on_estimation_started_callbacks:
+                callback(name)
+        except Exception as e:
+            self.logger.error(f"Failed to handle estimation started callback: {e=}")
 
     def export(self, data, folder: Path, ref_time: WattsonTime):
         ref_time_wall = ref_time.file_name(time_type=WattsonTimeType.WALL, with_milliseconds=True)
@@ -483,22 +599,6 @@ class GridWrapper:
                 data.append(line)
         return data
 
-    def get_dataframe_row(self, net, ref_time: datetime.datetime, table_cols: Optional[List[str]] = None):
-        raise DeprecationWarning("get_dataframe_row has been deprecated")
-        data = {"datetime": [ref_time.timestamp()]}
-        if table_cols is None:
-            table_cols = ["*"]
-        for table in dir(net):
-            if isinstance(net[table], pd.DataFrame):
-                for col in net[table].columns:
-                    if f"{table}.{col}" in table_cols or "*" in table_cols:
-                        for index in net[table].index:
-                            key = f"{table}.{col}.{index}"
-                            data[key] = [net[table].at[index, col]]
-        df = pd.DataFrame(data)
-        df.set_index("datetime")
-        return df
-
     # def on_element_change(self, callback: Callable[[str, int, str, DataPointValue, DataPointValue], None]):
     def on_element_change(self, callback: Callable[[GridValue, Any, Any], None]):
         self._callbacks["on_element_change"].append(callback)
@@ -516,23 +616,29 @@ class GridWrapper:
         for callback in self._callbacks["on_element_change"]:
             callback(grid_value, old_value, new_value)
 
-    def update_grid_value(self, element_type: str, element_index: int, value_context: GridValueContext, value_name: str, value):
-        grid_element = self.power_grid_model.get_element(element_type=element_type, element_id=element_index)
-        grid_value = grid_element.get(key=value_name, context=value_context)
+    def _on_grid_value_set(self, grid_value: GridValue, old_value: Any, new_value: Any):
+        self._notify_on_element_update(grid_value, old_value=old_value, new_value=new_value)
+
+    def update_grid_value(self, grid_value: GridValue, value):
         old_value = grid_value.get_value()
-        if old_value != value:
-            grid_value.set_value(value)
-            self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
+        changed = grid_value.set_value(value)
+        if changed:
+            # self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
             self._power_flow_required.set()
             return True
-        self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
+        # self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
         return False
 
+    def update_grid_value_by_identifiers(self, element_type: str, element_index: int, value_context: GridValueContext, value_name: str, value):
+        grid_element = self.power_grid_model.get_element(element_type=element_type, element_id=element_index)
+        grid_value = grid_element.get(key=value_name, context=value_context)
+        return self.update_grid_value(grid_value, value)
+
     def get_measurement(self, coa, ioa, value, arrival_time: Optional[float] = None) -> Optional[PowerOwlMeasurement]:
-        dp = self.get_data_point(coa, ioa)
+        dp = self.get_iec104_data_point(coa, ioa)
         if dp is not None:
             grid_values = self.get_grid_values_for_data_point(dp)
-            cot = self._dp_get_cot(dp)
+            cot = self.dp_get_cot(dp)
             if len(grid_values) != 1:
                 if len(grid_values) == 0:
                     self.logger.error(f"No grid value for {coa=}.{ioa=} found")
@@ -610,17 +716,17 @@ class GridWrapper:
 
     @staticmethod
     def get_104_info(data_point):
-        if data_point["protocol"] == "60870-5-104":
+        if data_point["protocol"] == CCXProtocol.IEC104:
             return data_point["protocol_data"]
         return None
 
-    def _dp_get_type_id(self, dp):
+    def dp_get_type_id(self, dp):
         info = self.get_104_info(dp)
         if info is not None:
             return info.get("type_id")
         return None
 
-    def _dp_get_cot(self, dp):
+    def dp_get_cot(self, dp):
         info = self.get_104_info(dp)
         if info is not None:
             return info.get("cot")

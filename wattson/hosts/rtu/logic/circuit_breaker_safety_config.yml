@@ -1,0 +1,6 @@
+safety_enabled:
+  - "switch.4"
+start_delay: 30
+modes:
+  over_voltage: "highest"
+  under_voltage: "lowest"

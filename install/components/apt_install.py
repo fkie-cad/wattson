@@ -12,6 +12,7 @@ class AptInstall(ComponentInstall):
         super().__init__(folder, main_task)
         self.from_step = 0
         self.linux_headers = None
+        self.is_windows = False
 
     def get_steps(self) -> int:
         return len(self.main_task.get_subtasks())
@@ -28,6 +29,9 @@ class AptInstall(ComponentInstall):
         else:
             uname = self._last_stdout[0]
             self.linux_headers = f"linux-headers-{uname}"
+            if "microsoft" in self.linux_headers:
+                self.linux_headers = None
+                self.is_windows = True
             task.success()
 
     def get_apt_dependencies(self) -> List[str]:
@@ -38,9 +42,9 @@ class AptInstall(ComponentInstall):
            "socat", "gfortran", "libopenblas-dev", "liblapack-dev", "ninja-build", "graphviz",
            "libgraphviz-dev", "graphviz-dev", "pkg-config", "docker.io", "python3-pyqt5",
             "dpkg-dev", "lintian", "devscripts", "fakeroot", "debhelper", "dh-autoreconf", "uuid-runtime",
-           "autoconf", "automake", "libtool", "python3-all", "dh-python", "xdg-utils", "groff", "netcat", "curl",
+           "autoconf", "automake", "libtool", "python3-all", "dh-python", "xdg-utils", "groff", "netcat-openbsd", "curl",
            "ethtool", "libunbound-dev", "libunbound8", "libcap-ng-dev", "libssl-dev", "openssl",
-           "python3-pyftpdlib",
+           "python3-pyftpdlib", "qt6-base-dev", "qt6-webengine-dev", "qt6-webview-dev",
            "python3-flake8", "lftp", "swig", "dsniff", "dbus-x11", "openvswitch-switch",
             "frr", "frr-pythontools"
         ]

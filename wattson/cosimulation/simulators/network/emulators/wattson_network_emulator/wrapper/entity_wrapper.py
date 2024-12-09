@@ -13,15 +13,21 @@ class EntityWrapper(abc.ABC):
     def __init__(self, entity: NetworkEntity, emulator: 'WattsonNetworkEmulator'):
         self.entity = entity
         self.emulator: 'WattsonNetworkEmulator' = emulator
-        self._namespace = None
+        self._virtual_machine_namespace = None
         self.logger = get_logger(f"{entity.entity_id}Wrapper", f"{entity.entity_id}Wrapper")
 
     @abc.abstractmethod
     def get_namespace(self) -> Namespace:
         ...
 
-    def create(self):
-        pass
+    def get_additional_namespace(self) -> Namespace:
+        return self.get_namespace()
+
+    def has_additional_namespace(self) -> bool:
+        return self.get_additional_namespace() != self.get_namespace()
+
+    def create(self) -> bool:
+        return True
 
     def clean(self):
         pass

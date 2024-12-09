@@ -1,11 +1,13 @@
+import copy
 import dataclasses
+import json
 import shlex
 import shutil
 import subprocess
 import sys
 import typing
 from pathlib import Path
-from typing import List, TYPE_CHECKING, Optional, Dict, Union, Callable
+from typing import List, TYPE_CHECKING, Optional, Dict, Union, Callable, Tuple
 
 from wattson.cosimulation.exceptions import ServiceNotFoundException
 from wattson.cosimulation.simulators.network.components.interface.network_node import NetworkNode
@@ -36,12 +38,18 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     _processes: List[subprocess.Popen] = dataclasses.field(default_factory=list)
     _min_interface_id: int = 0
 
+    _is_outside_namespace: bool = False
+
     class_id: typing.ClassVar[int] = 0
 
     def __post_init__(self):
         super().__post_init__()
         self.load_services()
-        
+
+    @property
+    def os(self) -> str:
+        return "linux"
+
     def start(self):
         super().start()
         for key, value in self.config.get("sysctl", {}).items():
@@ -50,6 +58,14 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def stop(self):
         self.shutdown_processes()
         super().stop()
+
+    def add_dns_entry(self, entry):
+        success = self.mkdir(Path(f"/etc/netns/w_n{self.id}"))
+        code = self.exec(["touch", f"/etc/netns/w_n{self.id}/resolv.conf"])
+        code = self.exec(f"echo {entry} >> /etc/netns/w_n{self.id}/resolv.conf", shell=True)
+
+    def is_outside_namespace(self):
+        return self._is_outside_namespace
 
     def set_sysctl(self, key, value) -> bool:
         code = self.exec(["sysctl", "-w", f"{key}={value}"])
@@ -73,8 +89,8 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
             self.interfaces.append(interface)
 
     def remove_interface(self, interface: 'WattsonNetworkInterface'):
-        if interface in self.get_interfaces():
-            self.get_interfaces().remove(interface)
+        if interface in self.interfaces:
+            self.interfaces.remove(interface)
 
     def on_interface_start(self, interface: 'WattsonNetworkInterface'):
         pass
@@ -88,7 +104,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         return f"{prefix}{i}"
 
     def get_interfaces(self) -> List['WattsonNetworkInterface']:
-        return self.interfaces
+        return self.interfaces.copy()
 
     def get_ip_addresses(self) -> List[str]:
         return super().get_ip_addresses()
@@ -111,7 +127,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
             service_configuration = ServiceConfiguration()
             # TODO: Better loading with sanitizing?
             for key, value in service_config.get("config", {}).items():
-                service_configuration[key] = value
+                service_configuration[key] = copy.deepcopy(value)
 
             service = None
             if service_config["service-type"] == "python":
@@ -192,17 +208,25 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def entity_id(self) -> str:
         return self.node_id
 
-    def get_artifact_folder(self) -> Path:
+    def get_host_root(self, ensure_exists: bool = True) -> Path:
+        """
+        Returns the root folder of this network node.
+        @return:
+        """
         path = self.network_emulator.get_working_directory().joinpath(self.get_hostname())
-        path.mkdir(parents=True, exist_ok=True)
+        if ensure_exists:
+            path.mkdir(parents=True, exist_ok=True)
         return path
 
-    def get_host_folder(self) -> Path:
+    def get_host_folder(self, ensure_exists: bool = True) -> Path:
         """
         Return the working directory of this node relative to the host machine running Wattson.
         @return: The working directory of this node relative to the host machine
         """
-        return self.get_artifact_folder()
+        path = self.get_host_root(ensure_exists=ensure_exists).joinpath("working_directory")
+        if ensure_exists:
+            path.mkdir(parents=True, exist_ok=True)
+        return path
 
     def get_guest_folder(self) -> Path:
         """
@@ -217,10 +241,11 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
 
     def exec(self, cmd: Union[List[str], str], **kwargs) -> typing.Tuple[int, List[str]]:
         if isinstance(cmd, str):
-            cmd = [cmd]
+            cmd = shlex.split(cmd)
         # namespace = self.network_emulator.get_namespace(self)
-        cmd = shlex.split(" ".join(cmd))
-        proc = self.popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, **kwargs)
+        # cmd = shlex.split(" ".join(cmd))
+        stderr = kwargs.pop("stderr", subprocess.STDOUT)
+        proc = self.popen(cmd, stdout=subprocess.PIPE, stderr=stderr, universal_newlines=True, **kwargs)
         res_lines = []
         output, error = proc.communicate()
         for line in output.splitlines():
@@ -257,7 +282,6 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def delete_role(self, role: str):
         if self.has_role(role):
             self.config["roles"].remove(role)
-
 
     def add_role(self, role: str):
         if self.has_role(role):
@@ -378,3 +402,105 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         @return: Whether the folder exists (and is actually a folder)
         """
         return self.exec_fs_cmd(["test", "-d", str(folder.absolute())]) == 0
+
+    def transform_path(self, path: Path) -> Path:
+        """
+        Transforms the given path to a node-specific path, i.e., relative paths are transformed to the in-node file system w.r.t. the working directory.
+        @param path: The path to transform
+        @return: The transformed path
+        """
+        if path.is_absolute():
+            return path
+        return self.get_guest_folder().joinpath(path)
+
+    def file_put_contents(self, path: Path, contents: str) -> Tuple[bool, Optional[Path]]:
+        transformed_path = self.transform_path(path)
+        return self.get_namespace().file_put_contents(transformed_path, contents), transformed_path
+
+    def file_get_contents(self, path: Path) -> Optional[str]:
+        return self.get_namespace().file_get_contents(path)
+
+    """
+    Interface control
+    """
+    def interface_set_mac(self, interface: 'WattsonNetworkInterface') -> bool:
+        return False
+
+    def interface_up(self, interface: 'WattsonNetworkInterface') -> bool:
+        code, lines = self.exec(["ip", "link", "set", "dev", interface.get_system_name(), "up"])
+        if not code == 0:
+            self.logger.error(f"Could not set interface {interface.get_system_name()} up")
+            self.logger.debug(lines)
+        return code == 0
+
+    def interface_down(self, interface: 'WattsonNetworkInterface') -> bool:
+        code, lines = self.exec(["ip", "link", "set", "dev", interface.get_system_name(), "down"])
+        if not code == 0:
+            self.logger.error(f"Could not set interface {interface.get_system_name()} down")
+            self.logger.debug(lines)
+        return code == 0
+
+    def interface_flush_ip(self, interface: 'WattsonNetworkInterface') -> bool:
+        code, lines = self.exec(["ip", "addr", "flush", "dev", interface.get_system_name()])
+        if not code == 0:
+            self.logger.error(f"Could not flush IP of {interface.get_system_name()}")
+            self.logger.debug(lines)
+        return code == 0
+
+    def interface_set_ip(self, interface: 'WattsonNetworkInterface') -> bool:
+        if interface.ip_address_string is None:
+            return True
+        code, lines = self.exec(["ip", "addr", "add", interface.ip_address_string, "dev", interface.get_system_name()])
+        if not code == 0:
+            self.logger.error(f"Could not set IP of {interface.get_system_name()} to {interface.ip_address_string}")
+            self.logger.debug(lines)
+        return code == 0
+
+    def interface_rename(self, old_name: str, new_name: str) -> bool:
+        """
+        Renames a physical interface on the node
+        @param old_name: The original interface name
+        @param new_name: The new interface name
+        @return: Whether the action was successful
+        """
+        code, lines = self.exec(["ip", "link", "set", "dev", old_name, "name", new_name])
+        if not code == 0:
+            self.logger.error(f"Could not rename interface {old_name} to {new_name}")
+            self.logger.error(lines)
+            return False
+        return True
+
+    def interfaces_list_existing(self) -> List[Dict]:
+        code, lines = self.exec(["ip", "--json", "a"], stderr=subprocess.PIPE)
+        if code != 0:
+            self.logger.error(f"Could not load interface information")
+            return []
+        try:
+            data = json.loads("\n".join(lines))
+        except json.JSONDecodeError:
+            self.logger.error(f"Could not load interface information ({self.entity_id} // {self.display_name})")
+            self.logger.error("\n".join(lines))
+            return []
+        # Sanitize - follow QEMU Agent format
+        interfaces = []
+        for interface_data in data:
+            ip_addresses = []
+            for address_info in interface_data.get("addr_info", []):
+                addr_type = "inet"
+                if address_info.get("family") == "inet":
+                    addr_type = "ipv4"
+                elif address_info.get("family") == "inet6":
+                    addr_type = "ipv6"
+                ip_addresses.append({
+                    "ip-address-type": addr_type,
+                    "ip-address": address_info.get("local"),
+                    "prefix": address_info.get("prefixlen")
+                })
+            interface = {
+                "name": interface_data["ifname"],
+                "ip-addresses": ip_addresses,
+                "statistics": {},
+                "hardware-address": interface_data.get("address")
+            }
+            interfaces.append(interface)
+        return interfaces

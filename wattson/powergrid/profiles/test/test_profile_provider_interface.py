@@ -4,8 +4,8 @@ from pathlib import Path
 import pandapower
 import yaml
 
-from wattson.powergrid.profiles.profile_provider_interface import (
-    PowerProfileProviderInterface,
+from wattson.powergrid.profiles.profile_calculator import (
+    ProfileCalculator,
 )
 import pytest
 
@@ -20,20 +20,6 @@ import pytest
         ("test1", "test2", "test2"),
     ],
 )
-def test_get_file(key, value, expected_filename):
-    scenario_path = (
-        Path(__file__).parent.parent.parent.parent.with_name("scenarios")
-        / "cigre_mv_2020"
-    )
-    dicts = yaml.load(
-        (scenario_path / "powernetwork.yml").open("r"), Loader=yaml.FullLoader
-    )
-    pnet = pandapower.from_json_string(json.dumps(dicts))
-
-    interface = PowerProfileProviderInterface(pnet, {})
-    actual_file = interface.get_file(key, value)
-    assert actual_file.name == expected_filename
-
 
 def test_store_base_values():
     scenario_path = (
@@ -45,7 +31,7 @@ def test_store_base_values():
     )
     pnet = pandapower.from_json_string(json.dumps(dicts))
 
-    interface = PowerProfileProviderInterface(pnet, {})
+    interface = ProfileCalculator(pnet, {})
     assert interface._base_values == {
         "load": {
             0: {"p": 15.3, "q": 3.044661557546264},

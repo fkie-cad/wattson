@@ -71,8 +71,8 @@ class WattsonDockerPacketbeatService(WattsonService):
         self.logger = get_logger("WattsonPacketbeat", "WattsonPacketbeat")
         self.elk_ip = self._service_configuration.get("elk_ip")
 
-    def start(self):
-        super().start()
+    def start(self, refresh_config: bool = False):
+        super().start(refresh_config=refresh_config)
         kibana_port = self._service_configuration.get("kibana_port", 5601)
         elastic_port = self._service_configuration.get("elastic_port", 9200)
         if self.elk_ip is not None:

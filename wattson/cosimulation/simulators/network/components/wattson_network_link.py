@@ -1,5 +1,6 @@
 import dataclasses
 import time
+import typing
 from typing import TYPE_CHECKING, Optional, Any, Callable, List, ClassVar
 
 import json
@@ -19,6 +20,7 @@ class WattsonNetworkLink(WattsonNetworkEntity, NetworkLink):
     interface_b: Optional['WattsonNetworkInterface'] = None
     link_model: NetworkLinkModel = dataclasses.field(default_factory=lambda: NetworkLinkModel())
     config: dict = dataclasses.field(default_factory=lambda: {})
+    link_type: str = "digital"
 
     class_id: ClassVar[int] = 0
 
@@ -93,6 +95,10 @@ class WattsonNetworkLink(WattsonNetworkEntity, NetworkLink):
 
     def get_interface_b(self) -> 'WattsonNetworkInterface':
         return self.interface_b
+    
+    def get_other_interface(self, interface: 'WattsonNetworkInterface') -> 'WattsonNetworkInterface':
+        from wattson.cosimulation.simulators.network.components.wattson_network_interface import WattsonNetworkInterface
+        return typing.cast(WattsonNetworkInterface, super().get_other_interface(interface))
 
     def up(self):
         if not self.is_started:
@@ -110,6 +116,8 @@ class WattsonNetworkLink(WattsonNetworkEntity, NetworkLink):
         self.cached_is_up = False
         node_a = self.interface_a.get_node()
         node_a.exec(["ip", "link", "set", self.interface_a.get_system_name(), "down"])
+        self.interface_a.down()
+        self.interface_b.down()
         self.network_emulator.on_topology_change(self, "link_down")
 
     def is_up(self, force_update: bool = True) -> bool:

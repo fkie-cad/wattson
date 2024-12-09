@@ -29,10 +29,10 @@ class RTU:
     """
 
     def __init__(
-        self,
-        iec_server_class: Type[IECServerInterface],
-        server_datapoints: list,
-        **kwargs,
+            self,
+            iec_server_class: Type[IECServerInterface],
+            server_datapoints: list,
+            **kwargs,
     ):
         self.ip = ""
         self.hostname = ""
@@ -56,17 +56,15 @@ class RTU:
         self.periodic_updates_enable = kwargs.get("periodic_updates_enable", True)
         self.iec104_port = kwargs.get("iec104_port", 2404)
 
+        self._local_control = kwargs.get("local_control", False)
+
         self.logger = kwargs.get("logger")
         if self.logger is None:
-            self.logger = get_logger(
-                str(self.coa),
-                f"Wattson.RTU {self.coa}",
-                level=logging.INFO,
-                use_context_logger=False,
-                use_async_logger=False
-            )
+            self.logger = get_logger(f"RTU {self.coa}", level=logging.INFO, syslog_config=kwargs.get("use_syslog", False))
         self.logger.info(f"Starting RTU {self.coa}")
         self.logger.info(f"Primary IP: {self.ip}")
+        if self._local_control:
+            self.logger.warning(f"Local Control enabled: No remote control commands are allowed")
 
         self.statistics_config = kwargs.get("statistics", {})
 
@@ -127,6 +125,9 @@ class RTU:
                     "cache_decay": 5,
                     "statistics": self.statistics,
                 },
+                "protection": {
+                    "wattson_client": self.wattson_client,
+                },
                 "register": {"host": str(self.hostname)},
                 "copy": {"host": str(self.hostname)},
             },
@@ -148,6 +149,21 @@ class RTU:
         self.start_sockets()
         for logic in self.logics:
             logic.on_start()
+
+    def get_data_point_info(self, identifier: str):
+        return self.data_point_dict.get(identifier)
+
+    def get_value(self, identifier):
+        for logic in self.logics:
+            if logic.handles_get_value(identifier):
+                return logic.handle_get_value(identifier)
+        return self.manager.get_value(identifier)
+
+    def set_value(self, identifier, value):
+        for logic in self.logics:
+            if logic.handles_set_value(identifier, value):
+                return logic.handle_set_value(identifier, value)
+        return self.manager.set_value(identifier, value)
 
     def start_sockets(self):
         self.logger.info("Starting protocol sockets")
@@ -195,7 +211,6 @@ class RTU:
                 else:
                     raise NotImplementedError(f"No Handler for {protocol} implemented")
 
-
     # IEC 104 specific socket
     def _init_iec104_socket(self):
         rtu_iec104 = RtuIec104(
@@ -204,7 +219,8 @@ class RTU:
             periodic_update_start=self.periodic_update_start,
             periodic_updates_enable=self.periodic_updates_enable,
             port=self.iec104_port,
-            allowed_mtu_ips=self._allowed_mtu_ips
+            allowed_mtu_ips=self._allowed_mtu_ips,
+            block_control_commands=self._local_control
         )
         rtu_iec104.setup_socket()
         self.protocol_sockets["60870-5-104"] = rtu_iec104

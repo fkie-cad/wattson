@@ -1,4 +1,5 @@
 import math
+from os import wait
 import queue
 import threading
 import time
@@ -17,11 +18,7 @@ from wattson.cosimulation.control.messages.wattson_query_type import WattsonQuer
 from wattson.cosimulation.control.messages.wattson_response import WattsonResponse
 from wattson.cosimulation.control.messages.wattson_response_promise import WattsonResponsePromise
 from wattson.cosimulation.exceptions import WattsonClientException
-from wattson.cosimulation.simulators.network.components.remote.remote_network_entity import RemoteNetworkEntity
-from wattson.cosimulation.simulators.network.components.remote.remote_network_entity_factory import RemoteNetworkEntityFactory
 from wattson.cosimulation.simulators.network.components.remote.remote_network_interface import RemoteNetworkInterface
-from wattson.cosimulation.simulators.network.messages.wattson_network_query import WattsonNetworkQuery
-from wattson.cosimulation.simulators.network.messages.wattson_network_query_type import WattsonNetworkQueryType
 from wattson.services.wattson_remote_service import WattsonRemoteService
 from wattson.util import get_logger
 from wattson.networking.namespaces.namespace import Namespace
@@ -39,11 +36,18 @@ class WattsonClient(threading.Thread):
                  publish_server_socket_string: str = f"tcp://127.0.0.1:{SIM_CONTROL_PUBLISH_PORT}",
                  client_name: str = "generic-client",
                  namespace: Optional[Union[str, Namespace]] = None,
-                 wait_for_namespace: bool = False):
-        super().__init__()
+                 wait_for_namespace: bool = False,
+                 wattson_socket_ip: Optional[str] = None):
+        super().__init__(daemon=True)
         self.logger = get_logger(self.__class__.__name__, self.__class__.__name__)
+        # self.logger.setLevel(logging.DEBUG)
         self._query_socket_string = query_server_socket_string
         self._publish_socket_string = publish_server_socket_string
+
+        if wattson_socket_ip is not None:
+            self._query_socket_string = f"tcp://{wattson_socket_ip}:{SIM_CONTROL_PORT}"
+            self._publish_socket_string = f"tcp://{wattson_socket_ip}:{SIM_CONTROL_PUBLISH_PORT}"
+
         self._termination_requested = threading.Event()
         self._started_event = threading.Event()
         self._start_lock = threading.Lock()
@@ -74,6 +78,7 @@ class WattsonClient(threading.Thread):
         self._remote_services: Dict[int, WattsonRemoteService] = {}
 
         self._async_queries: Dict[int, WattsonQuery] = {}
+        self._pre_resolved_queries: Dict[int, WattsonNotification] = {}
 
         self.subscribe(WattsonNotificationTopic.EVENTS, self._handle_event_notification)
         self.subscribe(WattsonNotificationTopic.ASYNC_QUERY_RESOLVE, self._handle_async_query)
@@ -86,36 +91,45 @@ class WattsonClient(threading.Thread):
     def name(self) -> str:
         return self._client_name
 
-    def start(self) -> None:
+    def start(self, timeout: Optional[float] = None) -> None:
         with self._start_lock:
             if self._started_event.is_set():
                 return
             # Optionally wait for namespace to exist
-            if self._wait_for_namespace:
+            if self._wait_for_namespace:                
+                waiting_start = time.time()
                 while not self._namespace.exists() and not self._termination_requested.is_set():
                     time.sleep(0.5)
+                    if timeout is not None and time.time() - waiting_start > timeout:
+                        raise TimeoutError("Waiting for the namespace took too long")
                 if self._termination_requested.is_set():
                     return
             self._started_event.set()
             self._termination_requested.clear()
             self._publish_client.start()
             super().start()
+        self.require_connection(timeout_seconds=timeout)
+        self.register()
 
     def stop(self, timeout: Optional[float] = None):
         self._started_event.clear()
         self._termination_requested.set()
         self._publish_client.stop(timeout=timeout)
         if self.is_alive():
+            self.logger.debug(f"Waiting for termination")
             self.join(timeout=timeout)
         self._registered = False
         self._client_id = None
+        self.logger.debug(f"Stopped")
 
-    def register(self, client_name: Optional[str] = None) -> bool:
+    def register(self, client_name: Optional[str] = None, force_new_id: bool = False) -> bool:
         """
         Registers this client with the server based on the given ID, indicating its connection and availability.
         Returns True, iff the registration is acknowledged.
         """
         if self.is_registered:
+            if not force_new_id:
+                return True
             self.logger.info(f"Already registered as {self.client_id}. Requesting new ID.")
 
         if client_name is not None:
@@ -129,6 +143,7 @@ class WattsonClient(threading.Thread):
             self.logger.error(f"Could not register with {query.query_type=} {query.query_data=} - {resp.data=}")
         else:
             self._client_id = resp.data.get("client_id")
+        self.logger.info(f"Registered as {self._client_id}")
         return self.is_registered
 
     def require_connection(self, timeout_seconds: Optional[float] = None) -> bool:
@@ -140,7 +155,7 @@ class WattsonClient(threading.Thread):
 
         This function regularly checks for termination requests and stops its blocking behavior accordingly.
         """
-        interval_seconds = 1
+        interval_seconds = 5
         if timeout_seconds is not None:
             seconds = math.ceil(timeout_seconds)
             interval_seconds = timeout_seconds / seconds
@@ -181,6 +196,7 @@ class WattsonClient(threading.Thread):
                             continue
                         query: WattsonQuery = request["query"]
                         event: threading.Event = request["event"]
+                        query.client_id = self.client_id
                         try:
                             socket.send_pyobj(query)
                             # Poll socket for answer, but be interruptable by the termination event
@@ -196,6 +212,7 @@ class WattsonClient(threading.Thread):
                                 promise = WattsonResponsePromise(query=query, resolve_event=event)
                                 self._async_queries[resp.reference_id] = query
                                 query.add_response(promise)
+                                self._check_is_pre_resolved(resp.reference_id)
                             else:
                                 query.add_response(resp)
                                 event.set()
@@ -217,7 +234,7 @@ class WattsonClient(threading.Thread):
     def query(self, query: WattsonQuery, block: bool = True) -> WattsonResponse:
         """
         Issues a query to the simulation control server, returning the response.
-        :param query:
+        :param query: The query to issue
         :param block: Whether to block until the response arrives
         :return: The WattsonResponse returned by the server. This can also be a promise.
         """
@@ -230,7 +247,11 @@ class WattsonClient(threading.Thread):
         }
         self._query_queue.put(request)
         if block:
-            event.wait()
+            # Allow interrupting when client stops
+            while not event.wait(1):
+                if self._termination_requested.is_set():
+                    self.logger.warning(f"Client shutdown during query handling")
+                    return FailedQueryResponse()
         else:
             return WattsonResponsePromise(query, event)
 
@@ -257,7 +278,10 @@ class WattsonClient(threading.Thread):
             response = notification.notification_data.get("response")
             query = self._async_queries.get(reference_id)
             if query is None:
-                self.logger.warning(f"Unknown async query response {reference_id=} resolved")
+                self._pre_resolved_queries[reference_id] = notification
+                self.logger.warning(f"{self.client_id} - Unknown async query response {reference_id=} resolved - marking as pre-resolved ({notification.recipients})")
+                response: WattsonResponse
+                self.logger.warning(f"{response.is_successful()=}, {repr(response.data)[:200]}")
                 return
             # Remove entry / mark as resolved
             self._async_queries.pop(reference_id)
@@ -265,8 +289,15 @@ class WattsonClient(threading.Thread):
             if not isinstance(promise, WattsonResponsePromise):
                 self.logger.warning("Resolved async query response does not have WattsonResponsePromise associated")
                 return
+
             query.add_response(response)
             promise.trigger_resolve()
+
+    def _check_is_pre_resolved(self, reference_id: int):
+        if reference_id in self._pre_resolved_queries:
+            notification = self._pre_resolved_queries.pop(reference_id)
+            self.logger.info(f"Resolving pre-resolved query {reference_id=}")
+            self._handle_async_query(notification)
 
     def get_wattson_time(self, enable_synchronization: bool = False) -> 'WattsonTime':
         from wattson.time.wattson_time import WattsonTime
@@ -292,7 +323,7 @@ class WattsonClient(threading.Thread):
         """
         Handles the reception of notifications by the server.
         """
-        if not ("*" in notification.recipients or self._client_id in notification.recipients):
+        if "*" not in notification.recipients and self._client_id not in notification.recipients:
             # Notification not handled by this client
             return
         topic = notification.notification_topic
@@ -458,3 +489,19 @@ class WattsonClient(threading.Thread):
 
     def get_remote_network_nodes(self) -> List['RemoteNetworkNode']:
         return self.get_remote_network_emulator().get_nodes()
+
+    def has_simulator(self, simulator_type) -> bool:
+        query = WattsonQuery(query_type=WattsonQueryType.HAS_SIMULATOR, query_data={"simulator_type": simulator_type})
+        response = self.query(query)
+        if not response.is_successful():
+            self.logger.error("HasSimulator query not successful")
+            return False
+        return response.data.get("has_simulator", False)
+
+    def get_simulators(self) -> List[str]:
+        query = WattsonQuery(query_type=WattsonQueryType.GET_SIMULATORS)
+        response = self.query(query)
+        if not response.is_successful():
+            self.logger.error("GetSimulators query not successful")
+            return []
+        return response.data.get("simulators", [])

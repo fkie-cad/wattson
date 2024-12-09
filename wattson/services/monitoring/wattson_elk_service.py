@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 
 
 class WattsonElkService(WattsonService):
-    def start(self):
-        super().start()
+    def start(self, refresh_config: bool = False):
+        super().start(refresh_config=refresh_config)
         start_file = Path("/usr/local/bin/start.sh")
         if not self.network_node.file_exists(start_file):
             self.network_node.logger.error(f"Cannot start ELK service as not start script can be found")

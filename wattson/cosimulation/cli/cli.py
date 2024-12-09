@@ -10,6 +10,7 @@ from typing import Optional, Union, List, Tuple, Type, Dict
 from wattson.cosimulation.cli.cli_command_handler import CliCommandHandler
 from wattson.cosimulation.cli.cli_completer import CLICompleter
 from wattson.cosimulation.cli.commands.exit_cli_command import ExitCliCommand
+from wattson.cosimulation.cli.commands.grid_value_cli_command import GridValueCliCommand
 from wattson.cosimulation.cli.commands.help_cli_command import HelpCliCommand
 from wattson.cosimulation.cli.commands.service_cli_command import ServiceCliCommand
 from wattson.cosimulation.cli.commands.link_cli_command import LinkCliCommand
@@ -32,6 +33,7 @@ class CLI:
         self._client = wattson_client
         self._default_sig_int_handler = default_sig_int_handler
 
+        self._ignore_keyboard_interrupt = True
         self._busy_lock = threading.Lock()
         self._shutdown_requested = threading.Event()
         self._completer = None
@@ -87,7 +89,7 @@ class CLI:
                     return
             except KeyboardInterrupt:
                 print("")
-                if readline.get_line_buffer() != "" and not self._shutdown_requested.is_set():
+                if (readline.get_line_buffer() != "" or self._ignore_keyboard_interrupt) and not self._shutdown_requested.is_set():
                     print("[Ctrl+C]")
                     continue
                 return
@@ -155,7 +157,8 @@ class CLI:
         CLI.add_handler_class(FirewallCliCommand)
         # Links
         CLI.add_handler_class(LinkCliCommand)
-
+        # Power Grid
+        CLI.add_handler_class(GridValueCliCommand)
 
     """
     Command handling

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from wattson.cosimulation.simulators.network.constants import DEFAULT_SERVICE_PRIORITY
 from wattson.services.service_priority import ServicePriority
+from wattson.util.performance.performance_decorator import performance_assert
 
 
 class ServiceConfiguration(dict):
@@ -56,3 +57,10 @@ class ServiceConfiguration(dict):
         if not isinstance(node_configuration, ServiceConfiguration):
             raise ValueError("Loaded instance is no ServiceConfiguration")
         return node_configuration
+
+    @performance_assert(0.2)
+    def to_dict(self) -> dict:
+        d = self.copy()
+        if "priority" in d:
+            d.pop("priority")
+        return d

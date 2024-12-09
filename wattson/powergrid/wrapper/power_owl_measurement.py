@@ -110,7 +110,29 @@ class PowerOwlMeasurement:
             pp.create_measurement(net, meas_type=m_type, element_type=self.get_element_type(), element=self.index,
                                   value=self.value, std_dev=self.std_dev, side=side)
 
+    def is_relevant(self):
+        if not isinstance(self.get_element(), (Bus, Line, Transformer)):
+            return False
+        m_type = self.get_measurement_type()
+        if m_type not in ["v", "i", "p", "q"]:
+            return False
+        if not isinstance(self.get_element(), Bus):
+            if self.get_side() is None:
+                return False
+        return True
+
     @staticmethod
     def copy(other: 'PowerOwlMeasurement'):
         o = other
         return PowerOwlMeasurement(o.grid_value, o.value, o.timeout, o.timestamp)
+
+    def to_dict(self):
+        return {
+            "element": self.get_element().get_identifier(),
+            "grid-value": self.grid_value.get_identifier(),
+            "type": self.get_measurement_type(),
+            "s_value": self.pandapower_value,
+            "value": self.value,
+            "stddev": self.std_dev,
+            "side": self.get_side()
+        }

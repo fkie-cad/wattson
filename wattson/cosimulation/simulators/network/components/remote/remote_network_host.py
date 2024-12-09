@@ -34,3 +34,18 @@ class RemoteNetworkHost(RemoteNetworkNode, NetworkHost):
             self.logger.error(f"Could not update default route: {error=}")
             return False
         return True
+
+    def get_routes_list(self) -> list:
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.NODE_ACTION,
+            query_data={
+                "action": "get_routes_list",
+                "entity_id": self.entity_id
+            }
+        )
+        response = self._wattson_client.query(query)
+        if not response.is_successful():
+            error = response.data.get("error")
+            self.logger.error(f"Could not get routes: {error=}")
+            return []
+        return response.data.get("routes", [])

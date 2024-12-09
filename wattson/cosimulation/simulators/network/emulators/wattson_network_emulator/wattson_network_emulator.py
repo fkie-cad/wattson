@@ -1,5 +1,7 @@
 import os
 import pwd
+import resource
+import shutil
 import subprocess
 import threading
 import typing
@@ -16,16 +18,19 @@ from wattson.cosimulation.simulators.network.components.wattson_network_interfac
 from wattson.cosimulation.simulators.network.components.wattson_network_link import WattsonNetworkLink
 from wattson.cosimulation.simulators.network.components.wattson_network_node import WattsonNetworkNode
 from wattson.cosimulation.simulators.network.components.wattson_network_switch import WattsonNetworkSwitch
+from wattson.cosimulation.simulators.network.components.wattson_network_virtual_machine_host import WattsonNetworkVirtualMachineHost
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.docker_wrapper import DockerWrapper
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.entity_wrapper import EntityWrapper
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.interface_wrapper import InterfaceWrapper
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.link_wrapper import LinkWrapper
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.native_wrapper import NativeWrapper
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.ovs_wrapper import OvsWrapper
+from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.virtual_machine_wrapper import VirtualMachineWrapper
 from wattson.cosimulation.simulators.network.messages.wattson_network_notificaction_topics import WattsonNetworkNotificationTopic
 from wattson.cosimulation.simulators.network.network_emulator import NetworkEmulator
 from wattson.networking.namespaces.namespace import Namespace
 from wattson.util.events.wait_event import WaitEvent
+from wattson.util.performance.resettable_timer import ResettableTimer
 from wattson.util.progress_printer import ProgressPrinter
 
 
@@ -38,8 +43,10 @@ class WattsonNetworkEmulator(NetworkEmulator):
         self._started = threading.Event()
         # Namespace object to represent the default / initial / system namespace
         self._main_namespace: Namespace = Namespace("w_main")
-        if not self._main_namespace.exists():
-            self._main_namespace.from_pid(os.getpid())
+
+        self._topology_change_timer: Optional[ResettableTimer] = None
+        self._topology_change_cache = None
+        self._topology_change_lock = threading.Lock()
 
     def cli(self):
         raise NotImplementedError("WattsonNetworkEmulator does not support a CLI - use the WattsonCLI instead")
@@ -65,6 +72,9 @@ class WattsonNetworkEmulator(NetworkEmulator):
         # Create wrapper
         if isinstance(node, WattsonNetworkDockerHost):
             wrapper = DockerWrapper(entity=node, emulator=self)
+            self._wrappers[node.entity_id] = wrapper
+        elif isinstance(node, WattsonNetworkVirtualMachineHost):
+            wrapper = VirtualMachineWrapper(entity=node, emulator=self)
             self._wrappers[node.entity_id] = wrapper
         elif isinstance(node, WattsonNetworkHost):
             wrapper = NativeWrapper(entity=node, emulator=self)
@@ -110,9 +120,15 @@ class WattsonNetworkEmulator(NetworkEmulator):
         if not self.is_running():
             return
         if isinstance(entity, WattsonNetworkLink):
+            """
             for interface in [entity.interface_a, entity.interface_b]:
+                if interface is None:
+                    continue
                 interface.link = None
-                self.remove_interface(interface)
+                if self.has_entity(interface):
+                    self.remove_interface(interface)
+            """
+            pass
         if isinstance(entity, WattsonNetworkInterface):
             entity.node.remove_interface(entity)
         wrapper = self.get_wrapper(entity=entity)
@@ -135,18 +151,69 @@ class WattsonNetworkEmulator(NetworkEmulator):
             return None
         return wrapper.get_namespace()
 
+    def get_additional_namespace(self, node: Union[str, WattsonNetworkEntity], raise_exception: bool = True) -> Optional[Namespace]:
+        wrapper = self.get_wrapper(entity=node, raise_exception=raise_exception)
+        if wrapper is None:
+            return None
+        return wrapper.get_additional_namespace()
+
+    def has_additional_namespace(self, node: Union[str, WattsonNetworkEntity], raise_exception: bool = True) -> bool:
+        return self.get_additional_namespace(node=node, raise_exception=raise_exception) != self.get_namespace(node=node, raise_exception=raise_exception)
+
     def get_main_namespace(self) -> Namespace:
         return self._main_namespace
 
+    def _adjust_resource_limits(self):
+        try:
+            limit = resource.getrlimit(resource.RLIMIT_NOFILE)
+            resource.setrlimit(resource.RLIMIT_NOFILE, (limit[1], limit[1]))
+            self.logger.info(f"Adjusting limits from {limit[0]} to {limit[1]}")
+        except Exception as e:
+            self.logger.error(f"Could not adjust resource limits: {e=}")
+
+        # ARP Cache Size
+        # This is necessary to make sure routers and other hosts don't run in problems, e.g., during an nmap scan
+        arp_cache_size = 4096
+        self.logger.info(f"Adjusting arp cache size to {arp_cache_size}")
+        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh1={arp_cache_size}", shell=True)
+        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh2={2 * arp_cache_size}", shell=True)
+        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh3={4 * arp_cache_size}", shell=True)
+
+        # Reserve ports for Wattson-related servers
+        reserved_ports = ["2404", "51000-51006"]
+        self.logger.info(f"Reserving ports: {', '.join(reserved_ports)}")
+        subprocess.check_call(f"sysctl net.ipv4.ip_local_reserved_ports={','.join(reserved_ports)}", shell=True)
+
+        # ConnTrack
+        conn_track_max = 524288
+        self.logger.info(f"Adjusting connection track maximum limit to {conn_track_max}")
+        subprocess.check_call(f"sysctl net.netfilter.nf_conntrack_max={conn_track_max}", shell=True)
+
+        # Multicast Groups
+        max_multicast_groups = 2048
+        self.logger.info(f"Adjusting number of multicast group limit to {max_multicast_groups}")
+        subprocess.check_call(f"sysctl net.ipv4.igmp_max_memberships={max_multicast_groups}", shell=True)
+
+        # inotify Limit
+        inotify_max = 1024
+        self.logger.info(f"Adjusting inotify limit to {inotify_max}")
+        subprocess.check_call(f"sysctl fs.inotify.max_user_instances={inotify_max}", shell=True)
+
     def start(self):
+        if not self._main_namespace.exists():
+            self._main_namespace.from_pid(os.getpid())
         super().start()
+        self._adjust_resource_limits()
+
         self.logger.info(f"Creating nodes")
         # Create node namespaces
         progress_printer = ProgressPrinter(max_progress=len(self.get_nodes()), enable_print=self._print_progress, on_stop_margin=True)
         progress_printer.start()
         for node in self.get_nodes():
             wrapper = self.get_wrapper(entity=node)
-            wrapper.create()
+            if not wrapper.create():
+                self.logger.error(f"Could not create node {node.entity_id} ({node.display_name})")
+                raise Exception(f"Could not create node {node.entity_id} ({node.display_name})")
             progress_printer.inc()
         progress_printer.stop()
 
@@ -188,21 +255,41 @@ class WattsonNetworkEmulator(NetworkEmulator):
         self.logger.info(f"Cleaning up interfaces")
         progress_printer = ProgressPrinter(max_progress=len(self.get_interfaces()), enable_print=self._print_progress, on_stop_margin=True)
         progress_printer.start()
+
+        def _clean_wrapper(_wrapper, _progress_printer):
+            _wrapper.clean()
+            _progress_printer.inc()
+
+        interface_threads = []
+
         for interface in self.get_interfaces():
             wrapper = self.get_wrapper(entity=interface)
-            wrapper.clean()
-            progress_printer.inc()
+            t = threading.Thread(target=_clean_wrapper, args=(wrapper, progress_printer), daemon=True)
+            interface_threads.append(t)
+            t.start()
+        for t in interface_threads:
+            t.join()
         progress_printer.stop()
 
         self.logger.info(f"Cleaning up nodes")
         progress_printer = ProgressPrinter(max_progress=len(self.get_nodes()), enable_print=self._print_progress, on_stop_margin=True)
         progress_printer.start()
+
+        node_threads = []
+
+        OvsWrapper.enable_batch()
         for node in self.get_nodes():
             wrapper = self.get_wrapper(entity=node)
-            wrapper.clean()
-            progress_printer.inc()
-        progress_printer.stop()
+            t = threading.Thread(target=_clean_wrapper, args=(wrapper, progress_printer), daemon=True)
+            node_threads.append(t)
+            t.start()
+        for t in node_threads:
+            t.join()
+        self.logger.info(f"Flushing OVS")
+        OvsWrapper.disable_batch()
+        OvsWrapper.flush_batch()
 
+        progress_printer.stop()
         self._main_namespace.clean()
 
     def deploy_services(self):
@@ -213,9 +300,14 @@ class WattsonNetworkEmulator(NetworkEmulator):
                 for service_id, service in node.get_services().items():
                     if service.autostart:
                         services.append(service)
-        progress_printer = ProgressPrinter(max_progress=len(services), on_stop_margin=True, enable_print=self._print_progress)
+        progress_printer = ProgressPrinter(max_progress=len(services), on_stop_margin=True, enable_print=self._print_progress, show_custom_prefix=True)
         progress_printer.start()
+        longest_service_name_length = 0
+        if len(services) > 0:
+            longest_service_name_length = len(sorted(services, key=lambda s: len(s.name), reverse=True)[0].name)
+            longest_service_name_length = min(longest_service_name_length, 30)
         for service in sorted(services, key=lambda s: s.get_priority().get_global(), reverse=True):
+            progress_printer.set_custom_prefix(str(service.name).ljust(longest_service_name_length))
             if service.autostart_delay > 0:
                 service.delay_start(service.autostart_delay)
             else:
@@ -267,8 +359,25 @@ class WattsonNetworkEmulator(NetworkEmulator):
         super().on_topology_change(trigger_entity, change_name)
         if not self.is_running:
             return
-        self.send_notification(WattsonNotification(notification_topic=WattsonNetworkNotificationTopic.TOPOLOGY_CHANGED,
-                                                   notification_data={"entity_id": trigger_entity.entity_id, "change": change_name}))
+        with self._topology_change_lock:
+            notification = WattsonNotification(
+                notification_topic=WattsonNetworkNotificationTopic.TOPOLOGY_CHANGED,
+                notification_data={"entity_id": trigger_entity.entity_id, "change": change_name}
+            )
+            self._topology_change_cache = notification
+            if self._topology_change_timer is not None and self._topology_change_timer.is_alive():
+                self._topology_change_timer.reset()
+            else:
+                self._topology_change_timer = ResettableTimer(3, self._flush_topology_change_notification)
+                self._topology_change_timer.start()
+
+    def _flush_topology_change_notification(self):
+        with self._topology_change_lock:
+            if self._topology_change_cache is None:
+                return
+            self.send_notification(notification=self._topology_change_cache)
+            self._topology_change_cache = None
+            self._topology_change_timer = None
 
     def open_browser(self, node: WattsonNetworkNode) -> bool:
         wrapper = self.get_wrapper(node)
@@ -276,7 +385,7 @@ class WattsonNetworkEmulator(NetworkEmulator):
             # Find local user if any
             process = psutil.Process(os.getpid())
             user = None
-            while "sudo" not in process.cmdline():
+            while process is not None and "sudo" not in process.cmdline():
                 process = process.parent()
             if process is not None and process.parent() is not None:
                 user = process.parent().username()

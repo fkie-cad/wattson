@@ -34,21 +34,115 @@ class NetworkScenarioLoader:
             self._check_node(node)
             node_type = node["type"]
             node_roles = node["roles"]
-            if node_type == "host" and "router" in node_roles:
-                if "firewall" in node_roles:
-                    node["image"] = "wattson-router"
-                    network_node = WattsonNetworkDockerRouter(id=node["id"], config=node)
-                    network_emulator.add_router(network_node)
-                    # Add webmin service
-                    service = WattsonWebminService(service_configuration=ServiceConfiguration(), network_node=network_node)
-                    network_node.add_service(service)
-                else:
-                    # Add default router
-                    network_node = WattsonNetworkRouter(id=node["id"], config=node)
-                    network_emulator.add_router(network_node)
-            elif node_type == "host":
-                network_node = WattsonNetworkHost(id=node["id"], config=node)
-                network_emulator.add_host(network_node)
+            network_node = None
+            if node_type == "host":
+                # Router (w/ and w/o Firewall)
+                if "router" in node_roles:
+                    if "firewall" in node_roles:
+                        node["image"] = "wattson-router"
+                        network_node = WattsonNetworkDockerRouter(id=node["id"], config=node)
+                        network_emulator.add_router(network_node)
+                        # Add webmin service
+                        service = WattsonWebminService(service_configuration=ServiceConfiguration(), network_node=network_node)
+                        network_node.add_service(service)
+                    else:
+                        # Add default router
+                        network_node = WattsonNetworkRouter(id=node["id"], config=node)
+                        network_emulator.add_router(network_node)
+
+                # Server
+                ## SIP
+                if "sip-server" in node_roles:
+                    if network_node is not None:
+                        network_emulator.logger.warning(f"Cannot respect SIP Server role - node already declared {network_node.__class__.__name__}")
+                    else:
+                        node["image"] = "wattson-sip"
+                        sip_dns_name = node.get("dns_host_name", "sip")
+                        sip_domain_name = network_emulator.get_domain_name(sip_dns_name)
+                        sip_users = node.get("configuration", {}).get("sip-users", [])
+                        user_list = []
+                        for user in sip_users:
+                            user_list.append({
+                                "name": user["username"],
+                                "password": user["password"],
+                                "domain": sip_domain_name
+                            })
+
+                        node["dns_host_name"] = sip_dns_name
+                        network_node = WattsonNetworkDockerHost(id=node["id"], config=node)
+                        network_emulator.add_host(network_node)
+                        # Add SIP Service
+                        from wattson.services.management.wattson_sip import WattsonSIPService
+                        service_configuration = ServiceConfiguration({
+                            "ip": "!ip",
+                            "port": 5060,
+                            "fqdn": sip_domain_name,
+                            "user_list": user_list
+                        })
+                        service = WattsonSIPService(service_configuration=service_configuration, network_node=network_node)
+                        network_node.add_service(service)
+                ## Mail
+                if "mail-server" in node_roles:
+                    if network_node is not None:
+                        network_emulator.logger.warning(f"Cannot respect Mail Server role - node already declared {network_node.__class__.__name__}")
+                    else:
+                        pass
+                ## DNS
+                if "dns-server" in node_roles:
+                    if network_node is not None:
+                        network_emulator.logger.warning(f"Cannot respect DNS Server role - node already declared {network_node.__class__.__name__}")
+                    else:
+                        node["image"] = "wattson-dns"
+                        dns_dns_name = node.get("configuration", {}).get("dns_host_name", "dns")
+                        dns_role = node.get("configuration", {}).get("dns_role", "primary")
+                        dns_type = "primary" if dns_role == "primary" else "forwarder"
+
+                        dns_forward_to = node.get("configuration", {}).get("dns_forward_to", [])
+                        dns_forward_to = [f"!primary_ips.{entity_id}" for entity_id in [
+                            network_emulator.get_node(node_id).entity_id for node_id in dns_forward_to
+                        ]]
+                        if dns_type == "primary" and len(dns_forward_to) == 0:
+                            dns_forward_to = ["8.8.8.8"]
+
+                        node["dns_host_name"] = dns_dns_name
+                        network_node = WattsonNetworkDockerHost(id=node["id"], config=node)
+                        network_emulator.add_host(network_node)
+                        # Add DNS Service
+                        from wattson.services.management.wattson_dns_service import WattsonDnsService
+                        service_configuration = ServiceConfiguration(
+                            {
+                                "domain": network_emulator.get_domain_name(),
+                                "hostname": dns_dns_name,
+                                "type": dns_type,
+                                "forwarding-to": dns_forward_to,
+                                "hosts": "!dns_map"
+                            }
+                        )
+                        service = WattsonDnsService(service_configuration=service_configuration, network_node=network_node)
+                        network_node.add_service(service)
+                ## DHCP
+                if "dhcp-server" in node_roles:
+                    if network_node is not None:
+                        network_emulator.logger.warning(f"Cannot respect DHCP Server role - node already declared {network_node.__class__.__name__}")
+                    else:
+                        node["image"] = "wattson-dhcp"
+                        dhcp_dns_name = node.get("configuration", {}).get("dns_host_name", "dhcp")
+                        dhcp_mode = node.get("configuration", {}).get("dhcp_mode", "auto")
+
+                        node["dns_host_name"] = dhcp_dns_name
+                        network_node = WattsonNetworkDockerHost(id=node["id"], config=node)
+                        network_emulator.add_host(network_node)
+                        # Add DHCP Service
+                        from wattson.services.management.wattson_dhcp_server_service import WattsonDhcpServerService
+                        ## Configure service to automatically detect configuration on start
+                        service_configuration = ServiceConfiguration({"derive_configuration": True})
+                        service = WattsonDhcpServerService(service_configuration=service_configuration, network_node=network_node)
+                        network_node.add_service(service)
+
+                # Default Host
+                if network_node is None:
+                    network_node = WattsonNetworkHost(id=node["id"], config=node)
+                    network_emulator.add_host(network_node)
             elif node_type == "docker-host":
                 network_node = WattsonNetworkDockerHost(id=node["id"], config=node)
                 network_emulator.add_host(network_node)
@@ -69,15 +163,16 @@ class NetworkScenarioLoader:
                     interface.mac_address = interface_config["mac"]
                 network_emulator.add_interface(network_node, interface)
 
-            if isinstance(network_node, WattsonNetworkHost) and network_node.config.get("requires_internet_connection", False):
-                nat = network_emulator.add_nat_to_management_network()
-                nat.allow_traffic_from_host(network_node)
-                nat.set_internet_route(network_node)
+            if isinstance(network_node, WattsonNetworkHost):
+                if network_node.config.get("requires_internet_connection", False):
+                    nat = network_emulator.add_nat_to_management_network()
+                    nat.allow_traffic_from_host(network_node)
+                    nat.set_internet_route(network_node)
 
         # Links
         for link_id, link in network_data["links"].items():
             self._check_link(link)
-            network_link = WattsonNetworkLink(id=link["id"], config=link)
+            network_link = WattsonNetworkLink(id=link["id"], config=link, link_type=link.get("type", "digital"))
             node_a_id, interface_a_id = link["interfaces"][0].split(".")
             node_b_id, interface_b_id = link["interfaces"][1].split(".")
             interface_a = network_emulator.get_interface(node_a_id, interface_a_id)

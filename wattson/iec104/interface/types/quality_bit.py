@@ -15,6 +15,7 @@ class QualityBit(IntEnum):
     ELAPSED_TIME_INVALID = 0x08
     RESERVED = 0x04
     OVERFLOW = 0x01
+    NONE = 0x00
 
     # only indirectly used, not part of iec101
-    GOOD = 0x00
+    # GOOD = 0x00

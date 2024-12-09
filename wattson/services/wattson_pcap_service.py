@@ -34,13 +34,13 @@ class WattsonPcapService(WattsonService):
         self._clear_log_handle()
         return success
 
-    def ensure_working_directory(self):
-        super().ensure_working_directory()
+    def ensure_artifacts(self):
+        super().ensure_artifacts()
         if self.log_file is None:
-            self.log_file = ArtifactRotate(self.dir.joinpath(f"{self.network_node.entity_id}-service-{self.id}.log"))
+            self.log_file = ArtifactRotate(self.working_directory.joinpath(f"{self.network_node.entity_id}-service-{self.id}.log"))
             self._artifacts.append(self.log_file)
         if self.pcap_file is None:
-            self.pcap_file = ArtifactRotate(self.dir.joinpath(f"{self.network_node.entity_id}-service-{self.id}-{self.interface.system_id}.pcap"))
+            self.pcap_file = ArtifactRotate(self.working_directory.joinpath(f"{self.network_node.entity_id}-service-{self.id}-{self.interface.system_id}.pcap"))
             self._artifacts.append(self.pcap_file)
 
     def _clear_log_handle(self):

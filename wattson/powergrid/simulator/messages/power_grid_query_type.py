@@ -7,7 +7,10 @@ class PowerGridQueryType(str, enum.Enum):
     CONTROL = "control"
 
     GET_GRID_VALUE = "get-grid-value"
+    GET_GRID_VALUE_VALUE = "get-grid-value-value"
     SET_GRID_VALUE = "set-grid-value"
+    SET_GRID_VALUE_SIMPLE = "set-grid-value-simple"
+    SET_GRID_VALUE_STATE = "set-grid-value-state"
     GET_GRID_REPRESENTATION = "get-grid-representation"
 
     def __eq__(self, other):

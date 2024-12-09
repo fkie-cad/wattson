@@ -16,7 +16,6 @@ class VccDefaultConfiguration(ServiceConfiguration):
             "entityid": "!entityid",
             "ip": "!ip",
             "mtu_ip": "!management_ips.!mtus.0",
-            "scenario_path": "!scenario_path",
-            "network": {}   # TODO: Fill in the network graph
+            "scenario_path": "!scenario_path"
         })
         self.priority.set_local(0)

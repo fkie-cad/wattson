@@ -1,5 +1,5 @@
 import abc
-from typing import Optional, Callable, List
+from typing import Optional, Callable, List, Union
 
 from wattson.services.service_priority import ServicePriority
 
@@ -7,6 +7,14 @@ from wattson.services.service_priority import ServicePriority
 class WattsonServiceInterface(abc.ABC):
     id: int
     name: str
+
+    @abc.abstractmethod
+    def call(self, method, **kwargs) -> Union[bool, str]:
+        ...
+
+    @abc.abstractmethod
+    def callable_methods(self) -> dict[str, dict]:
+        ...
 
     @abc.abstractmethod
     def get_start_command(self) -> List[str]:
@@ -25,9 +33,10 @@ class WattsonServiceInterface(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def start(self) -> bool:
+    def start(self, refresh_config: bool = False) -> bool:
         """
         Start the service.
+        @param refresh_config: Whether to refresh the config even if it already exists.
         @return: True iff the service has been started.
         """
         ...
@@ -44,9 +53,10 @@ class WattsonServiceInterface(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def restart(self) -> bool:
+    def restart(self, refresh_config: bool = False) -> bool:
         """
         Restarts the service. Shortcut for (blocking) stop and start calls.
+        @param refresh_config: Whether to refresh the config even if it already exists
         @return: Whether the service has been restarted successfully.
         """
         ...

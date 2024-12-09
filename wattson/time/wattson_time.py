@@ -1,5 +1,7 @@
 import datetime
+import re
 import time
+from pathlib import Path
 from typing import Callable, TYPE_CHECKING, Optional
 
 from wattson.cosimulation.control.messages.wattson_notification import WattsonNotification
@@ -248,6 +250,7 @@ class WattsonTime:
                   as_local: bool = False,
                   with_time: bool = True,
                   with_milliseconds: bool = False,
+                  with_timestamp: bool = False,
                   force_dashes: bool = True) -> str:
         """
         Returns the current wall time as a datetime string for usage as a file name in ISO 8601.
@@ -255,10 +258,12 @@ class WattsonTime:
         @param as_local: Whether to use the local timezone or UTC.
         @param with_time: Whether to include the time besides the date in the string
         @param with_milliseconds: Whether to add milliseconds to the string (requires with_time = True)
+        @param with_timestamp: Whether to add the timestamp to the string
         @param force_dashes: Replace dots and colons with dashes for better file system compatibility
         @return: A String representation of the current time to be used as a filename
         """
         dt = self.to_local_datetime(time_type=time_type) if as_local else self.to_utc_datetime(time_type=time_type)
+        ts = self.time(time_type=time_type)
         date_format = "%Y-%m-%d"
         if with_time:
             date_format = f"{date_format}T%H:%M:%S"
@@ -268,6 +273,8 @@ class WattsonTime:
         file_name = dt.strftime(date_format)
         if "%z" in date_format:
             file_name = file_name[:-2] + ":" + file_name[-2:]
+        if with_timestamp:
+            file_name = f"{file_name}TS{ts}"
         if force_dashes:
             file_name = file_name.replace(":", "-").replace(".", "-")
         return file_name
@@ -276,3 +283,19 @@ class WattsonTime:
     def from_offset(timestamp: float, simulation_offset: float, speed: float = 1):
         reference_sim = timestamp + simulation_offset
         return WattsonTime(wall_clock_reference=timestamp, sim_clock_reference=reference_sim, speed=speed)
+
+    @staticmethod
+    def extract_timestamp_from_file(file: Path) -> Optional[float]:
+        name = file.stem
+        if "TS" not in name:
+            return None
+        timestamp_split = name.split("TS")[1]
+        pattern = re.compile("[0-9]+[.-][0-9]+")
+        timestamp_string = pattern.search(timestamp_split)
+        if timestamp_string is None:
+            return None
+        try:
+            timestamp = float(timestamp_string.string.replace("-", "."))
+            return timestamp
+        except ValueError:
+            return None

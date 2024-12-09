@@ -1,5 +1,5 @@
 import time
-from typing import Optional, Any, TYPE_CHECKING, List, Callable
+from typing import Optional, Any, TYPE_CHECKING, List, Callable, Dict
 
 from powerowl.layers.powergrid.values.grid_value import GridValue
 from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
@@ -25,12 +25,13 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
                  wattson_client: 'WattsonClient',
                  grid_element: Optional['GridElement'],
                  name: str = None,
-                 value_context: GridValueContext = GridValueContext.GENERIC):
+                 value_context: GridValueContext = GridValueContext.GENERIC,
+                 grid_value_data: Optional[Dict] = None):
         self._initialized = False
         self.wattson_client = wattson_client
         self._remote_power_grid_model = remote_power_grid_model
         self._last_synchronization = 0
-        self._synchronization_interval = 10
+        self._synchronization_interval = 20
         super().__init__(
             grid_element=grid_element,
             name=name,
@@ -40,28 +41,95 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
         self.logger = self.wattson_client.logger
         self.add_on_before_read_callback(self._on_before_read)
         self._initialized = True
+        if grid_value_data is not None:
+            self._update_from_data(grid_value_data)
 
-    def grid_value_changed(self, value: Any):
+    def _handle_state_query(self, query):
+        response = self.wattson_client.query(query=query, block=True)
+        if not response.is_successful():
+            error = response.data.get("error")
+            self.logger.error(f"{self.get_identifier()}: Could not lock: {error=}")
+            return False
+        self._update_from_data(response.data)
+        return True
+
+    def lock(self):
+        query = PowerGridQuery(
+            query_type=PowerGridQueryType.SET_GRID_VALUE_STATE,
+            query_data={
+                "grid_value_identifier": self.get_identifier(),
+                "state_type": "lock",
+                "state_target": True
+            }
+        )
+        return self._handle_state_query(query)
+
+    def unlock(self):
+        query = PowerGridQuery(
+            query_type=PowerGridQueryType.SET_GRID_VALUE_STATE,
+            query_data={
+                "grid_value_identifier": self.get_identifier(),
+                "state_type": "lock",
+                "state_target": False
+            }
+        )
+        return self._handle_state_query(query)
+
+    def freeze(self, frozen_value):
+        query = PowerGridQuery(
+            query_type=PowerGridQueryType.SET_GRID_VALUE_STATE,
+            query_data={
+                "grid_value_identifier": self.get_identifier(),
+                "state_type": "freeze",
+                "state_target": True,
+                "frozen_value": frozen_value
+            }
+        )
+        return self._handle_state_query(query)
+
+    def unfreeze(self):
+        query = PowerGridQuery(
+            query_type=PowerGridQueryType.SET_GRID_VALUE_STATE,
+            query_data={
+                "grid_value_identifier": self.get_identifier(),
+                "state_type": "freeze",
+                "state_target": False
+            }
+        )
+        return self._handle_state_query(query)
+
+    def grid_value_changed(self, value: Any, timestamp: Optional[float] = None):
         """
         Handler for received grid value changes by the WattsonClient, handled by the associated RemotePowerGridModel
         @param value: The new value of this GridValue
+        @param timestamp: The timestamp of the update
         @return:
         """
         if self._last_synchronization == 0:
             self.synchronize()
         else:
             self._last_synchronization = time.time()
-            super().set_value(value)
+            super().set_value(value, timestamp=timestamp, override_lock=True)
+
+    def grid_value_state_changed(self, data: dict):
+        """
+        Handler for received grid value state changes by the WattsonClient.
+        @param data: The dict representation of this grid value, including the new state
+        @return:
+        """
+        # self.wattson_client.logger.info(f"Grid value state changed {self.get_identifier()}")
+        self._update_from_data(data)
         
-    def set_value(self, value, timestamp: Optional[float] = None, value_scale: Optional[Scale] = None) -> bool:
+    def set_value(self, value, timestamp: Optional[float] = None, value_scale: Optional[Scale] = None, override_lock: bool = False, set_targets: bool = True) -> bool:
         if not self._initialized:
             return False
-        return self._on_set(value)
+        return self._on_set(value, override_lock)
 
     def synchronize(self, force: bool = False, block: bool = True):
         if not force and not time.time() - self._last_synchronization > self._synchronization_interval:
             return
 
+        overdue = time.time() - self._last_synchronization
         query = PowerGridQuery(
             query_type=PowerGridQueryType.GET_GRID_VALUE,
             query_data={"grid_value_identifier": self.get_identifier()}
@@ -85,13 +153,14 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
         # Optional synchronization
         self.synchronize()
 
-    def _on_set(self, value: Any) -> bool:
+    def _on_set(self, value: Any, override: bool = False) -> bool:
         # Write value to server
         query = PowerGridQuery(
             query_type=PowerGridQueryType.SET_GRID_VALUE,
             query_data={
                 "grid_value_identifier": self.get_identifier(),
-                "value": value
+                "value": value,
+                "override": override
             }
         )
         response = self.wattson_client.query(query)

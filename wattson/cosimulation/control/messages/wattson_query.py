@@ -14,6 +14,12 @@ class WattsonQuery:
         self.response: Optional[WattsonResponse] = None
         self.client_id: Optional[str] = None
 
+    def __repr__(self):
+        return f"{self.query_type} // {repr(self.query_data)}"
+
+    def requires_native_namespace(self) -> bool:
+        return True
+
     def add_response(self, response: WattsonResponse):
         self.response = response
 

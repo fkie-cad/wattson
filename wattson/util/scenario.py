@@ -3,7 +3,10 @@ from typing import List, Union
 import networkx
 import pandapower as pp
 
+from wattson.cosimulation.simulators.network.components.interface.network_link import NetworkLink
+from wattson.cosimulation.simulators.network.components.interface.network_node import NetworkNode
 from wattson.cosimulation.simulators.network.constants import MANAGEMENT_SWITCH
+from wattson.cosimulation.simulators.network.network_emulator import NetworkEmulator
 
 
 def get_powergrid_size(grid: pp.pandapowerNet) -> float:
@@ -22,6 +25,51 @@ def get_powergrid_size(grid: pp.pandapowerNet) -> float:
 def get_ict_size(graph: dict) -> float:
     # Count hosts, switches and routers
     return len(graph["nodes"])
+
+
+def get_network_statistics(network: NetworkEmulator) -> dict:
+    def is_management_only(link_or_node: Union[NetworkLink, NetworkNode]) -> bool:
+        if isinstance(link_or_node, NetworkLink):
+            i_a = link_or_node.get_interface_a()
+            i_b = link_or_node.get_interface_b()
+            if i_a is not None:
+                if i_a.is_management:
+                    return True
+            if i_b is not None:
+                if i_b.is_management:
+                    return True
+            return False
+        elif isinstance(link_or_node, NetworkNode):
+            if len(link_or_node.get_interfaces()) == 0:
+                return False
+
+            for interface in link_or_node.get_interfaces():
+                if not interface.is_management:
+                    return False
+            return True
+
+    num_nodes = len([node for node in network.get_nodes() if not is_management_only(node)])
+    num_hosts_all = len([node for node in network.get_hosts() if not is_management_only(node)])
+    num_routers = len([node for node in network.get_routers() if not is_management_only(node)])
+    num_hosts = num_hosts_all - num_routers
+    num_switches = len([node for node in network.get_switches() if not is_management_only(node)])
+    num_rtus = len([node for node in network.find_nodes_by_role("rtu") if not is_management_only(node)])
+    num_links = len([link for link in network.get_links() if not is_management_only(link)])
+
+    num_links_mgm = len([link for link in network.get_links() if is_management_only(link)])
+    num_nodes_mgm = len([link for link in network.get_nodes() if is_management_only(link)])
+
+    return {
+        "nodes": num_nodes,
+        "hosts_all": num_hosts_all,
+        "routers": num_routers,
+        "hosts": num_hosts,
+        "switches": num_switches,
+        "rtus": num_rtus,
+        "links": num_links,
+        "management_links": num_links_mgm,
+        "management_nodes": num_nodes_mgm
+    }
 
 
 def get_ict_graph(graph: dict, include_management: bool = False) -> networkx.Graph:

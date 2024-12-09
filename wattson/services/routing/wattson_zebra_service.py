@@ -17,7 +17,9 @@ class WattsonZebraService(WattsonFrRoutingService):
             self.get_artifact("zebra_vty", is_folder=True)
         ]
 
-    def write_fr_config_file(self):
+    def write_fr_config_file(self, refresh_config: bool = False):
+        if not refresh_config and not self.get_artifact("ospf.cfg").is_empty():
+            return
         self.network_node.logger.debug(f"Writing Zebra Config")
         config_lines = [
             f"hostname {self.network_node.system_name}",
@@ -31,9 +33,12 @@ class WattsonZebraService(WattsonFrRoutingService):
             "!"
         ]
 
+        subnets = []
         for interface in self.network_node.get_interfaces():
             if interface.is_management:
                 continue
+            if interface.has_ip():
+                subnets.append(interface.get_subnet())
             config_lines.extend([
                 f"interface {interface.interface_name}",
                 f"  no shutdown",
@@ -42,6 +47,23 @@ class WattsonZebraService(WattsonFrRoutingService):
                 "",
                 "!"
             ])
+
+        """
+        nat_found = False
+
+        for subnet in subnets:
+            nodes_in_subnet = self.network_node.network_emulator.find_nodes_in_subnet(subnet)
+            for node in nodes_in_subnet:
+                if node.has_role("nat"):
+                    nat_ip = node.get_primary_ip_address_string(with_subnet_length=False)
+                    if nat_ip is not None:
+                        # self.network_node.logger.info(f"Found NAT in subnet, setting default route via {nat_ip}")
+                        nat_found = True
+                        break
+            if nat_found:
+                break
+        """
+
         config_file = self.get_artifact("zebra.cfg").get_current()
         with config_file.open("w") as f:
             f.write("\n".join(config_lines))
@@ -71,4 +93,8 @@ class WattsonZebraService(WattsonFrRoutingService):
             "--log-level", "debug",
             "-u", "root"
         ]
+        # self.network_node.logger.info(" ".join(cmd))
         return cmd
+
+    def get_pid_file(self):
+        return self.get_artifact("zebra.pid")

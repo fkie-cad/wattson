@@ -20,6 +20,14 @@ class WattsonResponsePromise(WattsonResponse):
     def trigger_resolve(self):
         self._resolve_event.set()
 
+    @property
+    def query(self):
+        return self._query
+
+    @property
+    def resolve_event(self):
+        return self._resolve_event
+
     def is_resolved(self) -> bool:
         """
         Checks whether the associated query has already been resolved
@@ -32,8 +40,7 @@ class WattsonResponsePromise(WattsonResponse):
         If a timeout is given, the waiting is stopped after this timeout (in seconds).
         Returns True iff the query has been resolved.
         """
-        self._resolve_event.wait(timeout=timeout)
-        return self.is_resolved()
+        return self._resolve_event.wait(timeout=timeout)
 
     def get_response(self) -> Optional[WattsonResponse]:
         """
@@ -71,6 +78,6 @@ class WattsonResponsePromise(WattsonResponse):
 
     def _start_watchdog(self):
         if self._watchdog_thread is None:
-            self._watchdog_thread = threading.Thread(target=self._watchdog)
+            self._watchdog_thread = threading.Thread(target=self._watchdog, daemon=True)
             self._watchdog_thread.start()
 

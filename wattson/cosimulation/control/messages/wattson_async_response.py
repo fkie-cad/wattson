@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, Callable, Dict
 
 from wattson.cosimulation.control.messages.wattson_response import WattsonResponse
 
@@ -27,6 +27,26 @@ class WattsonAsyncResponse(WattsonResponse):
     def resolve(self, response: WattsonResponse):
         self.resolvable.wait()
         self.wattson_server.resolve_async_response(self, response)
+
+    def resolve_with_task(self, resolve_task: Callable[['WattsonAsyncResponse', Dict], WattsonResponse], further_kwargs: Optional[Dict] = None):
+        """
+        Calls the given function (resolve_task) in a new thread to allow for asynchronous resolution.
+        After the resolve_task finishes and returns a WattsonResponse, this WattsonAsyncResponse is
+        automatically resolved.
+        @param resolve_task: The callable to call for deriving the full WattsonResponse
+        @param further_kwargs: A dict with further arguments to pass to the resolve_task function (as a dict!). If None is given, an empty dict is created.
+        @return:
+        """
+        if further_kwargs is None:
+            further_kwargs = {}
+
+        def async_resolve(_resolve_task, custom_kwargs):
+            self.resolvable.wait()
+            response = _resolve_task(self, custom_kwargs)
+            self.resolve(response)
+
+        t = threading.Thread(target=async_resolve, args=(resolve_task, further_kwargs))
+        t.start()
 
     def copy_for_sending(self) -> 'WattsonAsyncResponse':
         response = WattsonAsyncResponse(reference_id=self.reference_id)

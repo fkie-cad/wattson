@@ -1,11 +1,14 @@
 import copy
+import json
 import queue
 import threading
 from typing import TYPE_CHECKING, Optional, List
 
 import zmq
+from wattson.cosimulation.control.interface.notification_export_thread import NotificationExportThread
 
 from wattson.cosimulation.control.messages.wattson_notification import WattsonNotification
+from wattson.cosimulation.control.messages.wattson_notification_topic import WattsonNotificationTopic
 from wattson.networking.namespaces.namespace import Namespace
 
 if TYPE_CHECKING:
@@ -19,7 +22,8 @@ class PublishServer(threading.Thread):
     def __init__(self,
                  simulation_control_server: 'WattsonServer',
                  socket_string: str,
-                 namespace: Optional[Namespace] = None):
+                 namespace: Optional[Namespace] = None,
+                 **kwargs):
         """
 
         :param simulation_control_server: The associated WattsonServer instance
@@ -34,16 +38,25 @@ class PublishServer(threading.Thread):
         self._send_queue = queue.Queue()
         self._queue_timeout = 1
         self._lock = threading.Lock()
+        self._enable_history = kwargs.get("enable_history", False)
+        self._export_notifications = kwargs.get("export_notifications", [])
+        self._export_folder = kwargs.get("export_folder", None)
+        self._export_thread = NotificationExportThread(self._export_folder, self._export_notifications)
         self._publishing_history: List[WattsonNotification] = []
         self._ready_event = threading.Event()
 
     def start(self) -> None:
         self._termination_requested.clear()
         super().start()
+        self._export_thread.start()
 
     def stop(self, timeout: Optional[float] = None):
         self._termination_requested.set()
-        self.join(timeout=timeout)
+        self._export_thread.stop(timeout=timeout)
+        try:
+            self.join(timeout=timeout)
+        except RuntimeError:
+            pass
 
     def wait_until_ready(self):
         self._ready_event.wait()
@@ -71,9 +84,13 @@ class PublishServer(threading.Thread):
                         notification = self._send_queue.get(block=True, timeout=self._queue_timeout)
                     except queue.Empty:
                         continue
-                    socket.send_pyobj(notification)
-                    with self._lock:
-                        self._publishing_history.append(notification)
+                    try:
+                        socket.send_pyobj(notification)
+                        self._check_append_history(notification)
+                        self._check_export_notification(notification)
+                    except Exception as e:
+                        self.logger.error(f"{e=}")
+                        self.logger.error(f"Could not sent: {notification.notification_topic} // {notification.notification_data}")
 
     def notify(self, simulation_notification: WattsonNotification):
         """
@@ -115,3 +132,21 @@ class PublishServer(threading.Thread):
         """
         simulation_notification.recipients = [recipient]
         self._send_queue.put(simulation_notification)
+
+    def _check_append_history(self, notification: WattsonNotification):
+        if self._enable_history is False:
+            return
+
+        if isinstance(self._enable_history, list):
+            if notification.notification_topic not in self._enable_history:
+                return
+        elif self._enable_history is not True:
+            return
+
+        with self._lock:
+            self._publishing_history.append(notification)
+
+    def _check_export_notification(self, notification: WattsonNotification):
+        self._export_thread.queue(notification)
+
+

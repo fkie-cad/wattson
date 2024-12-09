@@ -378,11 +378,12 @@ class NodeCliCommand(CliCommandHandler):
     @staticmethod
     def print_node_info(node: RemoteNetworkNode):
         print(f"Node {node.entity_id}")
-        print(f"  Name         {node.get_hostname()}")
-        print(f"  System       {node.system_id}")
-        print(f"  Role         {node.get_role()}")
+        print(f"  Name          {node.get_hostname()}")
+        print(f"  System        {node.system_id}")
+        print(f"  Display Name  {node.display_name}")
+        print(f"  Role          {node.get_role()}")
         print(f"  Roles         {', '.join(node.get_roles())}")
-        print(f"  Interfaces   {len(node.get_interfaces())}")
+        print(f"  Interfaces    {len(node.get_interfaces())}")
         for i, interface in enumerate(node.get_interfaces()):
             interface_infos = [str(i)]
             if interface.get_system_name() is not None:
@@ -395,6 +396,11 @@ class NodeCliCommand(CliCommandHandler):
                 interface_infos.append(mac_str)
             if interface.is_management:
                 interface_infos.append("(Management)")
+            if interface.get_link() is not None:
+                interface_infos.append(f"Link {interface.get_link().entity_id}")
+                other_interface = interface.get_link().get_other_interface(interface)
+                interface_infos.append(f"-> {other_interface.entity_id}")
+                interface_infos.append(f"{other_interface.get_node().entity_id} ({other_interface.get_node().display_name})")
             print(f"        {' // '.join(interface_infos)}")
 
         print(f"  Services     {len(node.get_services())}")

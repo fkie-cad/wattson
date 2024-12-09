@@ -99,14 +99,14 @@ class FirewallCliCommand(CliCommandHandler):
             other_node = self.get_node(command[2])
             ip = other_node.get_primary_ip_address_string(with_subnet_length=False)
             if ip is not None:
-                firewall.block_traffic(ip)
+                firewall.block_traffic_from_address(ip)
             return True
         elif action == "block-tcp-traffic":
             firewall = IPTablesFirewall(node)
             other_node = self.get_node(command[2])
             ip = other_node.get_primary_ip_address_string(with_subnet_length=False)
             if ip is not None:
-                firewall.block_tcp_traffic(ip)
+                firewall.block_tcp_traffic_from_address(ip)
             return True
         else:
             print(f"Command {action} not known.")

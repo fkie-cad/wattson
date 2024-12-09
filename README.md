@@ -1,4 +1,4 @@
-<img src="https://wattson.it/img/logo/wattson-white-blue.svg" width="50%"/>
+<img src="https://wattson.it/wp-content/uploads/2024/05/wattson-white-blue.svg" width="50%"/>
 
 Wattson is a research testbed that allows investigating and analyzing the effects of cyberattacks on power grids.
 
@@ -24,14 +24,15 @@ https://wattson.it/cite
 ## Installation
 For better performance, we suggest using a bare-metal installation instead of a virtual machine.
 
-As the operating system, please use Ubuntu 22.04 LTS.  
+As the operating system, please use Ubuntu 24.04 LTS.  
 Other distributions might work, but you have to install dependencies yourself.
 
 ### Install APT Dependencies
 ```bash
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y python3-pip git gcc make perl docker.io python3-pyqt5
+sudo apt update && sudo apt -y upgrade
+sudo apt install python3-pip python3-venv git gcc make perl cmake
+python3 -m venv wattson-venv
+wattson-venv/bin/python3 -m pip install --upgrade pip
 ```
 
 
@@ -41,9 +42,16 @@ If you do not want this, skip the second step (`python3 setup.py wattson`).
 Then, you have to install the dependencies manually.
 
 ```bash
+# Install PowerOwl
+git clone https://github.com/fkie-cad/powerowl.git
+wattson-venv/bin/python3 -m pip install -e ./powerowl
+
+# Install Wattson
 git clone https://github.com/fkie-cad/wattson
-sudo python3 wattson/setup.py wattson
-sudo python3 -m pip install -e ./wattson
+## Install Wattson's Simulation Dependencies (OVS, Routing, ...)
+sudo wattson-venv/bin/python3 wattson/setup.py wattson
+# Install Wattson's Python module
+wattson-venv/bin/python3 -m pip install -e ./wattson
 ```
 
 ## Usage

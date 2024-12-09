@@ -16,6 +16,12 @@ class ScenarioExtension(abc.ABC):
     def provides_post_physical(self) -> bool:
         return type(self).extend_post_physical != ScenarioExtension.extend_post_physical
 
+    def provides_post_start(self) -> bool:
+        return type(self).extend_post_start != ScenarioExtension.extend_post_physical
+
+    def provides_on_run(self) -> bool:
+        return type(self).extend_on_run != ScenarioExtension.extend_on_run
+
     def extend_pre_physical(self):
         """
         Called after the initial network creation, but before the physical simulator adds its modifications.
@@ -27,5 +33,19 @@ class ScenarioExtension(abc.ABC):
         """
         Called after the initial network creation and after the physical simulator adds its modifications.
         :return:
+        """
+        pass
+
+    def extend_post_start(self):
+        """
+        Called after the co-simulation has been started, but no services have been started yet.
+        @return:
+        """
+        pass
+
+    def extend_on_run(self):
+        """
+        Called after the co-simulation has been started and is running.
+        @return:
         """
         pass

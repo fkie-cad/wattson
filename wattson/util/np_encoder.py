@@ -1,6 +1,7 @@
 import json
 
 import numpy as np
+from powerowl.layers.powergrid.values.grid_value_type import Step
 
 
 class NpEncoder(json.JSONEncoder):
@@ -11,4 +12,13 @@ class NpEncoder(json.JSONEncoder):
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
-        return super(NpEncoder, self).default(obj)
+        if isinstance(obj, np.bool_):
+            return bool(obj)
+        if isinstance(obj, Step):
+            return obj.value
+        if hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        try:
+            return super(NpEncoder, self).default(obj)
+        except Exception as e:
+            raise ValueError(repr(obj))

@@ -91,13 +91,6 @@ class WattsonNetworkSwitch(WattsonNetworkNode, NetworkSwitch):
 
     def is_ovs(self) -> bool:
         return True
-        """
-        try:
-            import mininet.node
-        except ImportError as e:
-            return False
-        return isinstance(self.emulation_instance, mininet.node.OVSSwitch)
-        """
 
     def get_emulation_entity_config(self) -> dict:
         return {
@@ -190,22 +183,62 @@ class WattsonNetworkSwitch(WattsonNetworkNode, NetworkSwitch):
                 self.logger.critical(f"Tap interfaces are not yet implemented!")
 
             if interface.is_mirror_port():
-                # Declare port as mirror port
-                code, res = self.exec([f"ovs-vsctl", "--may-exist", "add-port",
-                                       self.system_id, interface.get_system_name()])
-                if code != 0:
-                    self.logger.error(f"Could not add interface {interface.get_system_name()} to switch {self.system_id}")
-                    continue
-                code, res = self.exec(["ovs-vsctl",
-                                       "--", "--id=@p", "get", "port", interface.get_system_name(),
-                                       "--", "--id=@m", f"create mirror name={interface.entity_id}",
-                                       "select-all=true", "output-port=@p",
-                                       "--", "set", "bridge", self.system_id,
-                                       "mirrors=@m"])
-                if code == 0:
-                    self.logger.info(f"Set {interface.entity_id} as the active mirror for switch {self.entity_id}")
-                else:
-                    self.logger.error(f"Could not set {interface.entity_id} as the active mirror for "
-                                      f"switch {self.entity_id}: {res=}")
-                    for line in res:
-                        self.logger.error(line)
+                self.enable_mirror(interface)
+
+    def enable_mirror(self, interface: 'WattsonNetworkInterface') -> bool:
+        # Declare port as mirror port
+        interface.set_mirror_port(True)
+
+        code, res = self.exec(
+            [f"ovs-vsctl", "--may-exist", "add-port",
+             self.system_id, interface.get_system_name()]
+            )
+        if code != 0:
+            self.logger.error(f"Could not add interface {interface.get_system_name()} to switch {self.system_id}")
+            return False
+
+        cmd = ["ovs-vsctl",
+               "--", "--id=@p", "get", "port", interface.get_system_name(),
+               "--", "--id=@m", f"create mirror name={interface.entity_id}",
+               "select-all=true", "output-port=@p",
+               "--", "set", "bridge", self.system_id,
+               "mirrors=@m"]
+        # Shell seems to be required here...
+        code, res = self.exec(cmd, shell=True)
+        if code == 0:
+            self.logger.info(f"Set {interface.entity_id} as the active mirror for switch {self.entity_id} ({self.display_name})")
+            return True
+        else:
+            self.logger.error(
+                f"Could not set {interface.entity_id} as the active mirror for "
+                f"switch {self.entity_id}: {res=}"
+            )
+            for line in res:
+                self.logger.error(line)
+        return False
+
+    def disable_mirror(self, interface: 'WattsonNetworkInterface') -> bool:
+        cmd = [
+            "ovs-vsctl",
+            "--", "--id=@p", "get", "mirror", interface.entity_id,
+            "--", "remove", "bridge", self.system_id, "mirrors", "@p"
+        ]
+        code, res = self.exec(cmd, shell=True)
+        if code == 0:
+            interface.set_mirror_port(False)
+            self.logger.info(f"Disabled {interface.entity_id} as mirror for {self.entity_id}")
+            return True
+        self.logger.error(f"Could not disable mirror port {interface.entity_id} at {self.entity_id}:\n" + "\n".join(res))
+        return False
+
+    def clear_mirrors(self):
+        if not self.is_ovs():
+            return False
+        code, lines = self.exec(["ovs-vsctl", "clear", "bridge", self.system_id, "mirrors"])
+        for interface in self.interfaces:
+            if interface.is_mirror_port():
+                self.logger.info(f"Disabling mirror port {interface.entity_id} ({interface.interface_name})")
+                interface.set_mirror_port(False)
+        if code != 0:
+            self.logger.error("\n".join(lines))
+        return code == 0

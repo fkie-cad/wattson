@@ -34,15 +34,28 @@ class WattsonNetworkEntity(NetworkEntity):
         if self.id is None:
             self.id = self.system_name
         if self.display_name is None:
-            self.display_name = self.generate_display_name()
+            if self.config.get("name") is None:
+                self.display_name = self.generate_display_name()
+            else:
+                self.display_name = self.config.get("name")
+        if self.get_dns_host_name() is None:
+            self.config["dns_host_name"] = self.get_dns_host_name()
         if self.logger is None:
             self.logger = get_logger(self.entity_id, self.entity_id)
+        if "role" in self.config:
+            self.config.setdefault("roles", []).insert(0, self.config["role"])
 
     def generate_name(self):
         return f"{self.get_prefix()}{self.get_numerical_id()}"
 
     def generate_display_name(self) -> str:
         return f"{self.__class__.__name__.replace('WattsonNetwork', '')} {self.entity_id}"
+
+    def generate_dns_host_name(self) -> Optional[str]:
+        return None
+
+    def get_dns_host_name(self) -> Optional[str]:
+        return self.config.get("dns_host_name", self.config.get("configuration", {}).get("dns_host_name", None))
 
     def get_prefix(self) -> str:
         return "e"

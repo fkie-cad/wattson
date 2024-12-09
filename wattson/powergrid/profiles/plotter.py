@@ -4,7 +4,7 @@ from typing import Tuple, Set, Union
 import pandapower
 from matplotlib import pyplot as plt
 
-from .profile_provider_factory import ProfileProviderFactory
+from .profile_loader_factory import ProfileLoaderFactory
 
 PlotterElement = Tuple[str, int]
 PlotterElementGroup = Tuple[str, Set[PlotterElement]]
@@ -18,8 +18,8 @@ class ProfilePlotter:
     def __init__(self, power_grid: pandapower.pandapowerNet, profiles: dict,
                  seed: int = 0, noise: str = "1%", interpolate="cubic", **kwargs):
         self.power_grid = power_grid
-        self.profile_provider_factory = ProfileProviderFactory(power_grid, profiles, seed=seed, noise=noise, interpolate=interpolate,
-                                                      **kwargs)
+        self.profile_provider_factory = ProfileLoaderFactory(power_grid, profiles, seed=seed, noise=noise, interpolate=interpolate,
+                                                             **kwargs)
         self.provider = self.profile_provider_factory.get_interface()
 
         #self.provider = PowerProfileProviderInterface(simulator, profiles, seed=seed, noise=noise, interpolate=interpolate,

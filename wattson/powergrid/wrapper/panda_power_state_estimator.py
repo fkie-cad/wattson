@@ -1,27 +1,24 @@
-import copy
 import logging
-import sys
 import threading
-from pathlib import Path
+import traceback
 from threading import Thread, Lock, Event
-import typing
+from typing import Any, Optional, List, Dict, Callable
 
 import numpy as np
 
 import pandapower as pp
-import pandas as pd
-from pandas import DataFrame, set_option
-import pandapower.estimation.util
-from copy import deepcopy
+from pandas import DataFrame
 
-from pandapower.estimation import ALGORITHM_MAPPING
 from powerowl.layers.powergrid.elements import Line, Switch
+from powerowl.layers.powergrid.values.grid_value import GridValue
+from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 from powerowl.layers.powergrid.values.units.scale import Scale
 from powerowl.layers.powergrid.values.units.unit import Unit
 from powerowl.simulators.pandapower import PandaPowerGridModel
 
 from wattson.powergrid.wrapper.panda_power_measurement import PandaPowerMeasurement
 from wattson.powergrid.wrapper.power_owl_measurement import PowerOwlMeasurement
+from wattson.util.events.queue_event import QueueEvent
 from wattson.util.hidden_print import HiddenPrint
 from wattson.util.log import get_logger
 from wattson.util.powernet import sanitize_power_net
@@ -33,10 +30,10 @@ class PandaPowerStateEstimator(Thread):
 
     def __init__(self,
                  power_grid_model: PandaPowerGridModel,
-                 update_required: typing.Optional[Event],
-                 estimation_done_callback: typing.Callable,
-                 estimation_started_callback: typing.Callable,
-                 **kwargs: typing.Any):
+                 update_required: Optional[Event],
+                 estimation_done_callback: Callable,
+                 estimation_started_callback: Callable,
+                 **kwargs: Any):
         """
         Initializes and configures the state estimator.
 
@@ -62,24 +59,34 @@ class PandaPowerStateEstimator(Thread):
         super().__init__()
         self.power_grid_model = power_grid_model
         self.net_lock = threading.Lock()
-        self.update_required: Event = update_required if update_required is not None else threading.Event()
-        self.estimation_done_callback: typing.Callable = estimation_done_callback
-        self.estimation_started_callback: typing.Callable = estimation_started_callback
+        self.update_required: QueueEvent = update_required if update_required is not None else QueueEvent(5, 1, 10)
+        self.estimation_done_callback: Callable = estimation_done_callback
+        self.estimation_started_callback: Callable = estimation_started_callback
         self.terminate: Event = Event()
         self.interval = kwargs.get("interval", 0.5)
-        self.logger = get_logger("PowerGrid", "StateEstimator")
+        self.logger = get_logger("StateEstimator", level=logging.INFO)
         self.counter = 0
         self.max_delay = kwargs.get("max_delay", 10)
         self.mode = kwargs.get("estimation_mode", "default")
         self.decay = kwargs.get("measurement_decay", 12)
-        self._measurements: typing.Dict[str, PowerOwlMeasurement] = {}
+        self._measurements: Dict[str, PowerOwlMeasurement] = {}
         self._measurement_lock = threading.Lock()
         self.name = kwargs.get("name", "StateEstimator")
         self.virtual_time = kwargs.get("virtual_time", VirtualTime.get_instance())
         self._schedule_lock = threading.Lock()
-        self._schedule_start: typing.Optional[float] = None
+        self._schedule_start: Optional[float] = None
         self._schedule_max_wait = 5
         self._fault_detection_enabled = kwargs.get("fault_detection", True)
+        self._on_element_update_callbacks: List[Callable[[GridValue, Any, Any], None]] = []
+        self._on_element_change_callbacks: List[Callable[[GridValue, Any, Any], None]] = []
+
+    def add_on_element_update_callback(self, callback: Callable[[GridValue, Any, Any], None]):
+        if callback not in self._on_element_update_callbacks:
+            self._on_element_update_callbacks.append(callback)
+
+    def add_on_element_change_callback(self, callback: Callable[[GridValue, Any, Any], None]):
+        if callback not in self._on_element_change_callbacks:
+            self._on_element_change_callbacks.append(callback)
 
     def run(self) -> None:
         if not self.power_grid_model.is_prepared():
@@ -87,14 +94,14 @@ class PandaPowerStateEstimator(Thread):
 
         while not self.terminate.is_set():
             if self.update_required.wait(self.interval):
-                self.update_required.clear()
                 with self._schedule_lock:
                     self._schedule_start = None
                 self.estimate_state()
+                self.update_required.clear()
                 self.counter = 0
-            self.counter += 1
+            """self.counter += 1
             if 0 < self.max_delay < self.counter * self.interval:
-                self.update_required.set()
+                self.update_required.set()"""
 
     def stop(self):
         self.terminate.set()
@@ -126,13 +133,20 @@ class PandaPowerStateEstimator(Thread):
                 else:
                     return
             if self._schedule_start < self.virtual_time.time() - self._schedule_max_wait:
-                self.update_required.set()
+                self.update_required.queue()
 
     def get_power_grid_model(self) -> PandaPowerGridModel:
         return self.power_grid_model
 
     def estimate_state(self) -> None:
         self.estimation_started_callback(self.name)
+
+        """
+        try:
+            self.power_grid_model.simulate()
+        except Exception as e:
+            self.logger.error(traceback.format_exception(e))
+        """
 
         with self.net_lock:
             pnet = self.power_grid_model.get_panda_power_net()
@@ -145,7 +159,7 @@ class PandaPowerStateEstimator(Thread):
         self.clear_net(pnet)
 
         # Filter measurement dictionary
-        with ((((self._measurement_lock)))):
+        with self._measurement_lock:
             prev = len(self._measurements)
             faulty_lines = set()
             measurements = {}
@@ -199,24 +213,20 @@ class PandaPowerStateEstimator(Thread):
 
         self.logger.info(f"Currently {len(pnet.measurement.index)} valid measurements")
         zero_injection = self.get_zero_injection_busses(pnet)
+        self.logger.info(f"Zero Injection buses: {zero_injection}")
 
         # Estimate
         success = False
         algorithm_iterations = {
             "bad": 100,
+            'wls_with_zero_constraint': 1000,
             'wls': 1000,
-            'wls_with_zero_constraint': 100,
-            'opt': [50, 1e-08],
+            # 'opt': [50, 1e-08],
             # 'lp': 30,
             # 'irwls': 20,
         }
 
         used_algorithm = None
-
-        #if len(pnet.measurement) > 100:
-        #    pnet.measurement.to_csv("measurements.csv")
-        #    sys.exit()
-        # pnet.measurement
 
         with PandaPowerStateEstimator.global_estimation_lock:
             for algorithm, iterations in algorithm_iterations.items():
@@ -229,6 +239,12 @@ class PandaPowerStateEstimator(Thread):
                     with HiddenPrint():
                         if algorithm == "bad":
                             success = pp.estimation.remove_bad_data(pnet, maximum_iterations=iterations)
+                            try:
+                                pp.disconnected_elements(pnet)
+                            except Exception as e:
+                                self.logger.error("".join(traceback.format_exception(e)))
+                            # report = pp.diagnostic(pnet, report_style="none")
+
                         else:
                             success = pp.estimation.estimate(
                                 pnet,
@@ -239,13 +255,14 @@ class PandaPowerStateEstimator(Thread):
                                 **alg_args
                                 )
                     if not success:
-                        self.logger.error(f"{algorithm}: Estimation failed")
+                        self.logger.warning(f"{algorithm}: Estimation failed")
                     else:
                         self.logger.info(f"{algorithm}: Estimation success")
                         used_algorithm = algorithm
                         break
                 except Exception as e:
                     self.logger.error(f"SE Error {algorithm}: {e=}")
+                    self.logger.error("".join(traceback.format_exception(e)))
                 finally:
                     pass
 
@@ -262,17 +279,49 @@ class PandaPowerStateEstimator(Thread):
                         for index, row in pnet[key].iterrows():
                             for column in pnet[key]:
                                 value = row[column]
-                                # Scale to PowerOwl
-                                _, pandapower_scale = self.power_grid_model.extract_unit_and_scale(column)
                                 grid_value = self.power_grid_model.get_grid_value_by_pandapower_path(table, index, column)
                                 if grid_value is not None:
-                                    grid_value.raw_set_value(value, value_scale=pandapower_scale)
+                                    # Scale to PowerOwl
+                                    _, pandapower_scale = self.power_grid_model.extract_unit_and_scale(column)
+                                    value = grid_value.scale.from_scale(value, pandapower_scale)
+                                    grid_value.set_value(value)
+                                    # self.set_estimation_grid_value(grid_value=grid_value, value=value)
         if not success:
             self.logger.error("Estimation failed")
+            self.logger.info("Clearing results")
+            for element in self.power_grid_model.get_elements():
+                for _, grid_value in element.get_grid_values(GridValueContext.ESTIMATION):
+                    grid_value.set_value(None)
+                    # self.set_estimation_grid_value(grid_value=grid_value, value=None)
+
         self.estimation_done_callback(self.name, success, used_algorithm)
 
     def drop_nan_measurements(self, net):
-        net.measurement["value"].replace(np.nan, 0, inplace=True)
+        net.measurement["value"] = net.measurement["value"].replace(np.nan, 0)
+
+    def get_connected_buses(self):
+        external_grid_buses = [external_grid.get_bus() for external_grid in self.power_grid_model.get_elements_by_type("external_grid")]
+        stack = external_grid_buses
+
+        found = set()
+        connected_buses = set()
+
+        while len(stack) > 0:
+            bus = stack.pop()
+            if bus in found:
+                continue
+            found.add(bus)
+            neighbor_info = self.power_grid_model.find_all_neighbor_buses(bus)
+            for neighbor, connected in neighbor_info:
+                if connected:
+                    connected_buses.add(neighbor)
+                    stack.append(neighbor)
+        return list(connected_buses)
+
+    def get_disconnected_buses(self) -> List:
+        connected_buses = self.get_connected_buses()
+        # self.logger.info(f"Connected buses: {[bus.index for bus in connected_buses]}")
+        return [bus for bus in self.power_grid_model.get_buses() if bus not in connected_buses]
 
     def fix_disconnected_measurements(self, net):
         ext_busses = net.ext_grid["bus"].to_list()
@@ -311,6 +360,31 @@ class PandaPowerStateEstimator(Thread):
                         stack.append(bid)
         return found
 
+    def set_estimation_grid_value(self, grid_value: GridValue, value: Any):
+        old_value = grid_value.raw_get_value()
+        self.trigger_on_element_update(grid_value, old_value, value)
+
+    def trigger_on_element_update(self, grid_value: GridValue, old_value: Any, new_value: Any):
+        changed = False
+        try:
+            changed = old_value != new_value
+        except Exception as e:
+            changed = True
+        for callback in self._on_element_update_callbacks:
+            try:
+                callback(grid_value, old_value, new_value)
+            except Exception as e:
+                self.logger.error(f"on_element_update callback caused exception: {e=}")
+        if changed:
+            self.trigger_on_element_change(grid_value, old_value, new_value)
+
+    def trigger_on_element_change(self, grid_value: GridValue, old_value: Any, new_value: Any):
+        for callback in self._on_element_change_callbacks:
+            try:
+                callback(grid_value, old_value, new_value)
+            except Exception as e:
+                self.logger.error(f"on_element_change callback caused exception: {e=}")
+
     def get_adjacent_busses(self, net, bus):
         busses = []
 
@@ -318,7 +392,7 @@ class PandaPowerStateEstimator(Thread):
         line_busses = df[(df["from_bus"] == bus) | (df["to_bus"] == bus)]
         for i, row in line_busses.iterrows():
             bid = row["from_bus"] if bus == row["to_bus"] else row["to_bus"]
-            elem = row.to_remote_representation()
+            elem = row.to_dict()
             elem["etype"] = "line"
             elem["index"] = i
             busses.append(
@@ -333,7 +407,7 @@ class PandaPowerStateEstimator(Thread):
         trafo_busses = df[(df["lv_bus"] == bus) | (df["hv_bus"] == bus)]
         for i, row in trafo_busses.iterrows():
             bid = row["lv_bus"] if bus == row["hv_bus"] else row["hv_bus"]
-            elem = row.to_remote_representation()
+            elem = row.to_dict()
 
             elem["etype"] = "trafo"
             elem["index"] = i
@@ -344,6 +418,7 @@ class PandaPowerStateEstimator(Thread):
                     "connected": self.element_is_closed(net, elem)
                 }
             )
+        # TODO: Filter for bus switches
 
         return busses
 
@@ -365,25 +440,31 @@ class PandaPowerStateEstimator(Thread):
         return True
 
     def get_zero_injection_busses(self, net):
-        zero_injection_buses = np.array(
-            list(
-                set(net.bus.index) - set(net.load.bus) - set(net.sgen.bus) -
-                set(net.shunt.bus) - set(net.gen.bus) -
-                set(net.ext_grid.bus) - set(net.ward.bus) -
-                set(net.xward.bus)
-                )
-            )
-        return zero_injection_buses
+        zero_injection_buses = list(
+            set(net.bus.index) - set(net.load.bus) - set(net.sgen.bus) -
+            set(net.shunt.bus) - set(net.gen.bus) - set(net.storage.bus) -
+            set(net.ext_grid.bus) - set(net.ward.bus) -
+            set(net.xward.bus)
+        )
+
+        disconnected_buses = [bus.index for bus in self.get_disconnected_buses()]
+        self.logger.info(f"Disconnected buses: {disconnected_buses}")
+
+        # self.logger.info(f"Disconnected buses: {disconnected_buses}")
+        for bus in disconnected_buses:
+            if bus in zero_injection_buses:
+                zero_injection_buses.remove(bus)
+        return np.array(zero_injection_buses)
 
     def drop_zero_injection_bus_measurements(self, net):
         injection_buses = set()
-        for table in ["load", "shunt", "sgen", "gen", "ext_grid"]:
+        for table in ["load", "shunt", "sgen", "gen", "ext_grid", "storage"]:
             injection_buses.update(net[table]["bus"])
         zero_injection_buses = list(set(net.bus.index) - injection_buses)
         zero_injection_buses = np.array(
             list(
                 set(net.bus.index) - set(net.load.bus) - set(net.sgen.bus) -
-                set(net.shunt.bus) - set(net.gen.bus) -
+                set(net.shunt.bus) - set(net.gen.bus) - set(net.storage.bus) -
                 set(net.ext_grid.bus) - set(net.ward.bus) -
                 set(net.xward.bus)
                 )

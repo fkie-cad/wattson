@@ -21,7 +21,6 @@ class RtuDeployment(PythonDeployment):
         self.net = None
         if "power_grid" in configuration:
             self.net = self.load_power_grid("power_grid")
-        print(list(self.config.keys()))
 
         self.wattson_client_config = self.config.get("wattson_client_config")
 
@@ -35,8 +34,10 @@ class RtuDeployment(PythonDeployment):
         self.do_periodic_updates = self.config.get("do_periodic_updates", True)
         self.fields = self.config.get("fields", {})
         self.scenario_path = Path(self.config["scenario_path"])
+        self.use_syslog = self.config.get("use_syslog", False)
         # TODO SET BACK IF ELSE in seconds
         self.periodic_update_start_at = self.config.get("periodic_update_start", 0)
+        self.local_control = self.config.get("local_control", False)
         self.statistics = self.config.get("statistics", {})
         self.rtu_logics = []
         self.rtu = None
@@ -81,7 +82,9 @@ class RtuDeployment(PythonDeployment):
             logics=self.rtu_logics,
             statistics=self.statistics,
             power_grid=self.net,
-            allowed_mtu_ips=self.allowed_mtu_ips
+            allowed_mtu_ips=self.allowed_mtu_ips,
+            use_syslog=self.use_syslog,
+            local_control=self.local_control
         )
         self.rtu.start()
         self.rtu.wait()

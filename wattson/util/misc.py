@@ -10,7 +10,7 @@ from pathlib import Path
 
 import psutil, time
 from subprocess import run
-from typing import Union, Tuple
+from typing import Union, Tuple, Dict, Any
 
 
 def disable_checksum_offloading():
@@ -132,3 +132,14 @@ def get_object_size(_element) -> Tuple[float, str]:
         unit = "MiB"
         size /= s ** 2
     return size, unit
+
+
+def deep_update(mapping: Dict[Any, Any], *updating_mappings: Dict[Any, Any]) -> Dict[Any, Any]:
+    updated_mapping = mapping.copy()
+    for updating_mapping in updating_mappings:
+        for k, v in updating_mapping.items():
+            if k in updated_mapping and isinstance(updated_mapping[k], dict) and isinstance(v, dict):
+                updated_mapping[k] = deep_update(updated_mapping[k], v)
+            else:
+                updated_mapping[k] = v
+    return updated_mapping

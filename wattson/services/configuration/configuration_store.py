@@ -8,6 +8,11 @@ class ConfigurationStore(dict):
         self.short_notations = self["short-notations"]
         self._define_default_callbacks()
 
+    def get_configuration(self, key: str, default_value=None):
+        if not key.startswith("!"):
+            key = f"!{key}"
+        return self.get(key, default_value)
+
     def register_configuration(self, key: str, value):
         if not key.startswith("!"):
             key = f"!{key}"

@@ -1,3 +1,4 @@
+import typing
 from typing import Any, TYPE_CHECKING
 
 from wattson.cosimulation.simulators.network.components.interface.network_link import NetworkLink
@@ -40,21 +41,33 @@ class RemoteNetworkLink(RemoteNetworkEntity, NetworkLink):
             return None
         return interface
 
+    @property
+    def interface_a(self) -> 'RemoteNetworkInterface':
+        return self.get_interface_a()
+
+    @property
+    def interface_b(self) -> 'RemoteNetworkInterface':
+        return self.get_interface_b()
+
     def get_interface_a(self) -> 'RemoteNetworkInterface':
         return self._get_interface(self.state.get("interface_a_id"))
 
     def get_interface_b(self) -> 'RemoteNetworkInterface':
         return self._get_interface(self.state.get("interface_b_id"))
 
+    def get_other_interface(self, interface: 'RemoteNetworkInterface') -> 'RemoteNetworkInterface':
+        from wattson.cosimulation.simulators.network.components.remote.remote_network_interface import RemoteNetworkInterface
+        return typing.cast(RemoteNetworkInterface, super().get_other_interface(interface))
+
     def is_up(self) -> bool:
         self.synchronize()
         return self.state.get("is_up", False)
 
     def up(self):
-        self._set_link_state(WattsonNetworkQueryType.SET_LINK_UP, "up")
+        return self._set_link_state(WattsonNetworkQueryType.SET_LINK_UP, "up")
 
     def down(self):
-        self._set_link_state(WattsonNetworkQueryType.SET_LINK_DOWN, "down")
+        return self._set_link_state(WattsonNetworkQueryType.SET_LINK_DOWN, "down")
 
     def get_link_state(self) -> dict:
         query = WattsonNetworkQuery(
@@ -78,3 +91,4 @@ class RemoteNetworkLink(RemoteNetworkEntity, NetworkLink):
         if not resp.is_successful():
             error = resp.data.get("error")
             self.logger.error(f"Failed to set link {self.entity_id} {action_name}: {error=}")
+        return resp.is_successful()

@@ -20,3 +20,10 @@ class NetworkSwitch(NetworkNode, abc.ABC):
         @return:
         """
         pass
+
+    def clear_mirrors(self):
+        """
+        Clear any existing mirror interfaces
+        @return:
+        """
+        pass

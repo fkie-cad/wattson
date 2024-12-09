@@ -21,41 +21,54 @@ class InterfaceWrapper(EntityWrapper):
         # Namespace is given by associated node
         return self.emulator.get_namespace(self.interface.get_node())
 
+    def get_additional_namespace(self) -> Namespace:
+        # Namespace is given by associated node
+        return self.emulator.get_additional_namespace(self.interface.get_node())
+
     @property
     def interface(self) -> WattsonNetworkInterface:
         return typing.cast(WattsonNetworkInterface, self.entity)
 
     def exists(self):
-        code0, lines = self.get_namespace().exec(["ip", "link", "show", self.interface.interface_name])
-        return code0
+        interfaces = self.interface.node.interfaces_list_existing()
+        for interface in interfaces:
+            if interface["name"] == self.interface.interface_name:
+                return True
+        return False
 
     def create(self):
         if self.interface.is_physical():
+            self.flush_ip()
             self.push_to_namespace()
-            return
+            self.up()
+            return True
         if self.interface.is_tap_port():
             self.logger.warning("Tap port management not implemented")
-            return
+            return False
         if self.interface.is_virtual():
             # Create virtual interface
             if self.interface.link is None:
                 # Create placeholder interface
                 self.logger.info(f"Manually creating interface")
+                self.logger.warning(f"Not implemented for Windows!")
                 success, lines = self.get_namespace().exec(["ip", "link", "add", self.interface.interface_name, "type", "dummy"])
                 for line in lines:
                     print(line)
                 self.push_to_namespace()
                 self.configure()
-                return
+                return True
             else:
                 # Link will handle creation
-                return
+                return True
         self.logger.error("Unknown interface type - cannot be handled")
+        return False
 
     def clean(self):
         interface = self.interface
         if interface.is_physical():
             # Will be pushed to default namespace automatically
+            node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
+            node_wrapper.remove_interface(interface)
             return
         if interface.is_tap_port():
             self.logger.warning("Tap port management not implemented")
@@ -67,11 +80,28 @@ class InterfaceWrapper(EntityWrapper):
             return
         self.logger.error("Unknown interface type - cannot be handled")
 
+    def flush_ip(self) -> bool:
+        """
+        Flushes the IP from the interface.
+        @return: Whether the command was successful
+        """
+        return self.interface.node.interface_flush_ip(self.interface)
+
+        code0, lines = self.get_namespace().exec(["ip", "address", "flush", "dev", self.interface.interface_name])
+        # if self.has_remote_namespace():
+        #    remote_success, remote_lines = self.get_remote_namespace().exec()
+        if not code0:
+            self.logger.error(f"\n".join(lines))
+        return code0
+
     def down(self) -> bool:
         """
         Sets the interface down
         @return: Whether the command was successful
         """
+        if self.has_additional_namespace():
+            self.get_additional_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "down"])
+        return self.interface.down()
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "down"])
         return code0
 
@@ -80,7 +110,10 @@ class InterfaceWrapper(EntityWrapper):
         Sets the interface up
         @return: Whether the command was successful
         """
-        self.interface.up()
+        if self.has_additional_namespace():
+            self.get_additional_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
+
+        return self.interface.up()
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
         return code0
 
@@ -93,7 +126,7 @@ class InterfaceWrapper(EntityWrapper):
         if not self.exists():
             self.logger.warning(f"Cannot configure interface {interface.interface_name}")
             return False
-        self.down()
+        # self.down()
         # Set mac if given
         self.update_mac_address()
         # Set IP
@@ -103,7 +136,7 @@ class InterfaceWrapper(EntityWrapper):
     def update_mac_address(self):
         interface = self.interface
         if interface.mac_address is not None:
-            code0, lines = self.get_namespace().exec(["ip", "link", "set", "dev", interface.interface_name, "address", interface.mac_address])
+            code0, lines = self.get_additional_namespace().exec(["ip", "link", "set", "dev", interface.interface_name, "address", interface.mac_address])
             if not code0:
                 self.logger.warning(f"Cannot set MAC for interface {interface.interface_name}")
                 self.logger.debug("\n".join(lines))
@@ -112,17 +145,23 @@ class InterfaceWrapper(EntityWrapper):
         interface = self.interface
         # Remove all IPs
         self.logger.debug(f"Removing IP of interface {interface.interface_name}")
+        self.interface.node.interface_flush_ip(interface)
+        """
         code0, lines = self.get_namespace().exec(["ip", "addr", "flush", "dev", interface.interface_name])
         if not code0:
             self.logger.warning(f"Cannot remove IP for interface {interface.interface_name}")
             self.logger.debug("\n".join(lines))
+        """
         # Set IP if given
         if interface.ip_address_string is not None:
             self.logger.debug(f"Setting interface {interface.interface_name} IP to {interface.ip_address_string}")
+            self.interface.node.interface_set_ip(interface)
+            """
             code0, lines = self.get_namespace().exec(["ip", "addr", "add", interface.ip_address_string, "dev", interface.interface_name])
             if not code0:
                 self.logger.warning(f"Cannot set IP for interface {interface.interface_name}")
                 self.logger.debug("\n".join(lines))
+            """
 
     def pull_to_main_namespace(self) -> bool:
         """
@@ -132,11 +171,12 @@ class InterfaceWrapper(EntityWrapper):
         interface = self.interface
         node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
         node_wrapper.remove_interface(interface)
-        code0, lines = self.get_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", self.emulator.get_main_namespace().name])
-        if not code0:
-            self.logger.warning(f"Cannot move interface {interface.interface_name}")
-            self.logger.debug("\n".join(lines))
-            return False
+        if self.get_namespace().is_network_namespace:
+            code0, lines = self.get_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", self.emulator.get_main_namespace().name])
+            if not code0:
+                self.logger.warning(f"Cannot move interface {interface.interface_name}")
+                self.logger.debug("\n".join(lines))
+                return False
         return True
 
     def push_to_namespace(self, namespace: typing.Optional[Namespace] = None) -> bool:
@@ -145,18 +185,15 @@ class InterfaceWrapper(EntityWrapper):
         @param namespace: The namespace to put this interface into. If None, the nodes namespace is used.
         @return:
         """
-        """
-        Moves the interface from its associated namespace to the main namespace
-        @return:
-        """
         interface = self.interface
         if namespace is None:
             namespace = self.get_namespace()
-        code0, lines = self.emulator.get_main_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", namespace.name])
-        if not code0:
-            self.logger.warning(f"Cannot move interface {interface.interface_name}")
-            self.logger.debug("\n".join(lines))
-            return False
+        if namespace.is_network_namespace:
+            code0, lines = self.emulator.get_main_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", namespace.name])
+            if not code0:
+                self.logger.warning(f"Cannot move interface {interface.interface_name}")
+                self.logger.warning("\n".join(lines))
+                return False
         node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
         node_wrapper.add_interface(interface)
         return True
@@ -168,8 +205,15 @@ class InterfaceWrapper(EntityWrapper):
         @param link_model: The link wrapper to use
         @return: Whether the properties could be applied
         """
-        namespace = self.get_namespace()
+        # Additional namespace is external, i.e., native for the host machine
+        namespace = self.get_additional_namespace()
         interface = self.interface
+
+        """
+        if self.interface.node.os != "linux":
+            self.logger.warning(f"Cannot apply TC properties for {self.interface.node.os} - only linux supported")
+            return False
+        """
 
         code0, _ = namespace.exec(["which", "tc"])
         if not code0:
@@ -195,14 +239,14 @@ class InterfaceWrapper(EntityWrapper):
         packet_loss = link_model.packet_loss_percent
         reset_required |= packet_loss is None and self._previous_link_model.packet_loss_percent is not None
 
-        parent = "root"
+        parent = ["root"]
 
         success = True
 
         if self.is_tc_enabled():
             if reset_required:
                 action = "add"
-                code0, lines = namespace.exec(["tc", "qdisc", "del", "dev", interface.interface_name, parent])
+                code0, lines = namespace.exec(["tc", "qdisc", "del", "dev", interface.interface_name] + parent)
                 if not code0:
                     self.logger.error(f"Could not delete tc configuration")
                     self.logger.error("\n".join(lines))
@@ -221,25 +265,26 @@ class InterfaceWrapper(EntityWrapper):
                     self.logger.error(f"Could not add tc configuration")
                     self.logger.error("\n".join(lines))
                     success = False
-            parent = "parent 5:0"
-            code0, lines = namespace.exec(["tc", "class", action, "dev", interface.interface_name, parent,
-                                           "classid", "5:1", "htb", "rate", f"{bw}Mbit", "burst", "15k"])
+            parent = ["parent", "5:0"]
+            code0, lines = namespace.exec(
+                ["tc", "class", action, "dev", interface.interface_name] + parent + ["classid", "5:1", "htb", "rate", f"{bw}Mbit", "burst", "15k"]
+            )
             if not code0:
                 self.logger.error(f"Could not set bandwidth configuration")
                 self.logger.error("\n".join(lines))
                 success = False
-            parent = "parent 5:1"
+            parent = ["parent", "5:1"]
 
         # Apply delay, jitter and loss
         if delay is not None or jitter is not None or parent is not None:
-            cmd = ["tc", "qdisc", action, "dev", interface.interface_name, parent, "handle 10:", "netem"]
+            cmd = ["tc", "qdisc", action, "dev", interface.interface_name] + parent + ["handle", "10:", "netem"]
             if delay is not None:
                 cmd.extend(["delay", f"{delay}ms"])
             if jitter is not None:
                 cmd.extend([f"{jitter}ms"])
             if packet_loss is not None:
                 cmd.extend(["loss", f"{packet_loss}"])
-            parent = "parent 10:1"
+            parent = ["parent", "10:1"]
             code0, lines = namespace.exec(cmd)
             if not code0:
                 self.logger.error(f"Could not set delay/jitter/loss configuration")

@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 
 class WattsonFrRoutingMultiService(WattsonMultiService):
     def __init__(self, service_configuration: 'ServiceConfiguration', network_node: 'WattsonNetworkNode'):
-        service_configuration["services"] = [
+        services = [
             WattsonZebraService(ServiceConfiguration(), network_node=network_node),
             WattsonOSPFService(ServiceConfiguration(), network_node=network_node)
         ]
         service_configuration["max_wait"] = 1
-        super().__init__(service_configuration, network_node)
+        super().__init__(service_configuration, network_node, services)

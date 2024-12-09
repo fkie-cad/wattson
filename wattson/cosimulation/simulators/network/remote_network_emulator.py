@@ -1,6 +1,6 @@
 import ipaddress
 import time
-from typing import List, Dict, Type, Union, Optional, Tuple
+from typing import List, Dict, Type, Union, Optional, Tuple, Callable
 
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.cosimulation.control.messages.wattson_notification import WattsonNotification
@@ -8,6 +8,7 @@ from wattson.cosimulation.control.messages.wattson_response import WattsonRespon
 from wattson.cosimulation.exceptions import NetworkNodeNotFoundException, NetworkEntityNotFoundException, InterfaceNotFoundException, NetworkException
 from wattson.cosimulation.exceptions.node_creation_failed_exception import NodeCreationFailedException
 from wattson.cosimulation.simulators.network.components.interface.network_node import NetworkNode
+from wattson.cosimulation.simulators.network.components.remote.remote_network_docker_host import RemoteNetworkDockerHost
 from wattson.cosimulation.simulators.network.components.remote.remote_network_entity import RemoteNetworkEntity
 from wattson.cosimulation.simulators.network.components.remote.remote_network_entity_factory import RemoteNetworkEntityFactory
 from wattson.cosimulation.simulators.network.components.remote.remote_network_host import RemoteNetworkHost
@@ -44,14 +45,32 @@ class RemoteNetworkEmulator:
         self._interfaces: Dict[str, RemoteNetworkInterface] = {}
         self.logger = self._wattson_client.logger.getChild("RemoteNetworkEmulator")
         self._wattson_client.subscribe(WattsonNetworkNotificationTopic.TOPOLOGY_CHANGED, self._reload_entities)
+        self._on_topology_changed_callbacks: List[Callable[[RemoteNetworkEmulator], None]] = []
 
     def synchronize(self, force: bool = False):
         self._update_nodes(force=force)
         self._update_links(force=force)
-        self._update_interfaces(force=force)
+        self._update_interfaces(force=False)
 
     def query(self, query: WattsonNetworkQuery) -> WattsonResponse:
         return self._wattson_client.query(query)
+
+    def add_on_topology_changed_callback(self, callback: Callable) -> Callable:
+        self._on_topology_changed_callbacks.append(callback)
+        return callback
+
+    def remove_on_topology_changed_callback(self, callback: Callable) -> bool:
+        if callback in self._on_topology_changed_callbacks:
+            self._on_topology_changed_callbacks.remove(callback)
+            return True
+        return False
+
+    def _trigger_on_topology_changed(self):
+        for callback in self._on_topology_changed_callbacks:
+            try:
+                callback(self)
+            except Exception as e:
+                self.logger.error(f"{e=}")
 
     """
     SET GETTERS
@@ -162,6 +181,54 @@ class RemoteNetworkEmulator:
         return response.data.get("ip_address")
 
     """
+    FIND / SEARCH FOR NODES
+    """
+
+
+    def find_node_by_name(self, node_name: str) -> RemoteNetworkNode:
+        """
+        Searches for a node with the given display name.
+        @raise NetworkNodeNotFoundException if no node with the given name is found
+        @param node_name: The name to search for
+        @return: The (first) the node with the given display name
+        """
+        for node in self.get_nodes():
+            if node.display_name == node_name:
+                return node
+        raise NetworkNodeNotFoundException(f"No node with name {node_name} found")
+
+    def find_node_by_id(self, node_id: str) -> RemoteNetworkNode:
+        """
+        Searches for a node with the given (non-prefixed) ID and returns the node.
+        @raise NetworkNodeNotFoundException if no node with the given ID is found
+        @param node_id: The id of the node to search for
+        @return: The node with the given Id
+        """
+        for node in self.get_nodes():
+            if node.id == node_id:
+                return node
+        raise NetworkNodeNotFoundException(f"No node with {node_id} found")
+
+    def find_nodes_by_role(self, role: str) -> List[RemoteNetworkNode]:
+        result_nodes = []
+        for node in self.get_nodes():
+            if node.has_role(role):
+                result_nodes.append(node)
+        return result_nodes
+
+    def find_nodes_by_ip_address(self, ip_address: Union[str, ipaddress.IPv4Address]) -> List[RemoteNetworkNode]:
+        """
+        Searches for all nodes with the given IP address and returns the nodes.
+        @param ip_address: The IP address to search for
+        @return: A list of nodes with the given IP address
+        """
+        nodes = []
+        for node in self.get_nodes():
+            if node.has_ip(ip=ip_address):
+                nodes.append(node)
+        return nodes
+
+    """
     ENTITY ADDITION / CREATION
     """
     def create_node(self, entity_id: str, node_class: Type[NetworkNode] = RemoteNetworkNode,
@@ -187,6 +254,7 @@ class RemoteNetworkEmulator:
         if not response.is_successful():
             error = response.data.get("error", "")
             raise NodeCreationFailedException(f"Could not create {node_class.__name__} with {entity_id=}: {error=}")
+        
         node = self.get_node(node=entity_id)
         return node
 
@@ -202,21 +270,45 @@ class RemoteNetworkEmulator:
             raise NodeCreationFailedException(f"Could not create host with {entity_id=} - invalid node type returned")
         return host
 
+    def create_docker(self, entity_id: str, arguments: Optional[dict] = None, config: Optional[dict] = None) -> RemoteNetworkHost:
+        host = self.create_node(entity_id=entity_id, node_class=RemoteNetworkDockerHost, arguments=arguments, config=config)
+        if not isinstance(host, RemoteNetworkDockerHost):
+            raise NodeCreationFailedException(f"Could not create docker host with {entity_id=} - invalid node type returned")
+        return host
+
     def create_router(self, entity_id: str, arguments: Optional[dict] = None, config: Optional[dict] = None) -> RemoteNetworkRouter:
         router = self.create_node(entity_id=entity_id, node_class=RemoteNetworkRouter, arguments=arguments, config=config)
         if not isinstance(router, RemoteNetworkRouter):
             raise NodeCreationFailedException(f"Could not create router with {entity_id=} - invalid node type returned")
         return router
 
-    def create_interface(self, node_entity_id: str, arguments: Optional[dict] = None, config: Optional[dict] = None) -> RemoteNetworkInterface:
+    def create_interface(self, node: Union[str, RemoteNetworkNode], interface_id: str, arguments: Optional[dict] = None, config: Optional[dict] = None) -> Optional[RemoteNetworkInterface]:
         """
         Creates a network interface at a given node and returns its remote representation.
-        @param node_entity_id: The entity_id of the node to add the interface to
+        @param node: The node to create the network interface for.
+        @param interface_id: The entity_id of the interface to create
         @param arguments: Arguments to pass to the constructor
         @param config: Config options to pass to the constructor
         @return: The RemoteNetworkInterface instance
         """
-        raise NotImplementedError("NIY")
+        node = self.get_node(node)
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.CREATE_INTERFACE,
+            query_data={
+                "node_id": node.entity_id,
+                "interface_id": interface_id,
+                "arguments": arguments,
+                "config": config
+            }
+        )
+        response = self._wattson_client.query(query)
+        if not response.is_successful():
+            error = response.data.get("error", "")
+            self.logger.error(f"Could not create interface: {error=}")
+            return None
+        interface_entity_id = response.data.get("entity_id")
+        self.synchronize(force=True)
+        return self.get_interface_by_id(interface_entity_id)
 
     def remove_node(self, node: Union[str, RemoteNetworkNode]) -> bool:
         try:
@@ -249,6 +341,18 @@ class RemoteNetworkEmulator:
         if not response.is_successful():
             error = response.data.get("error", "")
             self.logger.error(f"Could not remove link {link.entity_id}: {error=}")
+            return False
+        return True
+
+    def remove_interface(self, interface: RemoteNetworkInterface) -> bool:
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.REMOVE_INTERFACE,
+            query_data={"entity_id": interface.entity_id}
+        )
+        response = self._wattson_client.query(query)
+        if not response.is_successful():
+            error = response.data.get("error", "")
+            self.logger.error(f"Could not remove interface {interface.entity_id}: {error=}")
             return False
         return True
 
@@ -298,6 +402,7 @@ class RemoteNetworkEmulator:
     """
     def _reload_entities(self, notification: WattsonNotification):
         self.synchronize(force=True)
+        self._trigger_on_topology_changed()
 
     def _update_nodes(self, force: bool = False):
         self._update_remote_objects(

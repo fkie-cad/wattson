@@ -16,6 +16,11 @@ class WattsonQueryType(str, enum.Enum):
     GET_CONFIGURATION = "get-configuration"
     RESOLVE_CONFIGURATION = "resolve-configuration"
 
+    GET_MODELS = "get-models"
+
+    HAS_SIMULATOR = "has-simulator"
+    GET_SIMULATORS = "get-simulators"
+
     REQUEST_SHUTDOWN = "request-shutdown"
 
     def __eq__(self, other):

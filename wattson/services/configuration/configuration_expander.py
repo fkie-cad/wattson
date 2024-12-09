@@ -35,7 +35,16 @@ class ConfigurationExpander:
         try:
             expanded_configuration = ServiceConfiguration()
             for key, value in service_configuration.items():
-                expanded_configuration[key] = copy.deepcopy(value)
+                try:
+                    expanded_configuration[key] = copy.deepcopy(value)
+                except Exception as e:
+                    print(f"{node.node_id}: {key}")
+                    print(f"{type(value)}")
+                    print(f"{repr(value)}")
+                    for i in value:
+                        print(type(i))
+                        print(repr(i))
+                    raise e
             self._replace_short_notations(expanded_configuration)
             self._expand_configuration(node, expanded_configuration)
             return expanded_configuration
@@ -110,7 +119,7 @@ class ConfigurationExpander:
             raise e
 
         # Default - should not happen
-        warnings.warn(f"Configuration expansion handled by default case, which should not happen. {type(configuration)} // {repr(configuration)}")
+        warnings.warn(f"Configuration expansion handled by default case, which should not happen. {path=} // {type(configuration)} // {repr(configuration)}")
         return configuration
 
     def _resolve_expansion_parts(self, node: 'WattsonNetworkNode', parts: List[str]) -> Any:

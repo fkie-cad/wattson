@@ -16,12 +16,11 @@ class RtuDefaultConfiguration(ServiceConfiguration):
             "coa": "!coa",
             "ip": "!ip",
             "periodic_update_ms": "!periodic_update_ms",
-            # "fields": "!fields.!nodeid",
             "periodic_update_start": "!periodic_update_start",
             "do_periodic_updates": "!do_periodic_updates",
             "rtu_logic": "!rtu_logic",
             "statistics": "!statistics",
-            # "power_grid": "!power_grid_model",
             "scenario_path": "!scenario_path",
-            "allowed_mtu_ips": "!allowed_mtu_ips"
+            "allowed_mtu_ips": "!allowed_mtu_ips",
+            "local_control": False
         })

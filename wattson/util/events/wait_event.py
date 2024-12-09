@@ -32,6 +32,8 @@ class WaitEvent(threading.Event):
             self._thread = threading.Thread(target=self._thread_run)
             self._thread.start()
         else:
+            if timeout is not None:
+                self._timeout = timeout
             self._restart.set()
             self._cancel.set()
 

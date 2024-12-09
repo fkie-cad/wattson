@@ -1,5 +1,6 @@
+import json
 import time
-from typing import Optional, List, TYPE_CHECKING, Dict
+from typing import Optional, List, TYPE_CHECKING, Dict, Any, Union
 
 import tabulate
 
@@ -30,7 +31,7 @@ class ServiceCliCommand(CliCommandHandler):
             return True
 
         sub_command = command[0]
-        if sub_command in ["start", "stop", "restart", "kill", "poll", "info"]:
+        if sub_command in ["start", "stop", "restart", "kill", "poll", "info", "config", "restart-all", "start-all", "stop-all"]:
             return self._handle_basic_command(command, prefix)
 
         self.cli.unknown_command(command)
@@ -39,9 +40,9 @@ class ServiceCliCommand(CliCommandHandler):
     def auto_complete_choices(self, prefix: List[str], level: Optional[int] = None) -> dict:
         self._load_available_nodes()
         self._update_services(True)
-        service_list = {str(service.id): {"children": [], "description": None} for service in self._services.values()}
-        actions = ["start", "stop", "restart", "kill", "poll", "info"]
-        return {
+        service_list = {str(service.id): {"children": {}, "description": None} for service in self._services.values()}
+        actions = ["start", "stop", "restart", "kill", "poll", "info", "config", "restart-all", "stop-all", "start-all"]
+        choices = {
             prefix[0]: {
                 "children": {
                     action: {"children": service_list, "description": f"{action} service"}
@@ -50,6 +51,50 @@ class ServiceCliCommand(CliCommandHandler):
                 "description": "Manage services"
             }
         }
+        for service_id, service_config in choices[prefix[0]]["children"]["config"]["children"].items():
+            service_config["children"] = {
+                "show": {
+                    "children": {},
+                    "description": "Show the (reduced) configuration"
+                },
+                "dump": {
+                    "children": {},
+                    "description": "Show the (full) configuration"
+                },
+                "raw": {
+                    "children": {},
+                    "description": "Show the unexpanded configuration"
+                },
+                "keys": {
+                    "children": {},
+                    "description": "List the available keys"
+                },
+                "get": {
+                    "children": {},
+                    "description": "Get a configuration option (key)"
+                },
+                "expand": {
+                    "children": {},
+                    "description": "Expand a configuration option (key)"
+                },
+                "set": {
+                    "children": {},
+                    "description": "Set a configuration option (key value)"
+                },
+                "restart-all": {
+                    "children": {},
+                    "description": "Restart all services"
+                },
+                "stop-all": {
+                    "children": {},
+                    "description": "Stop all services"
+                },
+                "start-all": {
+                    "children": {},
+                    "description": "Start all services"
+                }
+            }
+        return choices
 
     def help(self, prefix: List[str], subcommand: Optional[List[str]] = None) -> Optional[str]:
         if subcommand is not None and len(subcommand) > 0:
@@ -67,6 +112,17 @@ class ServiceCliCommand(CliCommandHandler):
             list:    list available services (optional for a single entity only)
             refresh: force refreshing the available services
             add:     Add a service to an existing entity
+            config:  Interact with the service's configuration
+                show: Prints the configuration, omitting large objects
+                dump: Prints the full configuration
+                keys: Prints the available keys of the configuration
+                get:  Gets a single configuration option
+                expand:  Permanently expands a single configuration option
+                set:  Sets a single configuration option (is parsed as JSON)
+            start-all:  Start a all services
+            stop-all:  Stop all services
+            restart-all:  Restart all services
+            
         """
 
     def description(self, prefix: List[str]) -> str:
@@ -99,12 +155,34 @@ class ServiceCliCommand(CliCommandHandler):
             return
         self._nodes = response.data.get("nodes", {})
 
+    def _traverse_config_dict(self, configuration: Dict, keys: Union[str, List[str]], set_value: bool = False, value: Any = None) -> Any:
+        if isinstance(keys, str):
+            keys = keys.split(".")
+        if len(keys) == 0:
+            if set_value:
+                print("Cannot set empty key")
+            return configuration
+        key = keys.pop(0)
+        if key in configuration:
+            if len(keys) > 0:
+                return self._traverse_config_dict(configuration[key], keys, set_value, value)
+            if set_value:
+                configuration[key] = value
+            return configuration[key]
+        elif len(keys) == 0 and set_value:
+            configuration[key] = value
+            return configuration
+        else:
+            print(f"Invalid key: {key}")
+        return None
+
     def _handle_basic_command(self, command: List[str], prefix: List[str]) -> bool:
         sub_command = command[0]
         if sub_command == "refresh":
             self._update_services(force=True)
             return True
-        if sub_command in ["start", "stop", "poll", "restart", "kill", "info"]:
+
+        if sub_command in ["start", "stop", "poll", "restart", "kill", "info", "config"]:
             if len(command) < 2:
                 self.cli.invalid_command(command)
                 return True
@@ -150,4 +228,78 @@ class ServiceCliCommand(CliCommandHandler):
                     rows.append((key, value))
                 print(tabulate.tabulate(rows))
                 return True
-            return True
+            if sub_command == "config":
+                if len(command) < 3:
+                    print("Invalid command")
+                    return True
+                config_command = command[2]
+                if config_command in ["show", "dump", "keys", "raw"]:
+                    if config_command == "raw":
+                        print(json.dumps(service.get_configuration(), indent=4))
+                        return True
+                    if config_command in ["show", "dump"]:
+                        expanded = service.expand_configuration().copy()
+                        if config_command == "show":
+                            for key in ["power_grid", "network", "datapoints"]:
+                                if key in expanded:
+                                    expanded[key] = "@hidden"
+                        print(json.dumps(expanded, indent=4))
+                        return True
+                    if config_command == "keys":
+                        print("Configuration keys")
+                        for key in service.get_configuration().keys():
+                            print(key)
+                if config_command == "get":
+                    if len(command) < 4 or len(command[3]) == 0:
+                        print("Specify configuration key")
+                        return True
+                    key = command[3]
+                    print(f"== Configuration for {key} ==")
+                    print(f"==== Raw configuration ====")
+                    raw_config = self._traverse_config_dict(service.get_configuration(), key)
+                    print(json.dumps(raw_config, indent=4))
+                    print(f"==== Expanded configuration ====")
+                    expanded_config = self._traverse_config_dict(service.expand_configuration(), key)
+                    print(json.dumps(expanded_config, indent=4))
+
+                if config_command == "expand":
+                    if len(command) < 4 or len(command[3]) == 0:
+                        print("Specify configuration key")
+                        return True
+                    key = command[3]
+                    print(f"Expanding configuration {key}")
+                    expanded_config_value = self._traverse_config_dict(service.expand_configuration(), key)
+                    configuration = service.get_configuration().copy()
+                    configuration = self._traverse_config_dict(configuration, key, True, expanded_config_value)
+                    service.set_configuration(configuration)
+                    return True
+                if config_command == "set":
+                    if len(command) < 5:
+                        print("Specify configuration key and value")
+                        return True
+                    key = command[3]
+                    value = json.loads(command[4])
+                    configuration = service.get_configuration().copy()
+                    configuration = self._traverse_config_dict(configuration, key, True, value)
+                    print(f"Setting configuration {key} = {repr(value)}")
+                    service.set_configuration(configuration)
+                    return True
+        if sub_command in ["restart-all", "start-all", "stop-all"]:
+            self._update_services()
+            if sub_command == "start-all":
+                print("Starting all services")
+            elif sub_command == "stop-all":
+                print("Stopping all services")
+            elif sub_command == "restart-all":
+                print("Restarting all services")
+
+            for service_id, service in self._services.items():
+                print(f"{service_id}", end="  ", flush=True)
+                if sub_command == "restart-all":
+                    service.restart()
+                elif sub_command == "start-all":
+                    service.start()
+                elif sub_command == "stop-all":
+                    service.stop()
+            print("")
+        return True

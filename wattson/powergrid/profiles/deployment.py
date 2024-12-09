@@ -5,7 +5,7 @@ from typing import Dict
 import pandapower
 import yaml
 
-from wattson.powergrid.profiles.profile_loader import ProfileLoader
+from wattson.powergrid.profiles.profile_provider import ProfileLoaderFactory
 from wattson.services.deployment import PythonDeployment
 
 
@@ -40,7 +40,7 @@ class ProfileLoaderDeployment(PythonDeployment):
                 self.profile_config[key] = self.config[key]
 
     def start(self):
-        self.profile_loader = ProfileLoader(
+        self.profile_loader = ProfileLoaderFactory(
             self.coordinator_ip,
             self.net,
             **self.profile_config

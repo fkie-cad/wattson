@@ -22,16 +22,18 @@ class IEC104Server(IECServerInterface):
     def __init__(self, rtu: 'RTU', ip: str, **kwargs):
         #c104.set_debug_mode(c104.Debug.Point | c104.Debug.Server | c104.Debug.Client
         #                    | c104.Debug.Callback | c104.Debug.Connection | c104.Debug.Gil)
+        # c104.set_debug_mode(c104.Debug.Server)
 
         port = kwargs.get('port', SERVER_DEFAULT_PORT)
         tick_rate_ms = kwargs.get('tick_rate_ms', SERVER_TICK_RATE_MS)
-        tick_rate_ms = 50
+        kwargs["tick_rate_ms"] = tick_rate_ms
+        # self._tick_rate_ms = tick_rate_ms
         self.periodic_updates_ms = kwargs.get("periodic_update_ms", SERVER_UPDATE_PERIOD_MS)
         self.periodic_updates_start = kwargs.get("periodic_update_start", 0)
         if self.periodic_updates_start < 0:
             self.periodic_updates_start = self.periodic_updates_start % self.periodic_updates_ms
 
-        self.server = c104.add_server(ip=ip, port=port, tick_rate_ms=tick_rate_ms)
+        self.server = c104.Server(ip=ip, port=port, tick_rate_ms=tick_rate_ms)
         self.station = self.server.add_station(common_address=rtu.coa)
 
         self._periodic_update_points_queue = []
@@ -54,13 +56,13 @@ class IEC104Server(IECServerInterface):
         wattson_time = self.rtu.wattson_client.get_wattson_time()
         ref_time = wattson_time.start_timestamp(WattsonTimeType.WALL)
         offset = wattson_time.time() - ref_time
-        self.logger.info(f"Simulation is running for {offset} seconds?")
+        self.logger.debug(f"Simulation is running for {offset} seconds?")
         delay = self.periodic_updates_start - offset
         if delay > 0:
-            self.logger.info(f"Delaying Periodic Updates by {delay}s")
+            self.logger.debug(f"Delaying Periodic Updates by {delay}s")
             time.sleep(delay)
         else:
-            self.logger.info(f"Periodic Updates Delay is smaller than 0 ({delay}s), skipping delay")
+            self.logger.debug(f"Periodic Updates Delay is smaller than 0 ({delay}s), skipping delay")
 
         for p in self._periodic_update_points_queue:
             self._set_periodic(p)
@@ -70,6 +72,7 @@ class IEC104Server(IECServerInterface):
         if self.callbacks["on_before_auto_transmit"]:
             point.on_before_auto_transmit(callable=self._on_before_auto_transmit)
         point.report_ms = self.periodic_updates_ms
+        # self.logger.info(f"{point.station.common_address}.{point.io_address}: Setting up Periodic Updates with {self.periodic_updates_ms} -> {point.report_ms} (TR {self.server.tick_rate_ms})")
 
     def set_datapoints(self):
         self.points = {}
@@ -79,6 +82,9 @@ class IEC104Server(IECServerInterface):
             ioa = info["ioa"]
             type_id = info["type_id"]
             cot = info["cot"]
+
+            self.mapped_point_info.setdefault(coa, {})[ioa] = dp
+
             if type_id < 45:
                 point = self.station.add_point(
                     io_address=ioa,
@@ -102,7 +108,7 @@ class IEC104Server(IECServerInterface):
                 "point": point
             }
             """
-            self.points[ioa] = point
+            self.points[ioa] = C104Point(point)
 
             if cot == COT.PERIODIC:
                 if self.periodic_updates_enable:
@@ -165,21 +171,21 @@ class IEC104Server(IECServerInterface):
                                cause: c104.Umc) -> None:
         self.callbacks["on_unexpected_msg"](server, message, cause)
 
-    def _on_receive(self, point: c104.Point, previous_state: dict,
+    def _on_receive(self, point: c104.Point, previous_info: c104.Information,
                     message: c104.IncomingMessage) -> c104.ResponseState:
-        prev_point = C104Point.parse_to_previous_point(previous_state, point)
+        prev_point = C104Point.parse_to_previous_point(previous_info, point)
         success = self.callbacks["on_receive"](C104Point(point), prev_point, message)
         return c104.ResponseState.SUCCESS if success else c104.ResponseState.FAILURE
 
-    def _on_setpoint_command(self, point: c104.Point, previous_state: dict,
+    def _on_setpoint_command(self, point: c104.Point, previous_info: c104.Information,
                              message: c104.IncomingMessage) -> c104.ResponseState:
-        prev_point = C104Point.parse_to_previous_point(previous_state, point)
+        prev_point = C104Point.parse_to_previous_point(previous_info, point)
         success = self.callbacks["on_setpoint_command"](C104Point(point), prev_point, message)
         return c104.ResponseState.SUCCESS if success else c104.ResponseState.FAILURE
 
-    def _on_step_command(self, point: c104.Point, previous_state: dict,
+    def _on_step_command(self, point: c104.Point, previous_info: c104.Information,
                          message: c104.IncomingMessage) -> bool:
-        prev_point = C104Point.parse_to_previous_point(previous_state, point)
+        prev_point = C104Point.parse_to_previous_point(previous_info, point)
         return self.callbacks["on_step_command"](C104Point(point), prev_point, message)
 
     def _on_before_read(self, point: c104.Point) -> None:

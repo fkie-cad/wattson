@@ -26,6 +26,8 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
         self._docker_client = docker.from_env()
         self._namespace: Optional[DockerNamespace] = None
         self._container_name = f"mn.{self.system_id}"
+        self._python_executable = None
+        self.config.setdefault("capabilities", []).extend(["NET_BIND_SERVICE", "NET_RAW", "SYS_ADMIN"])
 
     @classmethod
     def get_class_id(cls):
@@ -71,7 +73,13 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
         return "h"
 
     def start(self):
+        self.start_container()
         super().start()
+        # Start rsyslog
+        if self.config.get("start_syslog", True):
+            self.exec("chmod 0777 /var/log")
+            self.exec("rsyslogd")
+            
         # Remove unwanted interfaces added by docker
         _, data = self.exec("ip --json a")
         host_interfaces = json.loads("".join(data))
@@ -85,6 +93,10 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
                 if code != 0:
                     self.logger.error(f"Could not delete {interface}")
                     self.logger.error("\n".join(lines))
+
+    def stop(self):
+        super().stop()
+        self.stop_container()
 
     def add_volume(self, name: str, host_path: str, docker_path: str, permission: str = "rw"):
         """
@@ -140,7 +152,7 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
             volumes.append(
                 {
                     "name": "default_mount",
-                    "host_path": str(self.get_artifact_folder().resolve()),
+                    "host_path": str(self.get_host_folder().resolve()),
                     "docker_path": "/wattson/mnt",
                     "permission": "rw"
                 }
@@ -161,19 +173,26 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
         # Then, the respective docker_path is the guest folder
         self.logger.debug(f"Searching for {str(self.get_host_folder().resolve())}")
         for volume in self.get_volumes():
-            self.logger.debug(f"  Found {str(Path(volume.get('host_path')))}")
+            self.logger.debug(f"  Checking {str(Path(volume.get('host_path')))}")
             if Path(volume.get("host_path")).resolve() == self.get_host_folder().resolve():
+                self.logger.debug(f"  Using {str(Path(volume.get('host_path')))}")
                 return Path(volume.get("docker_path"))
 
         self.logger.error("Could not find a mount of the host folder within the container")
         return Path("/wattson")
 
     def get_python_executable(self) -> str:
-        _, lines = self.exec("which python3")
-        if len(lines) != 1:
-            self.logger.warning("Could not identify a python3 executable - attempting to use fallback")
-            return "python3"
-        return lines[0]
+        if self._python_executable is None:
+            if not self.is_started:
+                self.logger.warning("Could not determine python3 executable since node is not yet started - attempting fallback")
+                return "python3"
+
+            _, lines = self.exec("which python3")
+            if len(lines) != 1:
+                self.logger.warning("Could not identify a python3 executable - attempting to use fallback")
+                self._python_executable = "python3"
+            self._python_executable = lines[0]
+        return self._python_executable
 
     def get_image_name(self) -> Optional[str]:
         return self.config.get("image")
@@ -242,6 +261,8 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
         return False
 
     def start_container(self):
+        if self.is_container_running():
+            return True
         try:
             self._docker_client.api.start(self.container_name)
             return True
@@ -313,11 +334,18 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
             divider = "--"
             dbus = shutil.which("dbus-launch")
             pre_cmd = f"{dbus} "
-            use_shell = True
+            use_shell = False
 
         cmd = f"{pre_cmd}{terminal} {divider} {command}"
         cmd = shlex.split(cmd)
-        p = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, shell=use_shell, stderr=subprocess.DEVNULL)
+
+        def pre_exec_function():
+            # Detach from process group to ignore signals sent to main process
+            os.setpgrp()
+
+        self.logger.info(" ".join(cmd))
+
+        p = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, shell=use_shell, stderr=subprocess.DEVNULL, preexec_fn=pre_exec_function)
         self.manage_process(p)
         return p.poll() is None
 

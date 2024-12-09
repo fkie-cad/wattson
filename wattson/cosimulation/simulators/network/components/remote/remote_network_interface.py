@@ -1,6 +1,7 @@
 import ipaddress
 from typing import Optional, TYPE_CHECKING
 
+from wattson.cosimulation.exceptions import NetworkEntityNotFoundException
 from wattson.cosimulation.simulators.network.components.interface.network_interface import NetworkInterface
 from wattson.cosimulation.simulators.network.components.remote.remote_network_entity import RemoteNetworkEntity
 from wattson.cosimulation.simulators.network.messages.wattson_network_query import WattsonNetworkQuery
@@ -45,21 +46,52 @@ class RemoteNetworkInterface(RemoteNetworkEntity, NetworkInterface):
         return self.state.get("mac_address")
 
     def up(self):
-        raise NotImplementedError("NIY")
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.SET_INTERFACE_UP,
+            query_data={
+                "entity_id": self.entity_id
+            }
+        )
+        response = self._wattson_client.query(query)
+        self.synchronize(force=True)
+        return response.is_successful()
 
     def down(self):
-        raise NotImplementedError("NIY")
+        query = WattsonNetworkQuery(
+            query_type=WattsonNetworkQueryType.SET_INTERFACE_DOWN,
+            query_data={
+                "entity_id": self.entity_id
+            }
+        )
+        response = self._wattson_client.query(query)
+        self.synchronize(force=True)
+        return response.is_successful()
 
     @property
     def is_management(self) -> bool:
         return self.state.get("is_management", False)
 
+    @property
+    def interface_name(self):
+        return self.get_system_name()
+
     def get_system_name(self) -> Optional[str]:
         return self.state.get("system_name")
 
+    @property
+    def link(self) -> Optional['RemoteNetworkLink']:
+        return self.get_link()
+
+    @property
+    def node(self) -> Optional['RemoteNetworkNode']:
+        return self.get_node()
+
     def get_link(self) -> Optional['RemoteNetworkLink']:
         from wattson.cosimulation.simulators.network.components.remote.remote_network_link import RemoteNetworkLink
-        link = self._wattson_client.get_remote_network_link(self.state.get("link_id"))
+        link_id = self.state.get("link_id")
+        if link_id is None:
+            return None
+        link = self._wattson_client.get_remote_network_link(link_id)
         if not isinstance(link, RemoteNetworkLink):
             return None
         return link

@@ -2,12 +2,13 @@ import abc
 import ipaddress
 import json
 import logging
+import subprocess
 import sys
 import threading
 import time
 import traceback
 from pathlib import Path
-from typing import Union, Optional, List, Tuple, Set, Type, Dict, Any
+from typing import Union, Optional, List, Tuple, Set, Type, Dict, Any, cast
 
 import networkx as nx
 
@@ -18,6 +19,7 @@ from wattson.cosimulation.control.messages.wattson_response import WattsonRespon
 from wattson.cosimulation.exceptions import *
 from wattson.cosimulation.simulators.network.components.interface.network_entity import NetworkEntity
 from wattson.cosimulation.simulators.network.components.interface.network_node import NetworkNode
+from wattson.cosimulation.simulators.network.components.wattson_network_docker_host import WattsonNetworkDockerHost
 from wattson.cosimulation.simulators.network.components.wattson_network_entity import WattsonNetworkEntity
 from wattson.cosimulation.simulators.network.components.wattson_network_host import WattsonNetworkHost
 from wattson.cosimulation.simulators.network.components.wattson_network_interface import WattsonNetworkInterface
@@ -40,6 +42,7 @@ from wattson.services.deployment import PythonDeployment
 from wattson.services.wattson_python_service import WattsonPythonService
 from wattson.services.wattson_service import WattsonService
 from wattson.networking.namespaces.namespace import Namespace
+from wattson.util.performance.timed_cache import TimedCache
 
 
 class NetworkEmulator(Simulator):
@@ -51,7 +54,9 @@ class NetworkEmulator(Simulator):
         self._config = {
             "ip_base": "172.16.0.0/16",
             "use_v6": False,
-            "controller_port": 6653
+            "controller_port": 6653,
+            "domain_name": "wattson.server",
+            "set_name_servers": True
         }
         self._config.update(kwargs)
         self._running: bool = False
@@ -65,10 +70,33 @@ class NetworkEmulator(Simulator):
         self._switch_cls = self._config.get("switch", "wattson.networking.nodes.patched_ovs_switch.PatchedOVSSwitch")
         self._link_cls = self._config.get("link", "wattson.networking.wattson_ip_link.WattsonIPLink")
         self._controller_cls = self._config.get("controller", "wattson.networking.nodes.l2_controller.L2Controller")
+        self._dummy_link = WattsonNetworkLink(id="ldummy")
+        self._remote_node_cache = TimedCache(cache_refresh_callback=self._get_node_remote_representations, cache_timeout_seconds=10)
+        self._remote_link_cache = TimedCache(cache_refresh_callback=self._get_link_remote_representations, cache_timeout_seconds=10)
+        self._remote_processes = {}
 
+    @classmethod
+    def get_simulator_type(cls) -> str:
+        return "network"
+    
     def set_configuration_store(self, configuration_store: Optional[ConfigurationStore]):
         super().set_configuration_store(configuration_store=configuration_store)
         self._fill_configuration_store()
+        
+    def start(self):
+        super().start()
+        if self._config.get("set_name_servers", True):
+            name_servers = self.get_name_servers()
+            search_domain = self.get_domain_name()
+            name_server_ips = [name_server.get_primary_ip_address_string(with_subnet_length=False) for name_server in name_servers]
+            if len(name_servers) > 0:
+                for host in self.get_hosts():
+                    if host not in name_servers:
+                        host.set_config("name-servers", name_server_ips)
+                        host.set_config("search-domain", search_domain)
+        
+    def stop(self):
+        super().stop()
 
     @abc.abstractmethod
     def cli(self):
@@ -101,6 +129,7 @@ class NetworkEmulator(Simulator):
             if not self.has_entity(interface):
                 self.add_interface(node, interface)
         self.on_topology_change(node, "add_node")
+        self._remote_node_cache.set_outdated()
         return node
 
     def replace_node(self, original_node: WattsonNetworkNode, new_node: WattsonNetworkNode) -> WattsonNetworkNode:
@@ -178,6 +207,49 @@ class NetworkEmulator(Simulator):
             raise NetworkNodeNotFoundException(f"Node {node_id} does not exist")
         return entity
 
+    def find_node_by_name(self, node_name: str) -> WattsonNetworkNode:
+        """
+        Searches for a node with the given display name.
+        @raise NetworkNodeNotFoundException if no node with the given name is found
+        @param node_name: The name to search for
+        @return: The (first) the node with the given display name
+        """
+        for node in self.get_nodes():
+            if node.display_name == node_name:
+                return node
+        raise NetworkNodeNotFoundException(f"No node with name {node_name} found")
+
+    def find_node_by_id(self, node_id: str) -> WattsonNetworkNode:
+        """
+        Searches for a node with the given (non-prefixed) ID and returns the node.
+        @raise NetworkNodeNotFoundException if no node with the given ID is found
+        @param node_id: The id of the node to search for
+        @return: The node with the given Id
+        """
+        for node in self.get_nodes():
+            if node.id == node_id:
+                return node
+        raise NetworkNodeNotFoundException(f"No node with {node_id} found")
+
+    def find_nodes_by_role(self, role: str) -> List[WattsonNetworkNode]:
+        result_nodes = []
+        for node in self.get_nodes():
+            if node.has_role(role):
+                result_nodes.append(node)
+        return result_nodes
+
+    def find_nodes_by_ip_address(self, ip_address: Union[str, ipaddress.IPv4Address]) -> List[WattsonNetworkNode]:
+        """
+        Searches for all nodes with the given IP address and returns the nodes.
+        @param ip_address: The IP address to search for
+        @return: A list of nodes with the given IP address
+        """
+        nodes = []
+        for node in self.get_nodes():
+            if node.has_ip(ip=ip_address):
+                nodes.append(node)
+        return nodes
+
     def get_switch(self, node: Union[str, WattsonNetworkSwitch]) -> WattsonNetworkSwitch:
         node = self.get_node(node)
         if not isinstance(node, WattsonNetworkSwitch):
@@ -220,13 +292,19 @@ class NetworkEmulator(Simulator):
         self._connect_graph_nodes(iface_a, link)
         self._connect_graph_nodes(iface_b, link)
         link.add_on_link_property_change_callback(self._network_link_property_changed)
+        self._remote_link_cache.set_outdated()
         return link
 
     def remove_link(self, link: Union[str, WattsonNetworkLink]):
-        link = self.get_entity(link)
+        link = cast(WattsonNetworkLink, self.get_entity(link))
+        if link.interface_a is not None:
+            link.interface_a.link = None
+        if link.interface_b is not None:
+            link.interface_b.link = None
         self._graph.remove_node(link.entity_id)
         self.on_topology_change(link, "remove_link")
         self.on_entity_remove(link)
+        self._remote_link_cache.set_outdated()
 
     def remove_switch(self, switch: Union[str, WattsonNetworkSwitch]):
         self.remove_node(switch)
@@ -243,6 +321,7 @@ class NetworkEmulator(Simulator):
         self._graph.remove_node(node.entity_id)
         self.on_topology_change(node, "remove_node")
         self.on_entity_remove(node)
+        self._remote_node_cache.set_outdated()
 
     def remove_interface(self, interface: Union[WattsonNetworkInterface]):
         if interface.get_link() is not None:
@@ -250,6 +329,7 @@ class NetworkEmulator(Simulator):
         self._graph.remove_node(interface.entity_id)
         self.on_topology_change(interface, "remove_interface")
         self.on_entity_remove(interface)
+        self._remote_node_cache.set_outdated()
 
     @abc.abstractmethod
     def get_namespace(self, node: Union[str, WattsonNetworkEntity], raise_exception: bool = True) -> Optional[Namespace]:
@@ -267,6 +347,8 @@ class NetworkEmulator(Simulator):
         node.add_interface(interface)
         self._add_graph_node(interface)
         self._connect_graph_nodes(node, interface)
+        self._remote_link_cache.set_outdated()
+        self._remote_node_cache.set_outdated()
         return interface
 
     def has_interface(self, node: Union[str, WattsonNetworkNode], interface_id: str) -> bool:
@@ -315,8 +397,8 @@ class NetworkEmulator(Simulator):
                 interface_options["subnet_prefix_length"] = interface_options["prefix_length"]
                 del interface_options["prefix_length"]
 
-        interface_a = WattsonNetworkInterface(node=node_a, **interface_a_options)
-        interface_b = WattsonNetworkInterface(node=node_b, **interface_b_options)
+        interface_a = WattsonNetworkInterface(node=node_a, link=self._dummy_link, **interface_a_options)
+        interface_b = WattsonNetworkInterface(node=node_b, link=self._dummy_link, **interface_b_options)
         self.add_interface(node_a, interface_a)
         self.add_interface(node_b, interface_b)
         link = self.connect_interfaces(interface_a, interface_b, link_options=link_options)
@@ -336,6 +418,51 @@ class NetworkEmulator(Simulator):
                 if subnet in router_subnets:
                     matches.append((router, subnet))
         return matches
+
+    def count_hops(self, node: WattsonNetworkNode, target_node: WattsonNetworkNode, allowed_subnets: Optional[Set[ipaddress.IPv4Network]]) -> int:
+        """
+        Count the number of hops between the node and the target node.
+        Optionally restrict the result path to nodes within the given set of allowed subnets.
+        @param node: The source node
+        @param target_node: The target node
+        @param allowed_subnets: The optional set of allowed subnets
+        @return: The number of hops (i.e., number of links) between the node and the target node. Returns -1 if no path exists.
+        """
+        # BFS
+        if node == target_node:
+            return 0
+        stack = [node]
+        seen = set()
+        dist = {
+            node: 0
+        }
+
+        while len(stack) > 0:
+            current_node = stack.pop(0)
+            if current_node in seen:
+                continue
+            seen.add(current_node)
+            for neighbor in current_node.get_neighbors():
+                if allowed_subnets is not None:
+                    subnet_matches = False
+                    for subnet in neighbor.get_subnets(include_management=False):
+                        if subnet in allowed_subnets:
+                            subnet_matches = True
+                            break
+                    if not subnet_matches:
+                        continue
+                dist[neighbor] = min(dist.get(neighbor, 0), dist[current_node] + 1)
+                if neighbor not in seen:
+                    stack.append(neighbor)
+
+        return dist.get(target_node, -1)
+
+    def find_nodes_in_subnet(self, subnet: ipaddress.IPv4Network) -> List[WattsonNetworkNode]:
+        nodes = []
+        for node in self.get_nodes():
+            if node.has_subnet(subnet):
+                nodes.append(node)
+        return nodes
 
     def get_free_link_id(self) -> str:
         i = 0
@@ -388,17 +515,19 @@ class NetworkEmulator(Simulator):
     def get_next_management_ip(self) -> ipaddress.IPv4Address:
         return next(self._management_ip_generator)
 
-    def get_all_networks(self) -> list[ipaddress.IPv4Network]:
+    def get_all_networks(self, include_management: bool = True) -> list[ipaddress.IPv4Network]:
         networks = []
         for host in self.get_hosts():
             for interface in host.get_interfaces():
                 if interface.has_ip():
+                    if not include_management and interface.is_management:
+                        continue
                     network = ipaddress.IPv4Network(interface.ip_address_string, strict=False)
                     if network not in networks:
                         networks.append(network)
         return networks
 
-    def get_unused_ip(self, subnet: ipaddress.IPv4Network) -> ipaddress.IPv4Address:
+    def get_unused_ip(self, subnet: ipaddress.IPv4Network, exclude_ips: Optional[List[ipaddress.IPv4Address]] = None) -> ipaddress.IPv4Address:
         used_ip_addresses = []
         for interface in self.get_interfaces():
             if interface.has_ip():
@@ -406,6 +535,9 @@ class NetworkEmulator(Simulator):
                     used_ip_addresses.append(interface.get_ip_address())
         for ip_address in subnet.hosts():
             if ip_address not in used_ip_addresses:
+                if exclude_ips is not None:
+                    if ip_address in exclude_ips:
+                        continue
                 return ip_address
         raise NetworkException(f"No unused ip address in subnet {repr(subnet)} found")
 
@@ -420,6 +552,9 @@ class NetworkEmulator(Simulator):
                 raise DuplicateInterfaceException(f"Host {host.entity_id} already has a management interface")
             self.connect_to_management_network(host=host)
 
+    def get_management_switch(self) -> Optional[WattsonNetworkSwitch]:
+        return self._management_switch
+
     def connect_to_management_network(self, host: WattsonNetworkHost) -> bool:
         if self._management_switch is None:
             return False
@@ -430,10 +565,17 @@ class NetworkEmulator(Simulator):
         management_ip = self.get_next_management_ip()
         prefix_len = self._management_network.prefixlen
         self.logger.debug(f"Connecting {host.entity_id} to management network with {management_ip}")
-        host_interface = WattsonNetworkInterface(id="mgm", node=host, ip_address=management_ip,
-                                                 subnet_prefix_length=prefix_len, is_management=True)
+        host_interface = WattsonNetworkInterface(id="mgm",
+                                                 node=host,
+                                                 link=self._dummy_link,
+                                                 ip_address=management_ip,
+                                                 subnet_prefix_length=prefix_len,
+                                                 is_management=True)
         self.add_interface(host, host_interface)
-        switch_interface = WattsonNetworkInterface(id=host.entity_id, node=self._management_switch, is_management=True)
+        switch_interface = WattsonNetworkInterface(id=host.entity_id,
+                                                   link=self._dummy_link,
+                                                   node=self._management_switch,
+                                                   is_management=True)
         self.add_interface(self._management_switch, switch_interface)
         self.connect_interfaces(host_interface, switch_interface)
         return True
@@ -494,6 +636,34 @@ class NetworkEmulator(Simulator):
         self._configuration_store.register_configuration(
             "artifacts_root_folder", lambda _, __: str(self.get_working_directory().absolute())
         )
+        self._configuration_store.register_configuration(
+            "dns_map", lambda _, __: self._get_dns_map()
+        )
+
+    def _get_dns_map(self):
+        dns_map = {}
+        for host in self.get_hosts():
+            dns_name = host.get_dns_host_name()
+            if dns_name is not None:
+                for interface in host.get_interfaces():
+                    if interface.is_management:
+                        continue
+                    if interface.has_ip():
+                        dns_map.setdefault(dns_name, []).append(str(interface.get_ip_address()))
+        return dns_map
+
+    def get_domain_name(self, prefix: Optional[str] = None):
+        domain_name = self._config.get("domain_name")
+        if prefix is None:
+            return domain_name
+        return f"{prefix}.{domain_name}"
+
+    def get_name_servers(self) -> List[WattsonNetworkHost]:
+        name_servers = []
+        for host in self.get_hosts():
+            if host.has_service("WattsonDnsService"):
+                name_servers.append(host)
+        return name_servers
 
     def get_node_interfaces_dict(self, node: NetworkNode) -> List[Dict]:
         interfaces = []
@@ -586,6 +756,9 @@ class NetworkEmulator(Simulator):
                                 WattsonNetworkQueryType.UPDATE_NODE_CONFIGURATION]:
             return self._handle_node_simulation_control_query(query)
 
+        if query.query_type in [WattsonNetworkQueryType.PROCESS_ACTION]:
+            return self._handle_process_simulation_control_query(query)
+
         if query.query_type in [WattsonNetworkQueryType.GET_SERVICE,
                                 WattsonNetworkQueryType.GET_SERVICES,
                                 WattsonNetworkQueryType.ADD_SERVICE,
@@ -600,7 +773,11 @@ class NetworkEmulator(Simulator):
                                 WattsonNetworkQueryType.REMOVE_LINK]:
             return self._handle_link_simulation_control_query(query)
 
-        if query.query_type in [WattsonNetworkQueryType.SET_INTERFACE_IP]:
+        if query.query_type in [WattsonNetworkQueryType.SET_INTERFACE_IP,
+                                WattsonNetworkQueryType.SET_INTERFACE_UP,
+                                WattsonNetworkQueryType.SET_INTERFACE_DOWN,
+                                WattsonNetworkQueryType.REMOVE_INTERFACE,
+                                WattsonNetworkQueryType.CREATE_INTERFACE]:
             return self._handle_interface_simulation_control_query(query)
 
         if query.query_type == WattsonNetworkQueryType.GET_UNUSED_IP:
@@ -618,6 +795,18 @@ class NetworkEmulator(Simulator):
         }
         return representations
 
+    def _get_node_remote_representations(self) -> Dict:
+        nodes = self.get_nodes()
+        return {
+            "nodes": self._get_remote_representations(nodes, force=False)
+        }
+
+    def _get_link_remote_representations(self) -> Dict:
+        links = self.get_links()
+        return {
+            "links": self._get_remote_representations(links, force=False)
+        }
+
     """
     QUERY HANDLING: LINK-RELATED QUERIES
     """
@@ -634,13 +823,23 @@ class NetworkEmulator(Simulator):
 
         if query.query_type == WattsonNetworkQueryType.GET_LINKS:
             query.mark_as_handled()
-            links = self.get_links()
-            response = WattsonNetworkResponse(
-                True,
-                data={
-                    "links": self._get_remote_representations(links, force=False)
-                }
-            )
+            if self._remote_link_cache.is_up_to_date():
+                data = self._remote_link_cache.get_raw_content()
+                response = WattsonNetworkResponse(
+                    True,
+                    data=data
+                )
+            else:
+                # Return async response
+                response = WattsonAsyncResponse()
+
+                def async_link_resolve_task(r, d):
+                    return WattsonNetworkResponse(
+                        True,
+                        data=self._remote_link_cache.get_content()
+                    )
+
+                response.resolve_with_task(async_link_resolve_task)
             return response
 
         if query.query_type == WattsonNetworkQueryType.GET_LINK_STATE:
@@ -695,12 +894,23 @@ class NetworkEmulator(Simulator):
         # Listing of nodes
         if query.query_type == WattsonNetworkQueryType.GET_NODES:
             query.mark_as_handled()
-            nodes = self.get_nodes()
-            response = WattsonNetworkResponse(
-                True, data={
-                    "nodes": self._get_remote_representations(nodes)
-                }
-            )
+            if self._remote_node_cache.is_up_to_date():
+                data = self._remote_node_cache.get_raw_content()
+                response = WattsonNetworkResponse(
+                    True,
+                    data=data
+                )
+            else:
+                # Return async response
+                response = WattsonAsyncResponse()
+
+                def async_node_resolve_task(r, d):
+                    return WattsonNetworkResponse(
+                        True,
+                        data=self._remote_node_cache.get_content()
+                    )
+
+                response.resolve_with_task(async_node_resolve_task)
             return response
 
         if query.query_type == WattsonNetworkQueryType.ADD_NODE:
@@ -715,18 +925,27 @@ class NetworkEmulator(Simulator):
 
             node_type_name = node_type
 
-            if node_type_name == "NetworkHost":
-                node = WattsonNetworkHost(id=entity_id, *arguments, config=config)
-                self.add_host(node)
-            elif node_type_name == "NetworkRouter":
-                node = WattsonNetworkRouter(id=entity_id, *arguments, config=config)
-                self.add_router(node)
-            elif node_type_name == "NetworkSwitch":
-                node = WattsonNetworkSwitch(id=entity_id, *arguments, config=config)
-                self.add_switch(node)
-            else:
-                return WattsonNetworkResponse(successful=False, data={"error": f"Invalid {node_type_name=}"})
-            return WattsonNetworkResponse(successful=True, data={"entity_id": node.entity_id})
+            def async_add_node(r, d):
+                if node_type_name == "NetworkHost":
+                    new_node = WattsonNetworkHost(id=entity_id, **arguments, config=config)
+                    self.add_host(new_node)
+                elif node_type_name == "NetworkDockerHost":
+                    new_node = WattsonNetworkDockerHost(id=entity_id, **arguments, config=config)
+                    self.add_host(new_node)
+                elif node_type_name == "NetworkRouter":
+                    new_node = WattsonNetworkRouter(id=entity_id, **arguments, config=config)
+                    self.add_router(new_node)
+                elif node_type_name == "NetworkSwitch":
+                    new_node = WattsonNetworkSwitch(id=entity_id, **arguments, config=config)
+                    self.add_switch(new_node)
+                else:
+                    return WattsonNetworkResponse(successful=False, data={"error": f"Invalid {node_type_name=}"})
+                self.logger.info(f"Added {node_type} with ID {entity_id}")
+                return WattsonNetworkResponse(successful=True, data={"entity_id": new_node.entity_id})
+
+            response = WattsonAsyncResponse()
+            response.resolve_with_task(async_add_node)
+            return response
 
         if query.query_type == WattsonNetworkQueryType.CONNECT_NODES:
             query.mark_as_handled()
@@ -780,8 +999,9 @@ class NetworkEmulator(Simulator):
             entity_id = query.query_data.get("entity_id")
             query.mark_as_handled()
             if action not in ["start", "stop", "start_pcap", "stop_pcap", "open_terminal", "exec",
-                              "add-role", "delete-role", "loopback_up", "update_default_route",
-                              "start-browser"]:
+                              "add-role", "delete-role", "loopback_up", "update_default_route", "get_routes_list",
+                              "start-browser", "enable_mirror", "disable_mirror", "clear_mirrors",
+                              "file_put_contents", "file_get_contents", "transform_path"]:
                 return WattsonNetworkResponse(successful=False, data={"error": f"Unsupported action {action=}"})
             try:
                 node = self.get_node(node=entity_id)
@@ -794,8 +1014,13 @@ class NetworkEmulator(Simulator):
                 node.delete_role(query.query_data["role"])
                 return WattsonNetworkResponse(successful=True)
             if action == "exec":
-                ret, data = node.exec(query.query_data["value"])
-                return WattsonNetworkResponse(successful=True, data={"code": ret, "lines": data})
+                def resolve(r, d):
+                    command_arguments = query.query_data.get("arguments", {})
+                    ret, data = node.exec(query.query_data["value"], **command_arguments)
+                    return WattsonNetworkResponse(successful=True, data={"code": ret, "lines": data})
+                response = WattsonAsyncResponse()
+                response.resolve_with_task(resolve)
+                return response
             if action == "start":
                 node.start()
                 self.on_topology_change(node, "node_start")
@@ -833,10 +1058,55 @@ class NetworkEmulator(Simulator):
                 if node.update_default_route():
                     return WattsonNetworkResponse(successful=True)
                 return WattsonNetworkResponse(successful=False, data={"error": "Could not update default route"})
+            if action == "get_routes_list":
+                if not isinstance(node, WattsonNetworkHost):
+                    return WattsonNetworkResponse(successful=False, data={"error": "Only hosts have routes"})
+                routes = node.get_routes_list()
+                return WattsonNetworkResponse(successful=True, data={"routes": routes})
             if action == "start-browser":
                 if self.open_browser(node):
                     return WattsonNetworkResponse(successful=True)
                 return WattsonNetworkResponse(successful=False, data={"error": "Cannot open browser for this node"})
+            if action in ["enable_mirror", "disable_mirror"]:
+                interface_id = query.query_data.get("interface")
+                interface = None
+                if interface_id is not None:
+                    interface = node.get_interface(interface_id)
+                    if interface is None:
+                        return WattsonNetworkResponse(successful=False, data={"error": f"Unknown interface {interface_id}"})
+                if action == "enable_mirror":
+                    if node.enable_mirror(interface):
+                        return WattsonNetworkResponse(successful=True)
+                    return WattsonNetworkResponse(successful=False, data={"error": "Could not enable mirroring"})
+                elif action == "disable_mirror":
+                    if node.disable_mirror(interface):
+                        return WattsonNetworkResponse(successful=True)
+                    return WattsonNetworkResponse(successful=False, data={"error": "Could not disable mirroring"})
+            if action == "clear_mirrors":
+                return WattsonNetworkResponse(successful=node.clear_mirrors())
+            if action == "file_put_contents":
+                path = query.query_data.get("path")
+                contents = query.query_data.get("contents")
+                if not isinstance(path, Path):
+                    return WattsonNetworkResponse(successful=False, data={"error": "path must be a Path object"})
+                if not isinstance(contents, str):
+                    return WattsonNetworkResponse(successful=False, data={"error": "contents must be a string"})
+                success, path = node.file_put_contents(path, contents)
+                if success:
+                    return WattsonNetworkResponse(successful=True, data={"path": path})
+                return WattsonNetworkResponse(successful=False, data={"error": "Could not put contents to file"})
+            if action == "file_get_contents":
+                path = query.query_data.get("path")
+                if not isinstance(path, Path):
+                    return WattsonNetworkResponse(successful=False, data={"error": "path must be a Path object"})
+                contents = node.file_get_contents(path)
+                return WattsonNetworkResponse(successful=True, data={"contents": contents})
+            if action == "transform_path":
+                path = query.query_data.get("path")
+                if not isinstance(path, Path):
+                    return WattsonNetworkResponse(successful=False, data={"error": "path must be a Path object"})
+                transformed_path = node.transform_path(path)
+                return WattsonNetworkResponse(successful=True, data={"path": transformed_path})
 
         if query.query_type == WattsonNetworkQueryType.UPDATE_NODE_CONFIGURATION:
             config = query.query_data["config"]
@@ -847,6 +1117,61 @@ class NetworkEmulator(Simulator):
                 return WattsonNetworkResponse(successful=False, data={"error": "Node not found"})
             node.update_config(config)
             return WattsonNetworkResponse(successful=True, data={"config": node.get_config()})
+        return None
+
+    """
+    QUERY HANDLING: PROCESS-RELATED QUERIES
+    """
+    def _handle_process_simulation_control_query(self, query: WattsonQuery) -> Optional[WattsonResponse]:
+        entity_id = query.query_data.get("entity_id")
+        action = query.query_data.get("action")
+        if action in ["popen", "synchronize", "signal"]:
+            query.mark_as_handled()
+            try:
+                node = self.get_node(node=entity_id)
+            except NetworkNodeNotFoundException:
+                return WattsonNetworkResponse(successful=False, data={"error": f"Unknown node {entity_id=}"})
+        else:
+            return None
+
+        if action == "popen":
+            try:
+                command_arguments = query.query_data.get("arguments", {})
+                command_arguments["stdout"] = subprocess.PIPE
+                command_arguments["stderr"] = subprocess.PIPE
+                process = node.popen(query.query_data["command"], **command_arguments)
+                self._remote_processes.setdefault(node.entity_id, {})[process.pid] = process
+                return WattsonNetworkResponse(successful=True, data={"pid": process.pid})
+            except Exception as e:
+                return WattsonNetworkResponse(successful=False, data={"error": f"Failed to spawn process: {traceback.format_exc()}"})
+        if action == "synchronize":
+            pid = query.query_data.get("pid")
+            process: Optional[subprocess.Popen] = self._remote_processes.get(node.entity_id, {}).get(pid, None)
+            if process is None:
+                return WattsonNetworkResponse(successful=False, data={"error": f"Process {pid} not found for node {node.entity_id}"})
+            code = process.poll()
+            stdout = None
+            stderr = None
+            if code is not None:
+                stdout, stderr = process.communicate()
+            representation = {
+                "pid": process.pid,
+                "return_code": code,
+                "stdout": stdout,
+                "stderr": stderr
+            }
+            return WattsonNetworkResponse(successful=True, data=representation)
+        if action == "signal":
+            signal = query.query_data.get("signal")
+            pid = query.query_data.get("pid")
+            process: Optional[subprocess.Popen] = self._remote_processes.get(node.entity_id, {}).get(pid, None)
+            if process is None:
+                return WattsonNetworkResponse(successful=False, data={"error": f"Process {pid} not found for node {node.entity_id}"})
+            code = process.poll()
+            if code is not None:
+                process.send_signal(signal)
+                return WattsonNetworkResponse(successful=True)
+            return WattsonNetworkResponse(successful=False, data={"error": f"Cannot send signal {signal} to terminated process {pid} on node {node.entity_id}"})
         return None
 
     """
@@ -863,6 +1188,44 @@ class NetworkEmulator(Simulator):
                 return WattsonNetworkResponse(successful=False, data={"error": "Interface not found"})
             ip = query.query_data.get("ip_address")
             interface.set_ip_address(ip_address=ip)
+            return WattsonNetworkResponse(successful=True)
+
+        if query.query_type == WattsonNetworkQueryType.REMOVE_INTERFACE:
+            query.mark_as_handled()
+            try:
+                interface = self.get_entity(query.query_data.get("entity_id"))
+            except NetworkEntityNotFoundException:
+                return WattsonNetworkResponse(successful=False, data={"error": "Interface not found"})
+            if not isinstance(interface, WattsonNetworkInterface):
+                return WattsonNetworkResponse(successful=False, data={"error": "Interface not found"})
+            self.remove_interface(interface)
+            return WattsonNetworkResponse(successful=True)
+
+        if query.query_type == WattsonNetworkQueryType.CREATE_INTERFACE:
+            query.mark_as_handled()
+            try:
+                node_entity_id = query.query_data.get("node_id")
+                node = self.get_node(node_entity_id)
+                interface_id = query.query_data.get("interface_id")
+                config = query.query_data.get("config", {})
+                interface = WattsonNetworkInterface(id=interface_id, node=node, network_emulator=self, config=config)
+                self.add_interface(node, interface)
+                return WattsonNetworkResponse(successful=True, data={"entity_id": interface.entity_id})
+            except Exception as e:
+                return WattsonNetworkResponse(successful=False, data={"error": f"Failed to create interface {e=}"})
+
+        if query.query_type in [WattsonNetworkQueryType.SET_INTERFACE_UP, WattsonNetworkQueryType.SET_INTERFACE_DOWN]:
+            query.mark_as_handled()
+            try:
+                interface = self.get_entity(query.query_data.get("entity_id"))
+            except NetworkEntityNotFoundException:
+                return WattsonNetworkResponse(successful=False, data={"error": "Interface not found"})
+            if not isinstance(interface, WattsonNetworkInterface):
+                return WattsonNetworkResponse(successful=False, data={"error": "Interface not found"})
+            if query.query_type == WattsonNetworkQueryType.SET_INTERFACE_UP:
+                interface.up()
+            else:
+                interface.down()
             return WattsonNetworkResponse(successful=True)
 
     """
@@ -891,7 +1254,7 @@ class NetworkEmulator(Simulator):
         if query.query_type == WattsonNetworkQueryType.SERVICE_ACTION:
             service_id = query.query_data.get("service_id")
             action = query.query_data.get("action")
-            parameters = query.query_data.get("params")
+            parameters = query.query_data.get("params", {})
             try:
                 service = WattsonService.get_instance(service_id=service_id)
             except ServiceException:
@@ -945,7 +1308,7 @@ class NetworkEmulator(Simulator):
             except RuntimeError:
                 return WattsonNetworkResponse(successful=False, data={"error": f"Requested deployment class could not be loaded"})
             service = WattsonPythonService(service_class=deployment_class, service_configuration=service_configuration, network_node=node)
-            service.ensure_working_directory()
+            service.ensure_artifacts()
             node.add_service(service)
             return WattsonNetworkResponse(successful=True, data={"service": service.to_remote_representation()})
         return None

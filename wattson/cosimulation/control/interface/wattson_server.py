@@ -1,12 +1,14 @@
 import os
 import sys
 import threading
+import time
 import traceback
 from typing import Optional, TYPE_CHECKING, List, Union, Type, Any, Set, Callable, Dict
 
 import zmq
 
 from wattson.cosimulation.control.interface.publish_server import PublishServer
+from wattson.cosimulation.control.interface.time_limit import TimeLimit
 from wattson.cosimulation.control.interface.wattson_query_handler import WattsonQueryHandler
 from wattson.cosimulation.control.messages.failed_query_response import FailedQueryResponse
 from wattson.cosimulation.control.messages.wattson_async_response import WattsonAsyncResponse
@@ -19,11 +21,13 @@ from wattson.cosimulation.control.messages.wattson_query_type import WattsonQuer
 from wattson.cosimulation.control.messages.wattson_response import WattsonResponse
 from wattson.cosimulation.control.messages.unhandled_query_response import UnhandledQueryResponse
 from wattson.cosimulation.exceptions import InvalidSimulationControlQueryException
+from wattson.cosimulation.exceptions.timeout_exception import TimeoutException
 from wattson.services.configuration import ServiceConfiguration
 from wattson.services.configuration.configuration_expander import ConfigurationExpander
 from wattson.util import get_logger
 from wattson.networking.namespaces.namespace import Namespace
 from wattson.time.wattson_time import WattsonTime
+from wattson.util.performance.performance_decorator import performance_assert
 
 if TYPE_CHECKING:
     from wattson.cosimulation.control.co_simulation_controller import CoSimulationController
@@ -46,11 +50,25 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
         self._query_socket_str = query_socket_string
         self._publish_socket_str = publish_socket_string
         self._publisher: Optional[PublishServer] = None
-        self._poll_timeout = 1000
+        self._poll_timeout_ms = 1000
+        self._query_timeout_seconds = None  # 5
         self._termination_requested = threading.Event()
         self._on_client_registration_callback: Optional[Callable[[str], None]] = None
         self._wattson_time: WattsonTime = kwargs.get("wattson_time", WattsonTime())
         self._ready_event = threading.Event()
+
+        self._idle_watchdog_thread: Optional[threading.Thread] = None
+        self._idle_watchdog_alarm_interval: float = 5
+        self._idle_poll_duration: float = 0.3
+        self._idle_watchdog_no_alarm_event: threading.Event = threading.Event()
+        self._idle_watchdog_had_alarm: bool = False
+
+        self._query_watchdog_long_query_interval: float = 5
+        self._query_watchdog_thread: Optional[threading.Thread] = None
+        self._query_watchdog_had_alarm: bool = False
+        self._query_watchdog_query_start: Optional[float] = None
+        self._query_watchdog_active_query: Optional[WattsonQuery] = None
+        self._query_watchdog_query_done_event: threading.Event = threading.Event()
 
         self._config = {
             "required_clients": [],     # List of client (IDs) to be connected before starting the simulation
@@ -88,16 +106,62 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
             return False
         self._publisher.wait_until_ready()
 
+    def _idle_watchdog(self):
+        logger = self.logger.getChild("IdleWatchdog")
+        while not self._termination_requested.is_set():
+            self._termination_requested.wait(1)
+            if not self._idle_watchdog_no_alarm_event.wait(self._idle_watchdog_alarm_interval):
+                if not self._idle_watchdog_had_alarm:
+                    logger.warning(f"Can't keep up - no idle round since {self._idle_watchdog_alarm_interval} seconds")
+                self._idle_watchdog_had_alarm = True
+            else:
+                # Alarm cleared
+                if self._idle_watchdog_had_alarm:
+                    self._idle_watchdog_had_alarm = False
+                    logger.info(f"Idle round detected - backlog has been worked on")
+            self._idle_watchdog_no_alarm_event.clear()
+
+    def _query_watchdog(self):
+        logger = self.logger.getChild("QueryWatchdog")
+        while not self._termination_requested.is_set():
+            self._termination_requested.wait(1)
+            query_start_time = self._query_watchdog_query_start
+            if query_start_time is not None:
+                if time.time() - query_start_time > self._query_watchdog_long_query_interval:
+                    if not self._idle_watchdog_had_alarm:
+                        logger.warning(f"Long running query detected!")
+                        if self._query_watchdog_active_query is not None:
+                            query = self._query_watchdog_active_query
+                            logger.warning(f"{query.query_type}")
+                            logger.warning(f"{str(repr(query.query_data))[:200]}")
+                        self._query_watchdog_had_alarm = True
+                    while not self._query_watchdog_query_done_event.wait(1):
+                        logger.warning(f"Long running query still blocking!")
+                    self._query_watchdog_query_done_event.clear()
+                    logger.info("Long running query resolved - no longer blocking")
+
     def start(self) -> None:
         self._termination_requested.clear()
         self._publisher = PublishServer(simulation_control_server=self, socket_string=self._publish_socket_str,
-                                        namespace=self._namespace)
+                                        namespace=self._namespace, **self._config)
         self._publisher.start()
+        self._idle_watchdog_thread = threading.Thread(target=self._idle_watchdog, daemon=True)
+        self._idle_watchdog_thread.start()
+        self._query_watchdog_thread = threading.Thread(target=self._query_watchdog, daemon=True)
+        self._query_watchdog_thread.start()
         super().start()
 
     def stop(self, timeout: Optional[float] = None):
         self._termination_requested.set()
         self._publisher.stop(timeout=timeout)
+        self._idle_watchdog_no_alarm_event.set()
+        self._query_watchdog_query_done_event.set()
+        if self._idle_watchdog_thread is not None:
+            if self._idle_watchdog_thread.is_alive():
+                self._idle_watchdog_thread.join(timeout=timeout)
+        if self._query_watchdog_thread is not None:
+            if self._query_watchdog_thread.is_alive():
+                self._query_watchdog_thread.join(timeout=timeout)
         try:
             self.join(timeout=timeout)
         except RuntimeError:
@@ -118,13 +182,28 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
                 socket.bind(self._query_socket_str)
                 self._ready_event.set()
                 while not self._termination_requested.is_set():
-                    if not socket.poll(timeout=self._poll_timeout):
+                    poll_start = time.time()
+                    if not socket.poll(timeout=self._poll_timeout_ms):
+                        # We have an idle round
+                        self._idle_watchdog_no_alarm_event.set()
                         continue
+                    poll_end = time.time()
+                    poll_time = poll_end - poll_start
+                    if poll_time > self._idle_poll_duration:
+                        # At least we were idle for a certain amount of time
+                        self._idle_watchdog_no_alarm_event.set()
+
+                    self._query_watchdog_query_start = time.time()
+
                     query: WattsonQuery = socket.recv_pyobj()
-                    if main_namespace is not None:
-                        response = main_namespace.call(self._handle_query, arguments=(query,))
+
+                    self._query_watchdog_active_query = query
+
+                    if query.requires_native_namespace() and main_namespace is not None:
+                        response = main_namespace.call(self._handle_query_wrapper, arguments=(query, self._query_timeout_seconds))
                     else:
-                        response = self._handle_query(query)
+                        response = self._handle_query_wrapper(query, self._query_timeout_seconds)
+
                     # Async queries get a unique ID
                     callback = response.get_post_send_callback()
                     response.clear_post_send_callback()
@@ -150,6 +229,10 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
                         socket.send_pyobj(FailedQueryResponse())
                     if callback is not None:
                         callback()
+
+                    self._query_watchdog_active_query = None
+                    self._query_watchdog_query_start = None
+                    self._query_watchdog_query_done_event.set()
 
     def set_on_client_registration_callback(self, callback: Callable[[str], None]):
         self._on_client_registration_callback = callback
@@ -365,6 +448,21 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
 
         return None
 
+    def _handle_query_wrapper(self, query: WattsonQuery, timeout: Optional[float] = 5) -> WattsonResponse:
+        try:
+            with TimeLimit(timeout) as time_limit:
+                t = time.perf_counter()
+                response = time_limit.run(self._handle_query, query)
+                duration = time.perf_counter() - t
+                if duration > 1:
+                    self.logger.warning(f"Query handling of {query.__class__.__name__} ({query.query_type}) took {duration} s")
+                return response
+        except TimeoutException:
+            self.logger.error(f"Handling query {query.__class__.__name__} ({query.query_type}) timed out after {timeout}s"
+                              f" - canceled to prevent deadlock. This should not happen!")
+            return FailedQueryResponse(data={"error": "Query handler timed out"})
+
+    @performance_assert(1)
     def _handle_query(self, simulation_control_query: WattsonQuery) -> WattsonResponse:
         """
         Handles a query sent by a client.
@@ -380,7 +478,7 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
                     simulation_control_query.mark_as_handled()
             return response
 
-        handlers: List[WattsonQueryHandler] = [self, self._co_simulation_controller] + self._simulators
+        handlers: List[WattsonQueryHandler] = [self, self._co_simulation_controller] + self._simulators + [self._co_simulation_controller.get_model_manager()]
         response = None
         try:
             for handler in handlers:

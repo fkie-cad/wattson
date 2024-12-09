@@ -51,7 +51,7 @@ class ExportThread(threading.Thread):
 
     def _get_filename(self, timestamp: float) -> str:
         time = WattsonTime(timestamp)
-        return time.file_name(WattsonTimeType.WALL, with_milliseconds=True)
+        return time.file_name(WattsonTimeType.WALL, with_milliseconds=True, with_timestamp=True)
 
     def run(self) -> None:
         last_timestamp = -1

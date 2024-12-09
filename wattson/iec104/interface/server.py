@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable
+from typing import TYPE_CHECKING, Optional, Callable, Dict
 
 from wattson.iec104.common.config import *
 from wattson.iec104.common.datapoint import IEC104Point
@@ -38,6 +38,7 @@ class IECServerInterface(ABC):
                 raise RuntimeError("Starting with on send/rcvd apdu as None-callback is invalid")
 
         self.points = {}
+        self.mapped_point_info = {}
         # for use for C_CI (see 60870-5-5; 6.9.1), necessary for future compability - may need push upwards to RTU
         self.temporary_integrating_points = {}
         if kwargs.get('pre_init_datapoints', False):
@@ -54,6 +55,9 @@ class IECServerInterface(ABC):
     @property
     def connection_string(self) -> str:
         return f"{self.ip}:{self.port}"
+
+    def get_data_point_info(self, coa: int, ioa: int) -> Optional[Dict]:
+        return self.mapped_point_info.get(coa, {}).get(ioa)
 
     def get_datapoint(self, ioa: int, update_value: bool = False) -> IEC104Point:
         p = self.points[ioa]

@@ -17,7 +17,8 @@ class ProgressPrinter:
                  auto_stop: bool = True,
                  stop_event: Optional[threading.Event] = None,
                  on_start_margin: bool = True,
-                 on_stop_margin: bool = False):
+                 on_stop_margin: bool = False,
+                 show_custom_prefix: bool = False):
 
         self._lock = threading.RLock()
         self.enable_print: bool = enable_print
@@ -27,7 +28,9 @@ class ProgressPrinter:
         self.show_bar: bool = show_bar
         self.show_total: bool = show_total
         self.show_current: bool = show_current
+        self.show_custom_prefix: bool = show_custom_prefix
         self.auto_stop: bool = auto_stop
+        self.custom_prefix = ""
         self.stop_event: Optional[threading.Event] = stop_event
         self._on_stop_margin: bool = on_stop_margin
         self._on_start_margin: bool = on_start_margin
@@ -82,7 +85,11 @@ class ProgressPrinter:
                     status_string = f"{str(self.current_progress).rjust(number_len)} / {str(self.max_progress)}"
                 else:
                     status_string = f"{str(self.current_progress).rjust(number_len)}"
-                bar_width -= max(len(status_string) + 1, 0)
+
+            if self.show_custom_prefix:
+                status_string = f"{self.custom_prefix} {status_string}".strip()
+
+            bar_width -= max(len(status_string) + 1, 0)
             bar_fill = min(int(bar_perc * bar_width), bar_width)
             bar_gap = bar_width - bar_fill
             if self.show_current:
@@ -96,12 +103,21 @@ class ProgressPrinter:
             if self.auto_stop and self.current_progress >= self.max_progress:
                 self.stop()
 
-    def inc(self):
+    def inc(self, custom_prefix: Optional[str] = None):
         with self._lock:
+            if custom_prefix is not None:
+                self.custom_prefix = custom_prefix
             self.current_progress += 1
             self.update()
 
-    def set_progress(self, progress: int):
+    def set_progress(self, progress: int, custom_prefix: Optional[str] = None):
         with self._lock:
+            if custom_prefix is not None:
+                self.custom_prefix = custom_prefix
             self.current_progress = progress
+            self.update()
+
+    def set_custom_prefix(self, custom_prefix: str):
+        with self._lock:
+            self.custom_prefix = custom_prefix
             self.update()

@@ -15,6 +15,7 @@ from pathlib import Path
 class PythonDeployment(abc.ABC):
     def __init__(self, configuration: Dict):
         self.config = configuration
+
         self.artifacts_dir = Path(self.config.get("artifacts_dir", ""))
         random_seed = configuration.get("random_seed", 0)
         self._deployment_logger = get_logger("Wattson", "Deployment")

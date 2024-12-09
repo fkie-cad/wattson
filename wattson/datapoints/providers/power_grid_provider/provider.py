@@ -1,3 +1,4 @@
+import json
 import threading
 
 from powerowl.layers.powergrid.values.grid_value import GridValue
@@ -33,6 +34,7 @@ class PowerGridProvider(DataPointProvider):
         self.cache: Dict[Tuple[str, int], Dict] = {}
         self.cache_decay = self.config.get("cache_decay", 1)
         self._connection_timeout_seconds = self.config.get("connection_timeout_seconds", 20)
+        self._retry_connections = self.config.get("retry_connections", True)
 
         self._path_to_identifier_map = {}
         self._identifier_to_path_map = {}
@@ -51,8 +53,8 @@ class PowerGridProvider(DataPointProvider):
             # Build Path -> Identifier Map
             self._add_identifier_to_map(identifier, dp)
 
-            if "source" in dp["providers"]:
-                for i, provider in enumerate(dp["providers"]["source"]):
+            if "sources" in dp["providers"]:
+                for i, provider in enumerate(dp["providers"]["sources"]):
                     if provider["provider_type"] == "POWER_GRID":
                         self._register_source_provider(identifier, i)
 
@@ -85,7 +87,7 @@ class PowerGridProvider(DataPointProvider):
         for path in paths:
             try:
                 grid_value = self.remote_power_grid_model.get_grid_value_by_identifier(grid_value_identifier=path)
-                grid_value.add_on_set_callback(self._on_change)
+                grid_value.add_on_set_callback(self._on_set)
             except Exception as e:
                 self.logger.error(f"Could not subscribe to element updates for {path}: {repr(e)}")
 
@@ -107,7 +109,15 @@ class PowerGridProvider(DataPointProvider):
         self._wait_until_ready()
 
     def _wait_until_ready(self):
-        self.client.require_connection(self._connection_timeout_seconds)
+        while True:
+            try:
+                self.client.require_connection(self._connection_timeout_seconds)
+                break
+            except TimeoutError as e:
+                if self._retry_connections:
+                    self.logger.info(f"Connection timeout occurred - retrying...")
+                    continue
+                raise e
         if not self.client.is_registered:
             self.client.register()
         self.remote_power_grid_model = RemotePowerGridModel(wattson_client=self.client)
@@ -117,8 +127,16 @@ class PowerGridProvider(DataPointProvider):
                          f"{self._wattson_time.start_datetime(time_type=WattsonTimeType.WALL).isoformat()} // "
                          f"{self._wattson_time.start_datetime_local(time_type=WattsonTimeType.WALL).isoformat()}")
 
-    def _on_change(self, grid_value: GridValue, old_value: Any, new_value: Any):
+    def _on_set(self, grid_value: GridValue, old_value: Any, new_value: Any):
         path = grid_value.get_identifier()
+        changed = True
+        try:
+            changed = old_value != new_value
+        except Exception:
+            pass
+
+        if not changed:
+            return
 
         if self.callbacks is not None:
             state_id = self._store_state(new_value)

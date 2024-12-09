@@ -3,8 +3,10 @@ import enum
 
 class PowerGridNotificationTopic(str, enum.Enum):
     ELEMENT_UPDATED = "element-updated"
-    GRID_VALUE_CHANGED = "grid-value-changed"
+    GRID_VALUES_UPDATED = "grid-values-updated"
+    GRID_VALUE_STATE_CHANGED = "grid-value-state-changed"
     SIMULATION_STEP_DONE = "simulation-step-done"
+    PROTECTION_TRIGGERED = "protection-triggered"
 
     def __eq__(self, other):
         if isinstance(other, str):

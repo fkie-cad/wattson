@@ -61,6 +61,8 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
         The hardware name of the interface
         @return:
         """
+        if self.is_physical():
+            return self.get_physical_name()
         return f"{self.node.system_id}-{self.system_id}"
 
     def generate_name(self):
@@ -80,6 +82,12 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
     def get_ip_address(self) -> Optional[ipaddress.IPv4Address]:
         return self.ip_address
 
+    def get_subnet_mask(self) -> str:
+        if self.ip_address is None:
+            return "0.0.0.0"
+        subnet = ipaddress.IPv4Network(self.ip_address_string, strict=False)
+        return str(subnet.netmask)
+
     def set_ip_address(self, ip_address: Optional[ipaddress.IPv4Address] = None) -> bool:
         self.ip_address = ip_address
         self.network_emulator.on_entity_change(self, "ip_address_set")
@@ -96,6 +104,9 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
 
     def is_mirror_port(self) -> bool:
         return self.config.get("mirror", False)
+
+    def set_mirror_port(self, is_mirror: bool):
+        self.config["mirror"] = is_mirror
 
     def is_virtual(self) -> bool:
         return self.config.get("type", "virtual") == "virtual"
@@ -129,10 +140,18 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
     def up(self):
         if self.emulation_instance is not None and hasattr(self.emulation_instance, "up"):
             self.emulation_instance.up()
+        else:
+            return self.node.interface_up(self)
+            code, _ = self.node.exec(["ip", "link", "set", "dev", self.get_system_name(), "up"])
+            return code == 0
 
     def down(self):
         if self.emulation_instance is not None and hasattr(self.emulation_instance, "down"):
             self.emulation_instance.down()
+        else:
+            return self.node.interface_down(self)
+            code, _ = self.node.exec(["ip", "link", "set", "dev", self.get_system_name(), "down"])
+            return code == 0
 
     def get_system_name(self) -> Optional[str]:
         if self.is_physical():

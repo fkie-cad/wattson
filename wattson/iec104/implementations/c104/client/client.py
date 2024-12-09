@@ -1,24 +1,22 @@
 import copy
 import threading
-import time
-from typing import Union, TYPE_CHECKING, Optional, List
-import logging
 import threading as th
+import traceback
 from queue import Empty, Queue
+from typing import Union, TYPE_CHECKING, Optional, List
 
 import c104
 import pyprctl
 
-from wattson.hosts.mtu.time_limited_connect import TimeLimitedConnect
-from wattson.iec104.common.config import *
 from wattson.iec104.common import ConnectionState, GLOBAL_COA
-from wattson.iec104.interface.apdus import APDU, I_FORMAT
-from wattson.iec104.interface.types import TypeID, COT
-from wattson.iec104.interface.client import IECClientInterface as IECClientInterface
+from wattson.iec104.common.config import *
 from wattson.iec104.implementations.c104 import C104Point, build_apdu_from_c104_bytes, explain_bytes
+from wattson.iec104.interface.apdus import APDU, I_FORMAT
+from wattson.iec104.interface.client import IECClientInterface as IECClientInterface
+from wattson.iec104.interface.types import TypeID, COT
 
 if TYPE_CHECKING:
-    from wattson.hosts.mtu.mtu import MTU
+    pass
 
 
 class FakeLock:
@@ -70,7 +68,7 @@ class IEC104Client(IECClientInterface, th.Thread):
 
         self._org = org
         self._servers = {}
-        self._client = c104.add_client(
+        self._client = c104.Client(
             tick_rate_ms=CLIENT_TICKRATE_MS,
             command_timeout_ms=CLIENT_COMMAND_TIMEOUT_MS
         )
@@ -223,7 +221,7 @@ class IEC104Client(IECClientInterface, th.Thread):
             c104.ConnectionState.OPEN_AWAIT_CLOCK_SYNC: ConnectionState.OPEN,
             c104.ConnectionState.OPEN_AWAIT_CLOSED: ConnectionState.OPEN,
             c104.ConnectionState.OPEN_AWAIT_INTERROGATION: ConnectionState.INTERRO_STARTED,
-            c104.ConnectionState.OPEN_MUTED: ConnectionState.OPEN
+            c104.ConnectionState.OPEN_MUTED: ConnectionState.OPEN,
         }
         connection_state = self.get_connection_state(coa)
         return state_map.get(connection_state, ConnectionState.CLOSED)
@@ -237,11 +235,14 @@ class IEC104Client(IECClientInterface, th.Thread):
         server = self._get_server(server)
         if server["connection"] is None:
             self.logger.info(f"Adding Connection {server['ip']} // {server['coa']}")
-            server["connection"] = self._client.add_connection(
-                ip=server["ip"],
-                port=server["port"],
-                init=self.c104_init
-            )
+            try:
+                server["connection"] = self._client.add_connection(
+                    ip=server["ip"],
+                    port=server["port"],
+                    init=self.c104_init
+                )
+            except RuntimeError as e:
+                self.logger.error(f"Failed to add connection: {e=}")
 
             self.logger.debug(f"Setting Connection Callbacks for {server['coa']}")
             server["connection"].on_receive_raw(callable=self._on_receive_raw_callback_wrapper)
@@ -307,7 +308,7 @@ class IEC104Client(IECClientInterface, th.Thread):
 
         if last_state != state:
             self.logger.info(f"RTU {coa}: {state.name} (Connected: {connection.is_connected})")
-        self._on_connection_change_wrapper(coa, server)
+            self._on_connection_change_wrapper(coa, server)
         server["connection_event"].set()
 
     def _on_connection_change_wrapper(self, coa: int, server):
@@ -324,16 +325,13 @@ class IEC104Client(IECClientInterface, th.Thread):
                 station: c104.Station = connection.stations[0]
                 coa = station.common_address
                 apdu = build_apdu_from_c104_bytes(data)
-
                 if isinstance(apdu, I_FORMAT) and 22 in apdu.ioas:
                     s = f"Pot. bad apdu {apdu} build from\n{data}\n{explain_bytes(data)}"
                     self.logger.critical(s)
-
                 self._update_conn_state_if_interro_APDU(apdu, coa)
-
                 self.callbacks['on_receive_apdu'](apdu, coa, True)
             except Exception as e:
-                self.logger.critical(f'On-rcv raw error {e}')
+                self.logger.critical(f'On-rcv raw error {e=}')
 
     def _on_send_raw_callback_wrapper(self, connection: c104.Connection, data: bytes) -> None:
         with self._cb_lock:
@@ -344,22 +342,27 @@ class IEC104Client(IECClientInterface, th.Thread):
                 self._update_conn_state_if_interro_APDU(apdu, coa)
                 self.callbacks['on_send_apdu'](apdu, coa)
             except Exception as e:
-                self.logger.error(f"{e=}")
+                self.logger.error(f"On-send raw error {e=}")
 
     def server_watchdog(self, server):
         coa = server["coa"]
         pyprctl.set_name(f"watchdog-{coa}")
         while not self._terminate.is_set():
-            server["connection_event"].clear()
-            connection_state = self.get_connection_state(coa)
+            try:
+                server["connection_event"].clear()
+                connection_state = self.get_connection_state(coa)
 
-            if connection_state == c104.ConnectionState.CLOSED:
-                self.logger.info(f"Attempting to connect to {coa}...")
-                self.connect_server(server)
-            elif connection_state == c104.ConnectionState.CLOSED_AWAIT_RECONNECT:
-                self.logger.info(f"Reconnecting to {coa}...")
-                self.connect_server(server)
+                if connection_state == c104.ConnectionState.CLOSED:
+                    self.logger.info(f"Attempting to connect to {coa}...")
+                    self.connect_server(server)
+                elif connection_state == c104.ConnectionState.CLOSED_AWAIT_RECONNECT:
+                    self.logger.info(f"Reconnecting to {coa} scheduled...")
+                    # self.connect_server(server)
+            except Exception as e:
+                self.logger.error(f"Error in Watchdog {coa}: {e=}")
+                self.logger.error(traceback.format_exc())
             server["connection_event"].wait(self._reconnect_interval_s)
+            self._terminate.wait(self._reconnect_interval_s)
 
     def run(self):
         """
@@ -481,19 +484,20 @@ class IEC104Client(IECClientInterface, th.Thread):
             server["datapoints"][str(ioa)].value = value
             return True
 
-    def _on_receive_datapoint(self, point: c104.Point, previous_state: dict,
+    def _on_receive_datapoint(self, point: c104.Point, previous_info: c104.Information,
                               message: c104.IncomingMessage) -> c104.ResponseState:
         # TODO: What happens during on_receive on client-side if return False?!
         with self._cb_lock:
             try:
                 if self.callbacks['on_receive_datapoint'] is not None:
                     p = C104Point(point)
-                    previous_state = C104Point.parse_to_previous_point(previous_state, point)
-                    success = self.callbacks['on_receive_datapoint'](p, previous_state, message)
+                    previous_info = C104Point.parse_to_previous_point(previous_info, point)
+                    success = self.callbacks['on_receive_datapoint'](p, previous_info, message)
                     return c104.ResponseState.SUCCESS if success else c104.ResponseState.FAILURE
                 return c104.ResponseState.NONE
             except Exception as e:
                 self.logger.error(f"{e=}")
+                self.logger.error(traceback.format_exc())
                 return c104.ResponseState.NONE
 
     def _get_server(self, server: Union[str, int, dict]):
@@ -589,4 +593,4 @@ class IEC104Client(IECClientInterface, th.Thread):
     def _is_server_connected(self, server: dict) -> bool:
         if server["connection"] is None:
             return False
-        return server["connection"].is_connected
+        return server.get("connected", server["connection"].is_connected)

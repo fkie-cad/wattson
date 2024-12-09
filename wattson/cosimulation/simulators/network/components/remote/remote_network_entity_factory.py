@@ -30,6 +30,7 @@ class RemoteNetworkEntityFactory:
         from wattson.cosimulation.simulators.network.components.remote.remote_network_router import RemoteNetworkRouter
         from wattson.cosimulation.simulators.network.components.remote.remote_network_switch import RemoteNetworkSwitch
         from wattson.cosimulation.simulators.network.components.remote.remote_network_docker_host import RemoteNetworkDockerHost
+        from wattson.cosimulation.simulators.network.components.remote.remote_network_vm_host import RemoteNetworkVirtualMachineHost
         from wattson.cosimulation.simulators.network.components.remote.remote_network_nat import RemoteNetworkNAT
 
         remote_class = {
@@ -41,7 +42,8 @@ class RemoteNetworkEntityFactory:
             "WattsonNetworkNAT": RemoteNetworkNAT,
             "WattsonNetworkSwitch": RemoteNetworkSwitch,
             "WattsonNetworkLink": RemoteNetworkLink,
-            "WattsonNetworkInterface": RemoteNetworkInterface
+            "WattsonNetworkInterface": RemoteNetworkInterface,
+            "WattsonNetworkVirtualMachineHost": RemoteNetworkVirtualMachineHost
         }.get(entity_class)
 
         if remote_class is None:

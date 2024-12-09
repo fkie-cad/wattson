@@ -13,9 +13,9 @@ class WattsonMultiService(WattsonService):
     """
     A wrapper to manage multiple individual services at once
     """
-    def __init__(self, service_configuration: 'ServiceConfiguration', network_node: 'WattsonNetworkNode'):
+    def __init__(self, service_configuration: 'ServiceConfiguration', network_node: 'WattsonNetworkNode', services: Optional[List[WattsonService]] = None):
         super().__init__(service_configuration=service_configuration, network_node=network_node)
-        self._sub_services: List[WattsonService] = service_configuration.get("services", [])
+        self._sub_services: List[WattsonService] = services if services is not None else []
         self.max_wait = service_configuration.get("max_wait", 5)
 
     def is_running(self) -> bool:
@@ -30,11 +30,11 @@ class WattsonMultiService(WattsonService):
                 return True
         return False
 
-    def start(self) -> bool:
-        self.ensure_working_directory()
+    def start(self, refresh_config: bool = False) -> bool:
+        self.ensure_artifacts()
         success = True
         for service in self._sub_services:
-            success &= service.start()
+            success &= service.start(refresh_config=refresh_config)
             timeout = time.time() + self.max_wait
             while not service.is_running() and time.time() < timeout:
                 # Busy wait

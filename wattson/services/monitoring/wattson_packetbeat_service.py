@@ -75,8 +75,8 @@ class WattsonPacketbeatService(WattsonService):
         self.interface = self._service_configuration.get("interface", "any")
         self.working_dir = self._service_configuration.get("working_dir")
 
-    def start(self):
-        super().start()
+    def start(self, refresh_config: bool = False):
+        super().start(refresh_config=refresh_config)
         yaml_file = Path(self.working_dir) / f"packetbeat.yml"
         kibana_port = self._service_configuration.get("kibana_port", 5601)
         elastic_port = self._service_configuration.get("elastic_port", 9200)

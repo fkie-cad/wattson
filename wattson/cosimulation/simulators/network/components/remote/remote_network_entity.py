@@ -33,6 +33,10 @@ class RemoteNetworkEntity(WattsonRemoteObject, NetworkEntity):
     def id(self):
         return self._state.get("id")
 
+    @property
+    def wattson_client(self):
+        return self._wattson_client
+
     def synchronize(self, force: bool = False, block: bool = True):
         if not force and time.time() - self.last_synchronization < self._synchronization_interval:
             return

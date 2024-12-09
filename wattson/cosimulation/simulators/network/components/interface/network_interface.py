@@ -115,12 +115,16 @@ class NetworkInterface(NetworkEntity, abc.ABC):
                     node = connected_interface.get_node()
                     if node is None:
                         return None
+                    from wattson.cosimulation.simulators.network.components.interface.network_host import NetworkHost
+                    if isinstance(node, NetworkHost):
+                        return None
                     subnets = node.get_subnets(include_management=include_management, exclude_interfaces=exclude_interfaces)
                     if len(subnets) > 1:
-                        raise NetworkException("Interface assigned to multiple subnets")
+                        raise NetworkException(f"Interface {self.get_system_name()} assigned to multiple subnets ({[repr(subnet) for subnet in subnets]})")
                     if len(subnets) == 0:
                         return None
                     return subnets[0]
+        return None
 
     def __repr__(self):
         return f"Interface {self.entity_id} ({self.ip_address_string} // {self.get_mac_address()})"

@@ -7,6 +7,7 @@ import numpy as np
 if TYPE_CHECKING:
     from wattson.hosts.rtu import RTU
 from wattson.iec104.common.datapoint import IEC104Point
+from wattson.iec104.implementations.c104.server import IEC104Server
 from wattson.iec104.common.iec104message import IEC104Message
 from wattson.iec104.interface.apdus import APDU, I_FORMAT
 from wattson.iec104.interface.types import TypeID, Step
@@ -22,6 +23,7 @@ class RtuIec104:
         self.periodic_update_start = kwargs.get("periodic_update_start", 0)
         self.periodic_updates_enable = kwargs.get("periodic_updates_enable", True)
         self.allowed_mtu_ips = kwargs.get("allowed_mtu_ips", True)
+        self.block_control_commands = kwargs.get("block_control_commands", False)
         if not self.periodic_updates_enable:
             self.logger.info("Globally disabling periodic updates")
         self.server = None
@@ -29,11 +31,20 @@ class RtuIec104:
     def setup_socket(self):
         def update_datapoint(point: IEC104Point):
             identifier = f"{point.coa}.{point.ioa}"
+            val = None
             try:
-                val = self.rtu.manager.get_value(identifier)
+                val = self.rtu.get_value(identifier)
+                if val is None:
+                    val = 0
+                try:
+                    if np.isnan(val):
+                        val = 0
+                except Exception:
+                    pass
                 point.value = val
+                #point.value = point.value.__class__(val)
             except Exception as e:
-                self.logger.error(f"Error reading {identifier}: {e}")
+                self.logger.error(f"Error reading {identifier} // {val=} @ {point.value.__class__} vs {val.__class__}: {e}")
 
         def on_unexpected_msg(server, message, cause):
             self.logger.warning(f"Received unexpected, likely bad msg with cause {cause}: {message.type}")
@@ -75,7 +86,8 @@ class RtuIec104:
         # Does not yet send End-of-Interro
         # https://gitlab.fit.fraunhofer.de/de.tools/104-connector-python/-/blob/master/src/Server.cpp#L693
         self.logger.info(f"Adding Server Socket: {self.rtu.ip}:{self.port}")
-        self.server = self.rtu.iec_server_class(
+
+        self.server = IEC104Server(
             self.rtu,
             self.rtu.ip,
             port=self.port,
@@ -112,6 +124,11 @@ class RtuIec104:
     def set_datapoint(self, point: IEC104Point,
                       prev: Optional[IEC104Point] = None,
                       message: IEC104Message = None):
+
+        if self.block_control_commands:
+            self.logger.warning(f"Blocked data point update (set) for {point.ioa} due to local control. Target value was {point.value}. No changes applied")
+            return False
+
         self.logger.info(f"Datapoint Update (Set) for ioa {point.ioa} with value {point.value}")
         identifier = f"{point.coa}.{point.ioa}"
 
@@ -122,9 +139,16 @@ class RtuIec104:
             if sufficient_quality:
                 # noinspection DuplicatedCode
                 if point.type not in (TypeID.C_RC_NA_1, TypeID.C_RC_TA_1):
-                    res = self.rtu.manager.set_value(identifier, point.value)
+                    res = self.rtu.set_value(identifier, point.value)
                 else:
-                    value = self.rtu.manager.get_value(identifier)
+                    value = None
+                    point_info = self.rtu.get_data_point_info(f"{point.coa}.{point.ioa}")
+                    if "related" in point_info and len(point_info["related"]) == 1:
+                        # Try to read value from related data point
+                        value = self.rtu.get_value(point_info["related"][0])
+                    else:
+                        value = self.rtu.get_value(identifier)
+
                     if value is None or np.isnan(value):
                         value = 0
                     if point.value == Step.LOWER:
@@ -135,7 +159,7 @@ class RtuIec104:
                         self.logger.warning(f"Received bad IO in step command with point {point}")
                         return False
                     self.logger.info(f"Step Command with value {point.value} results in value {value}")
-                    res = self.rtu.manager.set_value(identifier, value)
+                    res = self.rtu.set_value(identifier, value)
             else:
                 self.logger.info(f"Bad quality of point: {point.quality}, of msg: {message.quality}"
                                  f" prev: {prev}")

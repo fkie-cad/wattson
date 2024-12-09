@@ -12,48 +12,62 @@ class IPTablesFirewall:
         self._node = node
         self.support_enabled = None
 
-    def supports_firewall(self):
+    def supports_firewall(self) -> bool:
         if self.support_enabled is None:
             self.support_enabled = self._node.exec("which iptables")[0] == 0
         return self.support_enabled and self._node.has_role("firewall")
     
-    def add_rule(self, rule, enable: bool = False):
+    def add_rule(self, rule, enable: bool = False) -> bool:
         if self.supports_firewall():
             rule = IPTablesFirewallRules(rule)
             rules = self._node.get_config().get("rules", [])
             rules.append(rule)
-            self._node.update_config({
-                "rules": rules
-            })
+            if not self._node.update_config({"rules": rules}):
+                return False
             rule_id = len(rules) - 1
             if enable:
-                self.enable_rule(rule_id)
+                return self.enable_rule(rule_id)
+            return True
+        return False
 
     def rule_index_exists(self, index: int) -> bool:
         return 0 <= index < len(self._node.get_config().get("rules", []))
 
-    def remove_rule(self, index):
+    def remove_rule(self, index) -> bool:
         if self.supports_firewall():
             if self.rule_index_exists(index):
                 old_rules = self._node.get_config().get("rules", [])
-                del(old_rules[int(index)])
-                self._node.update_config({
+                del old_rules[int(index)]
+                return self._node.update_config({
                     "rules": old_rules
                 })
+        return False
 
-    def enable_rule(self, index):
+    def enable_rule(self, index) -> bool:
         if self.supports_firewall():
             if self.rule_index_exists(index):
                 rule = self._node.get_config()["rules"][int(index)]
-                self._node.exec(rule["rule"])
+                code, lines = self._node.exec(rule["rule"])
+                if code != 0:
+                    error = '\n'.join(lines)
+                    self._node.logger.error(f"Error enabling rule: {error}")
+                    return False
+                return True
+        return False
 
-    def disable_rule(self, index):
+    def disable_rule(self, index) -> bool:
         if self.supports_firewall():
             if self.rule_index_exists(index):
                 rule_obj = self._node.get_config()["rules"][int(index)]
                 disable_rule = f"iptables -D {rule_obj['specification']}"
-                self._node.exec(disable_rule)
+                code, lines = self._node.exec(disable_rule)
                 self._node.synchronize(force=True)
+                if code != 0:
+                    error = '\n'.join(lines)
+                    self._node.logger.error(f"Error disabling rule: {error}")
+                    return False
+                return True
+        return False
 
     def list_active_rules(self):
         if self.supports_firewall():
@@ -71,14 +85,16 @@ class IPTablesFirewall:
             text += f"{i}: {r}\n"
         return text
 
-    def block_traffic(self, address):
+    def block_traffic_from_address(self, address) -> bool:
         rule = f"iptables -I INPUT -s {address[:-3]} -j DROP"
-        self.add_rule(rule, enable=True)
+        success = self.add_rule(rule, enable=True)
         rule = f"iptables -I FORWARD -s {address[:-3]} -j DROP"
-        self.add_rule(rule, enable=True)
+        success &= self.add_rule(rule, enable=True)
+        return success
 
-    def block_tcp_traffic(self, address):
+    def block_tcp_traffic_from_address(self, address) -> bool:
         rule = f"iptables -I INPUT -p tcp -s {address} -j DROP"
-        self.add_rule(rule, enable=True)
+        success = self.add_rule(rule, enable=True)
         rule = f"iptables -I FORWARD -p tcp -s {address} -j DROP"
-        self.add_rule(rule, enable=True)
+        success &= self.add_rule(rule, enable=True)
+        return success

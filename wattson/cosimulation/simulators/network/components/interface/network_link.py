@@ -22,6 +22,17 @@ class NetworkLink(NetworkEntity, abc.ABC):
     def get_interface_b(self) -> 'NetworkInterface':
         ...
 
+    def get_other_interface(self, interface: 'NetworkInterface') -> 'NetworkInterface':
+        """
+        Given a valid interface, returns the other interface connected forming this link.
+        In case the given interface is not part of this link, interface A is returned.
+        @param interface: One interface that forms the link
+        @return: The other interface forming the link.
+        """
+        if self.get_interface_a() == interface:
+            return self.get_interface_b()
+        return self.get_interface_a()
+
     @abc.abstractmethod
     def get_link_state(self) -> dict:
         ...

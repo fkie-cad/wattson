@@ -1,7 +1,4 @@
 import ipaddress
-import json
-
-import pydantic.utils
 
 from wattson.cosimulation.control.scenario_extension import ScenarioExtension
 from wattson.cosimulation.simulators.network.components.wattson_network_docker_host import WattsonNetworkDockerHost
@@ -9,6 +6,7 @@ from wattson.cosimulation.simulators.network.components.wattson_network_host imp
 from wattson.cosimulation.simulators.network.components.wattson_network_interface import WattsonNetworkInterface
 from wattson.cosimulation.simulators.network.components.wattson_network_router import WattsonNetworkRouter
 from wattson.cosimulation.simulators.network.components.wattson_network_switch import WattsonNetworkSwitch
+from wattson.util.misc import deep_update
 
 
 class YamlScenarioExtension(ScenarioExtension):
@@ -93,5 +91,5 @@ class YamlScenarioExtension(ScenarioExtension):
         # Configuration
         configuration = config.get("config", {})
         if isinstance(configuration, dict):
-            updated_configuration = pydantic.utils.deep_update(self.co_simulation_controller.configuration_store.setdefault("configuration", {}), configuration)
-            self.co_simulation_controller.configuration_store["configuration"] = updated_configuration
+            updated_configuration = deep_update(self.co_simulation_controller.configuration_store.get_configuration("configuration", {}), configuration)
+            self.co_simulation_controller.configuration_store.register_configuration("configuration", updated_configuration)

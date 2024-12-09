@@ -1,11 +1,14 @@
 import abc
 from pathlib import Path
-from typing import Optional, Set, Callable
+from typing import Optional, Set, Callable, TYPE_CHECKING
 
 from wattson.cosimulation.control.interface.wattson_query_handler import WattsonQueryHandler
 from wattson.cosimulation.control.messages.wattson_notification import WattsonNotification
 from wattson.services.configuration import ConfigurationStore
 from wattson.time import WattsonTime
+
+if TYPE_CHECKING:
+    from wattson.cosimulation.control.co_simulation_controller import CoSimulationController
 
 
 class Simulator(WattsonQueryHandler):
@@ -15,10 +18,18 @@ class Simulator(WattsonQueryHandler):
     is an emulation.
     """
     def __init__(self):
+        self._controller: Optional['CoSimulationController'] = None
         self._configuration_store: Optional[ConfigurationStore] = None
         self._working_directory: Optional[Path] = None
         self.send_notification_handler: Callable[[WattsonNotification], None] = None
         self._wattson_time: WattsonTime = WattsonTime()
+
+    def set_controller(self, controller: Optional['CoSimulationController']):
+        self._controller = controller
+
+    @classmethod
+    def get_simulator_type(cls) -> str:
+        return "abstract"
 
     @property
     def wattson_time(self):

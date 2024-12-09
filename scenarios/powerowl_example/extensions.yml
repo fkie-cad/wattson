@@ -2,43 +2,23 @@
   class: PerformanceTest
   enabled: false
 
-# - extensions/industroyer.yml
 - extensions/power-profiles.yml
-# - extensions/ubuntu-docker.yml
-# - extensions/elk.yml
-# - extensions/workstation.yml
-- extensions/script-controller.yml
-- file: extensions/docker_rtu.py
-  class: DockerRtu
-  enabled: false
-  rtu_ids:
-  - '431'
 
-- file: extensions/docker_rtu_ssh_packetbeat.py
-  class: DockerRtuSSHPacketbeat
-  enabled: false
-  rtu_ids:
-  - '431'
-  elk_ip_config: "!primary_ips.elk"
-  enable_internet: false
+- extensions/noise.yml
 
-- file: extensions/docker_zeek.py
-  class: DockerZeek
+- file: extensions/docker_dns.py
+  class: DockerDNS
   enabled: false
 
-- file: extensions/docker_mtu_ssh_packetbeat.py
-  class: DockerMtuSSHPacketbeat
+- module: wattson.lib.scenarios.extensions.replace_with_docker_hosts
+  class: ReplaceWithDockerHosts
   enabled: false
-  mtu_id: '405'
-  elk_ip_config: "!primary_ips.elk"
-  enable_internet: false
 
-- file: extensions/local_packetbeat.py
-  class: LocalPacketbeat
+- file: extensions/docker_ids.py
+  class: DockerIDS
   enabled: false
-  rtu_ids:
-    - '431'
-  elk_ip_config: "!primary_ips.elk"
-  enable_internet: true
-  working_dir: "/home/fkie/wattson-artifacts/latest/n431"
-  interface: "h36-eth1"
+
+- file: extensions/vcc_proxy.py
+  class: VccProxy
+  enabled: true
+  ip_address: false

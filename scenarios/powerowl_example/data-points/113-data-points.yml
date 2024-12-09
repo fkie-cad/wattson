@@ -1,0 +1,237 @@
+'113':
+- identifier: '113.10010'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 6
+    direction: control
+    ioa: 10010
+    type_id: 45
+  providers:
+    targets:
+    - domain: target
+      provider_data:
+        attribute: explicit_control
+        context: CONFIGURATION
+        grid_element: storage.1
+        type: bool
+      provider_type: POWER_GRID
+  related: []
+  scale: NONE
+  unit: NONE
+  value: null
+- identifier: '113.10020'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 6
+    direction: control
+    ioa: 10020
+    type_id: 45
+  providers:
+    targets:
+    - domain: target
+      provider_data:
+        attribute: connected
+        context: CONFIGURATION
+        grid_element: storage.1
+        type: bool
+      provider_type: POWER_GRID
+  related: []
+  scale: NONE
+  unit: NONE
+  value: null
+- identifier: '113.10030'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 6
+    direction: control
+    ioa: 10030
+    type_id: 50
+  providers:
+    targets:
+    - domain: target
+      provider_data:
+        attribute: target_cos_phi
+        context: CONFIGURATION
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related: []
+  scale: NONE
+  unit: NONE
+  value: null
+- identifier: '113.10040'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 6
+    direction: control
+    ioa: 10040
+    type_id: 50
+  providers:
+    targets:
+    - domain: target
+      provider_data:
+        attribute: target_active_power
+        context: CONFIGURATION
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related:
+  - '113.10080'
+  scale: BASE
+  unit: WATT
+  value: null
+- identifier: '113.10050'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 6
+    direction: control
+    ioa: 10050
+    type_id: 50
+  providers:
+    targets:
+    - domain: target
+      provider_data:
+        attribute: target_reactive_power
+        context: CONFIGURATION
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related:
+  - '113.10090'
+  scale: BASE
+  unit: VAR
+  value: null
+- identifier: '113.10060'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 3
+    direction: monitoring
+    ioa: 10060
+    type_id: 1
+  providers:
+    sources:
+    - domain: source
+      provider_data:
+        attribute: is_connected
+        context: MEASUREMENT
+        grid_element: storage.1
+        type: bool
+      provider_type: POWER_GRID
+  related: []
+  scale: NONE
+  unit: NONE
+  value: null
+- identifier: '113.10070'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 1
+    direction: monitoring
+    ioa: 10070
+    type_id: 13
+  providers:
+    sources:
+    - domain: source
+      provider_data:
+        attribute: cos_phi
+        context: MEASUREMENT
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related:
+  - '113.10030'
+  scale: BASE
+  unit: NONE
+  value: null
+- identifier: '113.10080'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 1
+    direction: monitoring
+    ioa: 10080
+    type_id: 13
+  providers:
+    sources:
+    - domain: source
+      provider_data:
+        attribute: active_power
+        context: MEASUREMENT
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related:
+  - '113.10040'
+  scale: BASE
+  unit: WATT
+  value: null
+- identifier: '113.10090'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 1
+    direction: monitoring
+    ioa: 10090
+    type_id: 13
+  providers:
+    sources:
+    - domain: source
+      provider_data:
+        attribute: reactive_power
+        context: MEASUREMENT
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related:
+  - '113.10050'
+  scale: BASE
+  unit: VAR
+  value: null
+- identifier: '113.10100'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 1
+    direction: monitoring
+    ioa: 10100
+    type_id: 13
+  providers:
+    sources:
+    - domain: source
+      provider_data:
+        attribute: state_of_charge
+        context: MEASUREMENT
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related: []
+  scale: NONE
+  unit: PERCENT
+  value: null
+- identifier: '113.10110'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 113
+    cot: 1
+    direction: monitoring
+    ioa: 10110
+    type_id: 13
+  providers:
+    sources:
+    - domain: source
+      provider_data:
+        attribute: current_charge
+        context: MEASUREMENT
+        grid_element: storage.1
+        type: float
+      provider_type: POWER_GRID
+  related: []
+  scale: NONE
+  unit: WATT_HOUR
+  value: null

@@ -23,6 +23,7 @@ from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 from wattson.apps.interface.util import messages
 from wattson.powergrid.wrapper.power_owl_measurement import PowerOwlMeasurement
 from wattson.powergrid.wrapper.state_estimator import StateEstimator
+from wattson.powergrid.wrapper.panda_power_state_estimator import PandaPowerStateEstimator
 from wattson.time import WattsonTime, WattsonTimeType
 from wattson.util import get_logger
 from wattson.util.time.virtual_time import VirtualTime
@@ -261,10 +262,9 @@ class GridWrapper:
                 return False
 
             self._state_estimators[name] = {
-                "estimator": StateEstimator(
-                    power_net=self.power_grid_model.to_external(),
+                "estimator": PandaPowerStateEstimator(
+                    power_grid_model=self.power_grid_model,
                     update_required=threading.Event(),
-                    pnet_lock=self._power_flow_lock,
                     estimation_done_callback=self._estimation_done,
                     estimation_started_callback=self._estimation_started,
                     estimation_mode=estimation_mode,
@@ -399,8 +399,8 @@ class GridWrapper:
         estimator_info["estimator"].join()
         return True
 
-    def _estimation_done(self, name: str, success: bool):
-        self.logger.debug(f"SE for {name}: {success=}")
+    def _estimation_done(self, name: str, success: bool, used_algorithm: str | None):
+        self.logger.debug(f"SE for {name} with {used_algorithm} algorithm: {success=}")
         if success and self._state_estimators.get(name, {}).get("export", False):
             self.logger.debug(f"Scheduling export for {name}")
             self._export_se_queue.put(name)

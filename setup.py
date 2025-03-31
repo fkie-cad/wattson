@@ -30,7 +30,7 @@ setup(
         'ifcfg',
         'ninja',
         'testresources',
-        'c104@git+https://github.com/Fraunhofer-FIT-DIEN/iec104-python.git@main',
+        'c104==2.1.0',
         'python-dateutil',
         'docker',
         'ipaddress==1.0.23',

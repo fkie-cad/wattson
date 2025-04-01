@@ -249,3 +249,6 @@ scenarios/simbench/*/
 
 # Installation
 ubuntu/tmp/
+
+# wattson-autorunner
+wautorunner/scenarios/*_final

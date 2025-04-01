@@ -1,0 +1,33 @@
+nodes:
+  ctrl:
+    id: ctrl
+    name: ScriptController
+    type: host
+    interfaces:
+      - id: i1
+        ip: "auto"
+        connect_to: n361
+    services:
+      - module: wattson.apps.script_controller
+        service-type: "python"
+        class: ScriptControllerDeployment
+        config:
+          autostart: true
+          datapoints: "!datapoints"
+          nodeid: "!nodeid"
+          ip: "!management_ips.ctrl"
+          mtu_ip: "!management_ips.!mtus.0"
+          wattson_client_query_socket: "!sim-control-query-socket"
+          wattson_client_publish_socket: "!sim-control-publish-socket"
+          scenario_path: "!scenario_path"
+          export_config:
+            folder: "!artifacts_root_folder"
+            power_grid: False
+            measurements: True
+          scripts:
+            - script: wattson.apps.script_controller.toolbox.close_switches_script.CloseSwitchesScript
+              enabled: False
+              config:
+                close_delay: 5
+                wait_for_mtu: False
+                start_delay: 20

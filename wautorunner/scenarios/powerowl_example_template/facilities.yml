@@ -1,0 +1,60 @@
+'164':
+  id: '164'
+  name: Facilities.office
+  type: Office
+'166':
+  id: '166'
+  name: Facilities.control-center
+  type: ControlCenter
+'168':
+  id: '168'
+  name: TSS-0
+  type: TransformingSubstation
+'194':
+  id: '194'
+  name: DSS-0
+  type: DistributionSubstation
+'206':
+  id: '206'
+  name: DSS-1
+  type: DistributionSubstation
+'220':
+  id: '220'
+  name: DSS-2
+  type: DistributionSubstation
+'230':
+  id: '230'
+  name: DSS-3
+  type: DistributionSubstation
+'236':
+  id: '236'
+  name: DSS-4
+  type: DistributionSubstation
+'260':
+  id: '260'
+  name: DSS-5
+  type: DistributionSubstation
+'265':
+  id: '265'
+  name: DSS-6
+  type: DistributionSubstation
+'275':
+  id: '275'
+  name: DSS-7
+  type: DistributionSubstation
+'285':
+  id: '285'
+  name: DSS-8
+  type: DistributionSubstation
+'297':
+  id: '297'
+  name: DSS-9
+  type: DistributionSubstation
+'307':
+  id: '307'
+  name: DSS-10
+  type: DistributionSubstation
+'317':
+  id: '317'
+  name: DSS-11
+  type: DistributionSubstation

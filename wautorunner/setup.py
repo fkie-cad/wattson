@@ -17,7 +17,8 @@ setup(
         ]
     },
     install_requires=[
-        "pyyaml>=5.4"
+        "pyyaml>=5.4",
+        "numpy>=1.21.5",
     ],
     python_requires=">=3.10.0",
     author="Davide Savarro (Computer Science Department - University of Turin - UNITO)",

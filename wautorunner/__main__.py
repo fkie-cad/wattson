@@ -4,10 +4,10 @@ def main():
     Main function to run the AutorunnerManager.
     """
     from wautorunner.manager.autorunner_manager import AutorunnerManager
-    from logging import basicConfig, INFO
+    from logging import basicConfig, INFO, DEBUG
 
     # Configure logging
-    basicConfig(level=INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(thread)d.%(process)d -  %(message)s")
+    basicConfig(level=DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     # Create an instance of AutorunnerManager
     manager = AutorunnerManager()
     # Execute the scenario

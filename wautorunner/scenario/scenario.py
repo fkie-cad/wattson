@@ -21,6 +21,10 @@ class Scenario:
     def __init__(self, scenarioPath: Path):
         self.scenarioPath: Path = scenarioPath
         self.powerGridFilePath: Path = self.scenarioPath.joinpath("power-grid.yml")
+        self._name = self.scenarioPath.name
+
+    def getName(self) -> str:
+        return self._name 
 
     def getPowerGridModel(self) -> dict:
         # Logic to get the power grid file
@@ -33,9 +37,19 @@ class Scenario:
             file.truncate(0)
             yaml.dump(powerGridModel, file)
 
+    def getNumBusses(self):
+        powerGridModel: dict = self.getPowerGridModel()
+        return len(powerGridModel.get("elements", {}).get("bus", {}))
+
+    def getNumLines(self):
+        powerGridModel: dict = self.getPowerGridModel()
+        return len(powerGridModel.get("elements", {}).get("line", {}))
+
+
+    def getNumSwitches(self):
+        powerGridModel: dict = self.getPowerGridModel()
+        return len(powerGridModel.get("elements", {}).get("switch", {}))
+
+
     def getScenarioPath(self) -> Path:
         return self.scenarioPath
-
-    def run(self):
-        # Logic to run the scenario
-        pass

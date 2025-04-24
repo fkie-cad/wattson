@@ -7,7 +7,7 @@ def main():
     from logging import basicConfig, INFO, DEBUG
 
     # Configure logging
-    basicConfig(level=DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    basicConfig(level=INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     # Create an instance of AutorunnerManager
     manager = AutorunnerManager()
     # Execute the scenario

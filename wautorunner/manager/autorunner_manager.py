@@ -4,13 +4,18 @@ from wautorunner.scenario.modifiers.modifier_interface import ModifierInterface
 from scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, CloseAllSwitchesModifier
 from wattson.cosimulation.control.co_simulation_controller import CoSimulationController
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator import WattsonNetworkEmulator
+from pandapower.topology import create_nxgraph
+from pandapower.plotting import simple_plotly, simple_plot
 from logging import getLogger
 from pathlib import Path
 import time, sys, traceback, signal
 from pprint import pprint
+import networkx as nx
+import matplotlib.pyplot as plt
+import traceback
 
 class AutorunnerManager():
-    DEBUG_ANALYZER: bool = True
+    DEBUG_ANALYZER: bool = False
 
     def __init__(self, **kwargs):
         self.logger = getLogger("AutorunnerManager")
@@ -24,7 +29,7 @@ class AutorunnerManager():
                                                          MultiplyGenerationModifier(self.scenario, 0.5),
                                                          CloseAllSwitchesModifier(self.scenario)])
 
-    def execute(self, period_s: float = 10):
+    def execute(self, period_s: float = 5):
         """
         Execute the scenario with the given modifiers.
         """
@@ -50,9 +55,16 @@ class AutorunnerManager():
 
             try:
                 # Let it run for maximum period_s seconds
-                controller.join(period_s)
-            except Exception:
-                pass
+                ppNet = controller._physical_simulator._grid_model._pp_net
+                nxGraph = create_nxgraph(controller._physical_simulator._grid_model._pp_net)
+                nx.draw(nxGraph, with_labels=True)
+                plt.savefig(self.scenario.scenarioPath.joinpath("fullPPGraph.png"))
+                simple_plot(ppNet, plot_gens=True, plot_line_switches=True, plot_loads=True, plot_sgens=True)
+                plt.savefig(self.scenario.scenarioPath.joinpath("full-plot.png"))
+                simple_plotly(ppNet, filename=self.scenario.scenarioPath.joinpath("full-plot.html").absolute().__str__(), auto_open=False)
+                controller.join(period_s)    
+            except Exception as e:
+                print(traceback.format_exc())
             finally:
                 AutorunnerManager.stopController(controller)
 

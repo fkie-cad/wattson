@@ -3,6 +3,7 @@ import shutil
 import yaml
 import networkx as nx
 from collections import defaultdict
+import matplotlib.pyplot as plt
 
 class ScenarioBuilder:
     
@@ -26,6 +27,7 @@ class Scenario:
         self.powerGridModel: dict = self.getPowerGridModel()
         self.switchesGraph: nx.Graph = self._buildSwitchesGraph()
         nx.draw(self.switchesGraph, with_labels=True)
+        plt.savefig(self.scenarioPath.joinpath("power_network_graph.png"), dpi=300)
         for edge in self.switchesGraph.edges:
             print(f"Switches graph edge: {edge}")
         self._name = self.scenarioPath.name
@@ -65,12 +67,14 @@ class Scenario:
         for switch in self.powerGridModel.get("elements", {}).get("switch", {}):
             switchBusMap[switch] = self.getBusIndex(self.powerGridModel["elements"]["switch"][switch]["attributes"]["PROPERTY"]["bus"])
         
-        # Create a map from_bus: (line, to_bus)
+        # Create a map bus: [(line, bus)] 
+        # That's bidirectional!
         busLineMap = defaultdict(list)
         for line in self.powerGridModel.get("elements", {}).get("line", {}):
             fromBus = self.getBusIndex(self.powerGridModel["elements"]["line"][line]["attributes"]["PROPERTY"]["from_bus"])
             toBus = self.getBusIndex(self.powerGridModel["elements"]["line"][line]["attributes"]["PROPERTY"]["to_bus"])
             busLineMap[fromBus].append((line, toBus))
+            busLineMap[toBus].append((line, fromBus))
 
         busTrafoMap = defaultdict(list)
         for trafo in self.powerGridModel.get("elements", {}).get("trafo", {}):
@@ -79,7 +83,7 @@ class Scenario:
             busTrafoMap[fromBus].append((trafo, toBus))
         print(busTrafoMap)
 
-        swGraph: nx.DiGraph = nx.DiGraph()
+        swGraph: nx.Graph = nx.Graph()
         forbiddenEdges = [ (6, 5), (7, 2), (7, 4) ]
         for switch, bus in switchBusMap.items():
             busQueue: list = []

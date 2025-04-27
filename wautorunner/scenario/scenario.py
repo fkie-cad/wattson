@@ -25,11 +25,6 @@ class Scenario:
         self.scenarioPath: Path = scenarioPath
         self.powerGridFilePath: Path = self.scenarioPath.joinpath("power-grid.yml")
         self.powerGridModel: dict = self.getPowerGridModel()
-        self.switchesGraph: nx.Graph = self._buildSwitchesGraph()
-        nx.draw(self.switchesGraph, with_labels=True)
-        plt.savefig(self.scenarioPath.joinpath("power_network_graph.png"), dpi=300)
-        for edge in self.switchesGraph.edges:
-            print(f"Switches graph edge: {edge}")
         self._name = self.scenarioPath.name
 
     def getName(self) -> str:

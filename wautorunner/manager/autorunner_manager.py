@@ -1,10 +1,10 @@
 from wautorunner.scenario.scenario import ScenarioBuilder, Scenario
 from wautorunner.analyzer.experiment_analyzer import ExperimentAnalyzer
 from wautorunner.scenario.modifiers.modifier_interface import ModifierInterface
-from scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, CloseAllSwitchesModifier
+from wautorunner.scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, SetAllSwitchesModifier, SetSwitchesModifier
 from wattson.cosimulation.control.co_simulation_controller import CoSimulationController
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator import WattsonNetworkEmulator
-from pandapower.topology import create_nxgraph
+import pandapower.topology as tp
 from pandapower.plotting import simple_plotly, simple_plot
 from logging import getLogger
 from pathlib import Path
@@ -27,7 +27,13 @@ class AutorunnerManager():
         self.modifiers: list[ModifierInterface] = kwargs.get("modifiers", 
                                                         [MultiplyLoadsModifier(self.scenario, 2.0), 
                                                          MultiplyGenerationModifier(self.scenario, 0.5),
-                                                         CloseAllSwitchesModifier(self.scenario)])
+                                                         SetSwitchesModifier(self.scenario, 
+                                                                             status={
+                                                                                 2: False,
+                                                                                 1: False,
+                                                                                 4: False
+                                                                             }
+                                                         )])
 
     def execute(self, period_s: float = 5):
         """
@@ -56,7 +62,11 @@ class AutorunnerManager():
             try:
                 # Let it run for maximum period_s seconds
                 ppNet = controller._physical_simulator._grid_model._pp_net
-                nxGraph = create_nxgraph(controller._physical_simulator._grid_model._pp_net)
+                nxGraph: nx.Graph = tp.create_nxgraph(controller._physical_simulator._grid_model._pp_net, respect_switches=True)
+                self.logger.info("Edges impedances")
+                print(nxGraph.edges.data())
+                self.logger.info("Unsupplied busses")
+                print(tp.unsupplied_buses(ppNet))
                 nx.draw(nxGraph, with_labels=True)
                 plt.savefig(self.scenario.scenarioPath.joinpath("fullPPGraph.png"))
                 simple_plot(ppNet, plot_gens=True, plot_line_switches=True, plot_loads=True, plot_sgens=True)

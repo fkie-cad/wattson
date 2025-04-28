@@ -30,6 +30,17 @@ class Scenario:
     def getName(self) -> str:
         return self._name 
 
+    def getScriptControllerConfig(self) -> dict:
+        # Logic to get the script controller config file
+        with open(self.scenarioPath.joinpath("extensions").joinpath("script-controller.yml"), 'r') as file:
+            return yaml.load(file, Loader=yaml.Loader)
+        
+    def saveScriptControllerConfig(self, config: dict):
+        # Logic to set the script controller config file
+        with open(self.scenarioPath.joinpath("extensions").joinpath("script-controller.yml"), 'w') as file:
+            file.truncate(0)
+            yaml.dump(config, file, default_flow_style=False, sort_keys=False)
+
     def getPowerGridModel(self) -> dict:
         # Logic to get the power grid file
         with open(self.powerGridFilePath, 'r') as file:

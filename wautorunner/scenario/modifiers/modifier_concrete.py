@@ -1,5 +1,6 @@
 from wautorunner.scenario.modifiers.modifier_interface import ModifierInterface
 from wautorunner.scenario.scenario import Scenario
+from enum import Enum
 
 class MultiplyLoadsModifier(ModifierInterface):
     """
@@ -92,3 +93,51 @@ class SetSwitchesModifier(ModifierInterface):
 
         self.scenario.savePowerGridModel(powerGridModel)
 
+class StrategyType(Enum):
+    """
+    Enum for the different types of policies.
+    """
+    EXPLICIT = "explicit"
+    INTERMITTENT = "intermittent"
+
+class AttackerStrategyModifier(ModifierInterface):
+
+    def __init__(self, scenario: Scenario, strategyType: StrategyType, strategy: list[dict] | list[str]) -> None:
+        super().__init__(scenario)
+
+        if strategyType == StrategyType.EXPLICIT and not isinstance(strategy, list[dict]):
+            raise ValueError("Strategy must be a list of dictionaries")
+        if strategyType == StrategyType.INTERMITTENT and not isinstance(strategy, list[str]):
+            raise ValueError("Strategy must be a list of strings")
+        
+        self.strategyType = strategyType
+        self.strategy = strategy
+
+    def modify(self) -> None:
+        """
+        Modify the attack strategy in the scenario.
+        """
+        config: dict = self.scenario.getScriptControllerConfig()
+        services: list = config.get("nodes", {}).get("ctrl", {}).get("services", [])
+        service = None
+        for s in services:
+            if s["module"] == "wattson.apps.script_controller":
+                service = s
+                break
+        if service is None:
+            raise ValueError("Service not found in script controller config")
+        
+        scripts: list = service.get("config", {}).get("scripts", [])
+        for script in scripts:
+            if script["script"] == "wattson.apps.script_controller.toolbox.close_switches_script.CloseSwitchesScript":
+                script["enabled"] = True
+                scriptConfig = script["config"]
+                break
+        else:
+            raise ValueError("Attacker strategy script not found in script controller config")
+
+        scriptConfig["close_delay"] = 4
+        scriptConfig["strategy"] = self.strategy
+        scriptConfig["strategy_type"] = self.strategyType
+
+        self.scenario.saveScriptControllerConfig(config)

@@ -102,12 +102,12 @@ class StrategyType(Enum):
 
 class AttackerStrategyModifier(ModifierInterface):
 
-    def __init__(self, scenario: Scenario, strategyType: StrategyType, strategy: list[dict] | list[str]) -> None:
+    def __init__(self, scenario: Scenario, strategyType: StrategyType, strategy: list[dict] | list[int]) -> None:
         super().__init__(scenario)
 
         if strategyType == StrategyType.EXPLICIT and not isinstance(strategy, list[dict]):
             raise ValueError("Strategy must be a list of dictionaries")
-        if strategyType == StrategyType.INTERMITTENT and not isinstance(strategy, list[str]):
+        if strategyType == StrategyType.INTERMITTENT and not isinstance(strategy, list):
             raise ValueError("Strategy must be a list of strings")
         
         self.strategyType = strategyType
@@ -137,7 +137,8 @@ class AttackerStrategyModifier(ModifierInterface):
             raise ValueError("Attacker strategy script not found in script controller config")
 
         scriptConfig["close_delay"] = 4
+        scriptConfig["start_delay"] = 5
         scriptConfig["strategy"] = self.strategy
-        scriptConfig["strategy_type"] = self.strategyType
+        scriptConfig["strategy_type"] = self.strategyType.value
 
         self.scenario.saveScriptControllerConfig(config)

@@ -1,7 +1,7 @@
 from wautorunner.scenario.scenario import ScenarioBuilder, Scenario
 from wautorunner.analyzer.experiment_analyzer import ExperimentAnalyzer
 from wautorunner.scenario.modifiers.modifier_interface import ModifierInterface
-from wautorunner.scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, SetAllSwitchesModifier, SetSwitchesModifier, AttackerStrategyModifier
+from wautorunner.scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, SetAllSwitchesModifier, SetSwitchesModifier, AttackerStrategyModifier, StrategyType
 from wattson.cosimulation.control.co_simulation_controller import CoSimulationController
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator import WattsonNetworkEmulator
 import pandapower.topology as tp
@@ -34,11 +34,11 @@ class AutorunnerManager():
                                                                                  4: False
                                                                              }
                                                          ),
-                                                         AttackerStrategyModifier(self.scenario, strategyType="explicit",
-                                                                                 strategy=[])
+                                                         AttackerStrategyModifier(self.scenario, strategyType=StrategyType.INTERMITTENT,
+                                                                                 strategy=[4,1,2])
                                                         ])
 
-    def execute(self, period_s: float = 10):
+    def execute(self, period_s: float = 30):
         """
         Execute the scenario with the given modifiers.
         """

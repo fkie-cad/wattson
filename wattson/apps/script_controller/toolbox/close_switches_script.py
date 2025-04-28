@@ -38,7 +38,6 @@ class CloseSwitchesScript(SoloScript):
         self.strategy = self.config.get("strategy", [])
         # Elements to exclude
         self.exclude_element_identifiers = self.config.get("exclude", [])
-        self.logger.info(f"strategy_type: {self.strategy_type}")
 
     def run(self):
         if self.wait_for_mtu:
@@ -47,7 +46,13 @@ class CloseSwitchesScript(SoloScript):
             time.sleep(self.start_delay)
         self.logger.info("CloseSwitchesScript Started")
         self.grid_wrapper.on_element_update(self._on_element_update)
-        self._open_close_switches()
+        if self.strategy_type == "intermittent":
+            self.logger.info("Attack strategy: intermittent")
+            self._open_close_switches()
+        elif self.strategy_type == "explicit":
+            # TODO Must be implemented
+            pass
+
 
     def stop(self):
         self._terminate.set()
@@ -103,8 +108,8 @@ class CloseSwitchesScript(SoloScript):
             info = self.grid_wrapper.get_104_info(dp)
             coa = info["coa"]
             ioa = info["ioa"]
-            # Just open and close the switch.7 (associated to trafo.1)
-            if switch.get_identifier() == "switch.7":
+            switchArr = [f"switch.{swIndex}" for swIndex in self.strategy]
+            if self.strategy_type == "intermittent" and switch.get_identifier() in switchArr:
                 self.logger.info(f"Detected Switch {switch.get_identifier()} - modifying its state by setting {coa}.{ioa}")
                 # Negate the old value
                 self.queue_set_data_point(coa, ioa, not value)
@@ -115,11 +120,11 @@ class CloseSwitchesScript(SoloScript):
 
     def _open_close_switches(self):
         switches = self.grid_wrapper.get_grid_elements("switch")
+        # Just attack the switch with index 4 and 5 (circuit breaker)
+        switchArr = [f"switch.{swIndex}" for swIndex in self.strategy]
         for sw in switches:
             switch = typing.cast(Switch, sw)
             self.logger.info(f"Switch {switch.get_identifier()} is_closed: {switch.get_measurement_value('is_closed')}")
-            # Just attack the switch with index 4 and 5 (circuit breaker)
-            switchArr = ["switch.5", "switch.4"]
             if switch.get_identifier() in switchArr:
                 # Modify switch status
                 dp = self._data_point_cache.get(switch.get_identifier())
@@ -128,7 +133,7 @@ class CloseSwitchesScript(SoloScript):
                     dps = self.grid_wrapper.get_data_points_for_grid_value(grid_value=grid_value_setter)
                     dps = [dp for dp in dps if dp["protocol_data"]["direction"] == "control"]
                     if len(dps) != 1:
-                        self.logger.error(f"Cannot find DP for open switch: {sw.get_identifier()}")
+                        self.logger.error(f"Cannot find DP to open/close switch: {sw.get_identifier()}")
                         return
                     dp = dps[0]
                     self._data_point_cache[switch.get_identifier()] = dp
@@ -136,7 +141,6 @@ class CloseSwitchesScript(SoloScript):
                 coa = info["coa"]
                 ioa = info["ioa"]
                 self.logger.info(f"Detected Switch {switch.get_identifier()} - modifying its state by setting {coa}.{ioa}")
-                # Close swith 1
                 value: bool = switch.get_measurement_value("is_closed")
                 if switch.get_identifier() in switchArr and switch.get_identifier() != "switch.6":
                     self.queue_set_data_point(coa, ioa, not value)

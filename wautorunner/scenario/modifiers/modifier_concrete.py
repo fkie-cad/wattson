@@ -100,12 +100,25 @@ class StrategyType(Enum):
     EXPLICIT = "explicit"
     INTERMITTENT = "intermittent"
 
+class StrategyBuilder:
+
+    @staticmethod
+    def build(switchId: int, time: float, isClosed: bool) -> dict:
+        """
+        Build a strategy element for the attacker.
+        """
+        return {
+            "switch_id": switchId,
+            "time": time,
+            "is_closed": isClosed
+        }
+
 class AttackerStrategyModifier(ModifierInterface):
 
     def __init__(self, scenario: Scenario, strategyType: StrategyType, strategy: list[dict] | list[int]) -> None:
         super().__init__(scenario)
 
-        if strategyType == StrategyType.EXPLICIT and not isinstance(strategy, list[dict]):
+        if strategyType == StrategyType.EXPLICIT and not isinstance(strategy, list):
             raise ValueError("Strategy must be a list of dictionaries")
         if strategyType == StrategyType.INTERMITTENT and not isinstance(strategy, list):
             raise ValueError("Strategy must be a list of strings")

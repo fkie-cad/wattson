@@ -1,7 +1,8 @@
 from wautorunner.scenario.scenario import ScenarioBuilder, Scenario
 from wautorunner.analyzer.experiment_analyzer import ExperimentAnalyzer
 from wautorunner.scenario.modifiers.modifier_interface import ModifierInterface
-from wautorunner.scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, SetAllSwitchesModifier, SetSwitchesModifier, AttackerStrategyModifier, StrategyType
+from wautorunner.scenario.modifiers.modifier_concrete import MultiplyLoadsModifier, MultiplyGenerationModifier, SetAllSwitchesModifier
+from wautorunner.scenario.modifiers.modifier_concrete import SetSwitchesModifier, AttackerStrategyModifier, StrategyType, StrategyBuilder
 from wattson.cosimulation.control.co_simulation_controller import CoSimulationController
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator import WattsonNetworkEmulator
 import pandapower.topology as tp
@@ -34,11 +35,15 @@ class AutorunnerManager():
                                                                                  4: False
                                                                              }
                                                          ),
-                                                         AttackerStrategyModifier(self.scenario, strategyType=StrategyType.INTERMITTENT,
-                                                                                 strategy=[4,1,2])
+                                                         AttackerStrategyModifier(self.scenario, strategyType=StrategyType.EXPLICIT,
+                                                                                 strategy=[
+                                                                                     StrategyBuilder.build(switchId=1, time=10.0, isClosed=True),
+                                                                                     StrategyBuilder.build(switchId=2, time=15.0, isClosed=True),
+                                                                                     StrategyBuilder.build(switchId=4, time=20.5, isClosed=True)
+                                                                                 ])
                                                         ])
 
-    def execute(self, period_s: float = 30):
+    def execute(self, period_s: float = 40):
         """
         Execute the scenario with the given modifiers.
         """

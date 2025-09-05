@@ -5,7 +5,6 @@ import time
 from typing import Optional, Any, Callable, Dict, Union, List, TYPE_CHECKING
 
 import zmq
-from docutils.nodes import reference
 
 from wattson.cosimulation.control.constants import SIM_CONTROL_PORT, SIM_CONTROL_PUBLISH_PORT, SIM_CONTROL_ID
 from wattson.cosimulation.control.interface.publish_client import PublishClient

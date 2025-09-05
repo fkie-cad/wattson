@@ -24,7 +24,12 @@ class NotificationHandler(abc.ABC):
         Attempts to handle the given notification.
         If it is handled, True should be returned.
         If it is not handled, False should be returned.
-        @param notification: The received AppGatewayNotification
-        @return: Whether the notification has been handled
+
+        Args:
+            notification (AppGatewayNotification):
+                The received AppGatewayNotification
+
+        Returns:
+            bool: Whether the notification has been handled
         """
         return False

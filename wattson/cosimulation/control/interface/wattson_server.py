@@ -1,4 +1,5 @@
 import os
+import queue
 import sys
 import threading
 import time
@@ -6,11 +7,13 @@ import traceback
 from typing import Optional, TYPE_CHECKING, List, Union, Type, Any, Set, Callable, Dict
 
 import zmq
+import pyprctl
 
 from wattson.cosimulation.control.interface.publish_server import PublishServer
 from wattson.cosimulation.control.interface.time_limit import TimeLimit
 from wattson.cosimulation.control.interface.wattson_query_handler import WattsonQueryHandler
 from wattson.cosimulation.control.messages.failed_query_response import FailedQueryResponse
+from wattson.cosimulation.control.messages.wattson_async_group_response import WattsonAsyncGroupResponse
 from wattson.cosimulation.control.messages.wattson_async_response import WattsonAsyncResponse
 from wattson.cosimulation.control.messages.wattson_multi_query import WattsonMultiQuery
 from wattson.cosimulation.control.messages.wattson_notification_topic import WattsonNotificationTopic
@@ -34,9 +37,7 @@ if TYPE_CHECKING:
 
 
 class WattsonServer(threading.Thread, WattsonQueryHandler):
-    """
-    Handles queries issued by clients for interacting with the co-simulation.
-    """
+    """Handles queries issued by clients for interacting with the co-simulation."""
     def __init__(self,
                  co_simulation_controller: 'CoSimulationController',
                  query_socket_string: str,
@@ -44,6 +45,7 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
                  namespace: Optional[Namespace] = None,
                  **kwargs: Any):
         super().__init__()
+
         self._co_simulation_controller = co_simulation_controller
         self._simulators = self._co_simulation_controller.get_simulators()
         self._namespace = namespace
@@ -69,6 +71,17 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
         self._query_watchdog_query_start: Optional[float] = None
         self._query_watchdog_active_query: Optional[WattsonQuery] = None
         self._query_watchdog_query_done_event: threading.Event = threading.Event()
+
+        self._query_statistics = {
+            "total_queries": 0,
+            "topic_counts": {},
+            "client_counts": {},
+            "query_timestamps": [],
+            "query_timespan": 10,
+            "queries_in_timespan": 0
+        }
+        self._query_statistics_queue = queue.Queue()
+        self._query_statistics_thread: Optional[threading.Thread] = None
 
         self._config = {
             "required_clients": [],     # List of client (IDs) to be connected before starting the simulation
@@ -140,6 +153,30 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
                     self._query_watchdog_query_done_event.clear()
                     logger.info("Long running query resolved - no longer blocking")
 
+    def _statistic_watchdog(self):
+        logger = self.logger.getChild("QueryStatistics")
+        last_info = 0
+        while not self._termination_requested.is_set():
+            try:
+                query: WattsonQuery = self._query_statistics_queue.get(block=True, timeout=1)
+                query_type = query.query_type
+                client_id = query.client_id
+                if client_id is not None:
+                    self._query_statistics["client_counts"][client_id] = self._query_statistics["client_counts"].get(client_id, 0) + 1
+                self._query_statistics["topic_counts"][query_type] = self._query_statistics["topic_counts"].get(query_type, 0) + 1
+                self._query_statistics["query_timestamps"].append(time.time())
+                self._query_statistics["total_queries"] += 1
+            except queue.Empty:
+                pass
+            # Update sliding query count
+            ## Remove old timestamps
+            timeout = time.time() - self._query_statistics["query_timespan"]
+            self._query_statistics["query_timestamps"] = [entry for entry in self._query_statistics["query_timestamps"] if entry > timeout]
+            self._query_statistics["queries_in_timespan"] = len(self._query_statistics["query_timestamps"])
+
+    def _log_query_statistic(self, query: WattsonQuery):
+        self._query_statistics_queue.put(query)
+
     def start(self) -> None:
         self._termination_requested.clear()
         self._publisher = PublishServer(simulation_control_server=self, socket_string=self._publish_socket_str,
@@ -149,6 +186,8 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
         self._idle_watchdog_thread.start()
         self._query_watchdog_thread = threading.Thread(target=self._query_watchdog, daemon=True)
         self._query_watchdog_thread.start()
+        self._query_statistics_thread = threading.Thread(target=self._statistic_watchdog, daemon=True)
+        self._query_statistics_thread.start()
         super().start()
 
     def stop(self, timeout: Optional[float] = None):
@@ -162,12 +201,16 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
         if self._query_watchdog_thread is not None:
             if self._query_watchdog_thread.is_alive():
                 self._query_watchdog_thread.join(timeout=timeout)
+        if self._query_statistics_thread is not None:
+            if self._query_statistics_thread.is_alive():
+                self._query_statistics_thread.join(timeout=timeout)
         try:
             self.join(timeout=timeout)
         except RuntimeError:
             pass
 
     def run(self) -> None:
+        pyprctl.set_name("W/Srv")
         main_namespace = None
         if self._namespace is not None:
             main_namespace = Namespace("w_main")
@@ -176,6 +219,9 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
             self._namespace.thread_attach()
         self.logger.info(f"Binding to {self._query_socket_str} for queries")
         async_reference_id = 0
+
+        count = 0
+        send_time_sum = 0
 
         with zmq.Context() as context:
             with context.socket(zmq.REP) as socket:
@@ -197,6 +243,7 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
 
                     query: WattsonQuery = socket.recv_pyobj()
 
+                    self._log_query_statistic(query)
                     self._query_watchdog_active_query = query
 
                     if query.requires_native_namespace() and main_namespace is not None:
@@ -209,15 +256,29 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
                     response.clear_post_send_callback()
                     try:
                         if isinstance(response, WattsonAsyncResponse):
-                            response.reference_id = async_reference_id
-                            response.client_id = query.client_id
+                            # Single or Group Asynchronous Response
+                            response.register_reference(query.client_id, async_reference_id)
+                            if isinstance(response, WattsonAsyncGroupResponse):
+                                self.logger.debug(f"Sending GroupResponse {response.group_key} for {len(response.reference_map)} clients")
+                                # A Group response has asynchronous functionalities - hence, it is blocked while inserting a new client and reference.
+                                response.unblock()
                             response.wattson_server = self
-                            send_response = response.copy_for_sending()
+                            send_response = response.copy_for_sending(query.client_id)
                             socket.send_pyobj(send_response)
                             response.resolvable.set()
                             async_reference_id += 1
                         else:
+                            # Synchronous Response
+                            start_time = time.perf_counter()
                             socket.send_pyobj(response)
+                            send_time_sum += time.perf_counter() - start_time
+                            count += 1
+                            """
+                            if count % 100 == 0:
+                                self.logger.info(f"Sent {count} queries in {send_time_sum:.2f} seconds -> Avg {send_time_sum / count:.2f}")
+                                send_time_sum = 0
+                                count = 0
+                            """
                     except AttributeError as e:
                         self.logger.error(f"Failed to reply to {query.query_type=}, {repr(query.query_data)}")
                         self.logger.error(f"{e=}")
@@ -250,47 +311,62 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
     def broadcast(self, simulation_notification: WattsonNotification):
         """
         Sends a notification to all connected clients
-        :param simulation_notification: The notification to send
-        :return:
+
+        Args:
+            simulation_notification (WattsonNotification):
+                The notification to send
         """
         return self._publisher.broadcast(simulation_notification)
 
     def multicast(self, simulation_notification: WattsonNotification, recipients: List[str]):
         """
         Sends a notification to the clients in the recipients list.
-        :param simulation_notification: The notification to send
-        :param recipients: The list of recipient IDs to send the notification to.
-        :return:
+
+        Args:
+            simulation_notification (WattsonNotification):
+                The notification to send
+            recipients (List[str]):
+                The list of recipient IDs to send the notification to.
         """
         return self._publisher.multicast(simulation_notification, recipients=recipients)
 
     def unicast(self, simulation_notification: WattsonNotification, recipient: str):
         """
         Sends a notification to the specified client.
-        :param simulation_notification: The notification to send
-        :param recipient: The ID of the desired recipient
-        :return:
+
+        Args:
+            simulation_notification (WattsonNotification):
+                The notification to send
+            recipient (str):
+                The ID of the desired recipient
         """
         return self._publisher.unicast(simulation_notification, recipient=recipient)
 
     def resolve_async_response(self, async_response: WattsonAsyncResponse, response: WattsonResponse):
         """
         Sends a (delayed) response to a former WattsonQuery.
-        :param async_response: The async response object to resolve.
-        :param response: The (resolved) response object.
-        :return:
+
+        Args:
+            async_response (WattsonAsyncResponse):
+                The async response object to resolve.
+            response (WattsonResponse):
+                The (resolved) response object.
         """
-        client_id = async_response.client_id
-        reference_id = async_response.reference_id
-        self.unicast(
-            WattsonNotification(
-                WattsonNotificationTopic.ASYNC_QUERY_RESOLVE,
-                notification_data={
-                    "reference_id": reference_id,
-                    "response": response
-                }),
-            recipient=client_id
+        notification = WattsonNotification(
+            WattsonNotificationTopic.ASYNC_QUERY_RESOLVE,
+            notification_data={
+                "reference_map": async_response.get_reference_map(),
+                "response": response
+            }
         )
+        if isinstance(async_response, WattsonAsyncGroupResponse):
+            # Multicast
+            recipients = list(async_response.reference_map.keys())
+            self.multicast(notification, recipients=recipients)
+        else:
+            # Unicast
+            client_id = async_response.client_id
+            self.unicast(notification, recipient=client_id)
 
     def handles_simulation_query_type(self, query: Union[WattsonQuery, Type[WattsonQuery]]) -> bool:
         query_class = self.get_simulation_query_type(query)
@@ -466,8 +542,10 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
     def _handle_query(self, simulation_control_query: WattsonQuery) -> WattsonResponse:
         """
         Handles a query sent by a client.
-        :param simulation_control_query: The query to handle
-        :return:
+
+        Args:
+            simulation_control_query (WattsonQuery):
+                The query to handle
         """
         if isinstance(simulation_control_query, WattsonMultiQuery):
             # Handle queries containing multiple sub queries

@@ -23,7 +23,10 @@ class AppGatewayMessageType(str, enum.Enum):
     REQUEST_GRID_VALUE_MAPPING = "request_grid_value_mapping"
 
     # COMMAND MESSAGES
+    ## SET is context aware and should automatically use "control" or "write"
     SET_DATA_POINT_COMMAND = "set_data_point_command"
+    CONTROL_DATA_POINT_COMMAND = "control_data_point_command"
+    WRITE_DATA_POINT_COMMAND = "write_data_point_command"
     READ_DATA_POINT_COMMAND = "read_data_point_command"
     TRIGGER_INTERROGATION = "trigger_interrogation"
     DISCONNECT = "disconnect"

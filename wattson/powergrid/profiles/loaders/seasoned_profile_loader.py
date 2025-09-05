@@ -43,11 +43,11 @@ class SeasonedProfileLoader(PowerProfileLoader):
 
     def load_profile(self):
         with self.file.open("r") as f:
-            self.logger.info(f"Loading {self.key} profile from {self.file.absolute().__str__()}")
+            self.logger.debug(f"Loading {self.key} profile from {self.file.absolute().__str__()}")
             profile_meta = json.load(f)
             if self.key in profile_meta:
                 profiles = self._normalize_json_profiles(profile_meta[self.key])
-                self.logger.info(f"{list(profiles.keys())} profiles loaded")
+                self.logger.debug(f"{list(profiles.keys())} profiles loaded")
                 return profiles
             else:
                 self.logger.error(f"Cannot find {self.key} profile in file")
@@ -160,8 +160,12 @@ def _get_day_class(date_time: datetime.datetime) -> str:
     """
     For a given date, determines the day class "weekday", "saturday" or "sunday"
 
-    :param date_time: The datetime object to determine the day class for
-    :return: A string representing the day's class
+    Args:
+        date_time (datetime.datetime):
+            The datetime object to determine the day class for
+
+    Returns:
+        str: A string representing the day's class
     """
     day = date_time.weekday()
     if day == 6:
@@ -187,8 +191,12 @@ def _get_season_weights(date_time: datetime.datetime) -> dict:
     Hence, at most two seasons can influence every single date.
     Time of the day is ignored during the weighting.
 
-    :param date_time: The datetime to determine the season weights for
-    :return: A dict mapping each season to its normalized weight
+    Args:
+        date_time (datetime.datetime):
+            The datetime to determine the season weights for
+
+    Returns:
+        dict: A dict mapping each season to its normalized weight
     """
     dt = datetime.datetime
     year = date_time.year

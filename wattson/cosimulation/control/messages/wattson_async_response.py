@@ -15,6 +15,13 @@ class WattsonAsyncResponse(WattsonResponse):
         self.wattson_server: Optional['WattsonServer'] = None
         self.resolvable: Optional[threading.Event] = threading.Event()
 
+    def register_reference(self, client_id: str, reference_id: int):
+        self.client_id = client_id
+        self.reference_id = reference_id
+
+    def get_reference_map(self) -> dict:
+        return {self.client_id: self.reference_id}
+
     def is_successful(self) -> bool:
         return self._success
 
@@ -31,11 +38,14 @@ class WattsonAsyncResponse(WattsonResponse):
     def resolve_with_task(self, resolve_task: Callable[['WattsonAsyncResponse', Dict], WattsonResponse], further_kwargs: Optional[Dict] = None):
         """
         Calls the given function (resolve_task) in a new thread to allow for asynchronous resolution.
-        After the resolve_task finishes and returns a WattsonResponse, this WattsonAsyncResponse is
-        automatically resolved.
-        @param resolve_task: The callable to call for deriving the full WattsonResponse
-        @param further_kwargs: A dict with further arguments to pass to the resolve_task function (as a dict!). If None is given, an empty dict is created.
-        @return:
+        After the resolve_task finishes and returns a WattsonResponse, this WattsonAsyncResponse is automatically resolved.
+
+        Args:
+            resolve_task (Callable[['WattsonAsyncResponse', Dict], WattsonResponse]):
+                The callable to call for deriving the full WattsonResponse
+            further_kwargs (Optional[Dict], optional):
+                A dict with further arguments to pass to the resolve_task function (as a dict!). If None is given, an empty dict is created.
+                (Default value = None)
         """
         if further_kwargs is None:
             further_kwargs = {}
@@ -48,8 +58,10 @@ class WattsonAsyncResponse(WattsonResponse):
         t = threading.Thread(target=async_resolve, args=(resolve_task, further_kwargs))
         t.start()
 
-    def copy_for_sending(self) -> 'WattsonAsyncResponse':
+    def copy_for_sending(self, client_id: Optional[str] = None) -> 'WattsonAsyncResponse':
         response = WattsonAsyncResponse(reference_id=self.reference_id)
+        if client_id is not None:
+            self.client_id = client_id
         response.client_id = self.client_id
         response.data = self.data
         response._success = self._success

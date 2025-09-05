@@ -79,36 +79,37 @@ class IECServerInterface(ABC):
     @abstractmethod
     def _on_P_AC(self, *args, **kwargs):
         """
-        Parameter activation works by either:
-        - loading >= 1 parameters to be activated in the future (P_ME)
-        - loading + activating 1 parameter (P_AC) / activate loaded parameters (P_ME -> P_AC)
-        See 60870-5-5 6.10
-
-        Further details (60870-5-101, 7.4.9)
-        P_AC is combined with ACT + DEACT and QPA (3rd bit) to act/deact periodic sending of an object
-        P_ME + SPONT not valid in IEC101
-
+        Parameter activation works by either: - loading >= 1 parameters to be activated in the future (P_ME) - loading + activating 1 parameter
+        (P_AC) / activate loaded parameters (P_ME -> P_AC) See 60870-5-5 6.10
+        Further details (60870-5-101, 7.4.9) P_AC is combined with ACT + DEACT and QPA (3rd bit) to act/deact periodic sending of an object P_ME
+        + SPONT not valid in IEC101
         positive & negative ACT_CON need to send back the current, post-processing, parameter as value
+
+        Args:
+            *args:
+                
+            **kwargs:
+                
         """
 
     def on_C_CI(self):
         """
-        C_CI command requires more accurate handling as it is a command focussed on future requests
-        See 60870-5-5 6.9.1
+        C_CI command requires more accurate handling as it is a command focussed on future requests See 60870-5-5 6.9.1
+
         """
         raise NotImplementedError()
 
     def _on_initial_C_CI(self):
         """
-        Handles first command to from now on either memorize counter counters or memorize increments
-        For increments, reset value to 0.
+        Handles first command to from now on either memorize counter counters or memorize increments For increments, reset value to 0.
         Probably can forward regular counter-memorization to Pandapower-queries.
         See picture 92, 60870-5-101, p. 133
+
         """
         raise NotImplementedError()
 
     def _on_C_CI_request(self):
-        """ Handles later command that explicitly requests the current memory """
+        """Handles later command that explicitly requests the current memory"""
         raise NotImplementedError()
 
     def _on_send_apdu(self, apdu):

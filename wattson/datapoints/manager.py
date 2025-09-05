@@ -61,11 +61,16 @@ class DataPointManager:
     def get_value(self, identifier: str, disable_cache: bool = False, state_id: Optional[str] = None) -> DataPointValue:
         """
         Gets the current value of a data point by combining all involved provider values.
-        :param identifier: The data point identifier
-        :param disable_cache: Whether to request cache prevention for all providers
-        :param state_id: An optional state id (if supported by provider) to request a potentially older or pinned
-                         value.
-        :return:
+
+        Args:
+            identifier (str):
+                The data point identifier
+            disable_cache (bool, optional):
+                Whether to request cache prevention for all providers
+                (Default value = False)
+            state_id (Optional[str], optional):
+                An optional state id (if supported by provider) to request a potentially older or pinned value.
+                (Default value = None)
         """
         self._allow_reads.wait()
         dp = self.data_points[identifier]
@@ -144,11 +149,16 @@ class DataPointManager:
         """
         Adds a callback for data point changes.
         The callback is called for each change of a data point that it matches.
-        The callback takes the data point identifier (str) and the new value (DataPointValue).
+        The callback takes the data point identifier (str), the new value (DataPointValue), and the state ID.
 
-        :param callback: The Callback Callable
-        :param ids: An optional set of data point IDs that the callback should be limited to.
-        :return: The ID of the callback. Can be used to remove the callback.
+        Args:
+            callback (Callable[[str, DataPointValue, Optional[str]], None]):
+                The Callback Callable
+            ids (Optional[Set[str]]):
+                An optional set of data point IDs that the callback should be limited to.
+
+        Returns:
+            int: The ID of the callback. Can be used to remove the callback.
         """
         meta = {
             "identifiers": ids,
@@ -193,9 +203,15 @@ class DataPointManager:
     def provider_search(self, provider_type: Optional[str], provider_data: dict) -> Dict[str, Dict]:
         """
         Search for provider-specific configurations
-        :param provider_type: The provider type to search for (or None to match any type)
-        :param provider_data: The (partial) configuration (provider_data) to filter
-        :return: A dict of providers matching the request, keys are data point identifiers
+
+        Args:
+            provider_type (Optional[str]):
+                The provider type to search for (or None to match any type)
+            provider_data (dict):
+                The (partial) configuration (provider_data) to filter
+
+        Returns:
+            Dict[str,Dict]: A dict of providers matching the request, keys are data point identifiers
         """
         providers = {}
         for _, point in self.data_points.items():

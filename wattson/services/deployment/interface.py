@@ -1,10 +1,8 @@
 import abc
 import os
 import signal
-import sys
 from typing import Dict, Type
 
-import pandapower as pandapower
 from powerowl.layers.powergrid import PowerGridModel
 
 from wattson.util.random import Random
@@ -33,6 +31,7 @@ class PythonDeployment(abc.ABC):
 
     def load_powernet(self, key):
         json_net = bytes.fromhex(self.config[key]).decode("utf-8")
+        import pandapower as pandapower
         return pandapower.from_json_string(json_net)
 
     def load_power_grid(self, key, power_grid_class: Type[PowerGridModel] = PowerGridModel) -> PowerGridModel:

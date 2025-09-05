@@ -26,8 +26,13 @@ class NetworkLink(NetworkEntity, abc.ABC):
         """
         Given a valid interface, returns the other interface connected forming this link.
         In case the given interface is not part of this link, interface A is returned.
-        @param interface: One interface that forms the link
-        @return: The other interface forming the link.
+
+        Args:
+            interface ('NetworkInterface'):
+                One interface that forms the link
+
+        Returns:
+            'NetworkInterface': The other interface forming the link.
         """
         if self.get_interface_a() == interface:
             return self.get_interface_b()
@@ -43,16 +48,10 @@ class NetworkLink(NetworkEntity, abc.ABC):
 
     @abc.abstractmethod
     def up(self):
-        """
-        Set the link state to "up", i.e., enabling the link
-        @return:
-        """
+        """Set the link state to "up", i.e., enabling the link"""
         ...
 
     @abc.abstractmethod
     def down(self):
-        """
-        Set the link state to "down", i.e., disabling the link
-        @return:
-        """
+        """Set the link state to "down", i.e., disabling the link"""
         ...

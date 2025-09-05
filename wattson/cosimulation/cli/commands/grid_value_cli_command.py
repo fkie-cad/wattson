@@ -18,10 +18,14 @@ class GridValueCliCommand(CliCommandHandler):
         ]
 
     def strtobool(self, val):
-        """Convert a string representation of truth to true (1) or false (0).
-        True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
-        are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if
-        'val' is anything else.
+        """
+        Convert a string representation of truth to true (1) or false (0).
+        True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError
+        if 'val' is anything else.
+
+        Args:
+            val:
+                
         """
         val = val.lower().strip()
         if val in ["y", "yes", "t", "true", "on", "1"]:
@@ -35,9 +39,12 @@ class GridValueCliCommand(CliCommandHandler):
         try:
             return self.strtobool(value)
         except ValueError as e:
-            print(f"{value} / {type(value)}")
-            print(f"{e=}")
-            return value
+            try:
+                return float(value)
+            except:
+                print(f"{value} / {type(value)}")
+                print(f"{e=}")
+                return value
 
     def handle_command(self, command: List[str], prefix: List[str]) -> bool:
         if command[0] not in self._available_commands or len(command) < 2:

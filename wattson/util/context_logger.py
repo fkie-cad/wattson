@@ -5,9 +5,7 @@ from typing import Any, Optional, Dict, Iterable, Set
 
 
 class ContextLogger(logging.Logger):
-    """
-    Wraps the regular logger, called after as ContextLogger(logging.getLogger(xyz))
-    """
+    """Wraps the regular logger, called after as ContextLogger(logging.getLogger(xyz))"""
 
     def __init__(self, host_name: str, logger_name: str, within_xterm: bool,
                  _format: str, lvl: int = logging.INFO,

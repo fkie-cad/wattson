@@ -1,3 +1,4 @@
+import threading
 import typing
 from typing import TYPE_CHECKING
 
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
 class DockerWrapper(NodeWrapper):
     def __init__(self, entity: NetworkEntity, emulator: 'WattsonNetworkEmulator'):
         super().__init__(entity, emulator)
+        self._namespace_lock: threading.Lock = threading.Lock()
         self.docker.container_name = f"wattson.{self.docker.system_id}"
         self._namespace: Namespace = Namespace(f"w_{self.entity.entity_id}")
 
@@ -29,12 +31,13 @@ class DockerWrapper(NodeWrapper):
         return self.docker.get_namespace()
 
     def get_namespace(self) -> Namespace:
-        if self._namespace.exists():
+        with self._namespace_lock:
+            if self._namespace.exists():
+                return self._namespace
+            if not self.is_container_running():
+                raise RuntimeError("Cannot create namespace from non-existent container")
+            self._namespace.from_pid(self.get_docker_pid())
             return self._namespace
-        if not self.is_container_running():
-            raise RuntimeError("Cannot create namespace from non-existent container")
-        self._namespace.from_pid(self.get_docker_pid())
-        return self._namespace
 
     def is_container_running(self) -> bool:
         return self.docker.is_container_running()

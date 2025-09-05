@@ -46,7 +46,10 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
         """
         Determines the next node this interface connects to (if any).
         I.e., this-interface <-> link <-> other-interface <-> returned-node
-        @return: The next network node if any
+
+
+        Returns:
+            Optional['WattsonNetworkNode']: The next network node if any
         """
         if self.link is not None:
             other_interface = self.link.interface_a if self.link.interface_b == self else self.link.interface_b
@@ -59,7 +62,7 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
     def interface_name(self) -> str:
         """
         The hardware name of the interface
-        @return:
+
         """
         if self.is_physical():
             return self.get_physical_name()

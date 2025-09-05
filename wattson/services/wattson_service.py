@@ -25,8 +25,8 @@ if TYPE_CHECKING:
 class WattsonService(WattsonServiceInterface):
     """
     A WattsonService is a service or process that runs on a WattsonNetworkHost.
-    Essentially, the WattsonService wraps a Popen object to handle rotating log files
-    and abstract from Paths.
+    Essentially, the WattsonService wraps a Popen object to handle rotating log files and abstract from Paths.
+
     """
     _gid: int = 0
     _instances: Dict[int, 'WattsonService'] = {}
@@ -115,13 +115,21 @@ class WattsonService(WattsonServiceInterface):
 
     def get_stdout(self):
         """
-        @return: The file descriptor to use as stdout
+        
+
+
+        Returns:
+            The file descriptor to use as stdout
         """
         return sys.stdout
 
     def get_stderr(self):
         """
-        @return: The file descriptor to use as stderr
+        
+
+
+        Returns:
+            The file descriptor to use as stderr
         """
         return sys.stderr
 
@@ -147,10 +155,7 @@ class WattsonService(WattsonServiceInterface):
         t.start()
 
     def update(self):
-        """
-        Update the service state (is_running, ...)
-        @return:
-        """
+        """Update the service state (is_running, ...)"""
         pass
 
     def start(self, refresh_config: bool = False) -> bool:
@@ -254,14 +259,22 @@ class WattsonService(WattsonServiceInterface):
 
     def get_process(self) -> Optional[subprocess.Popen]:
         """
-        @return: The process associated with this service or None if the service is not running.
+        
+
+
+        Returns:
+            Optional[subprocess.Popen]: The process associated with this service or None if the service is not running.
         """
         return self._process
 
     @performance_assert(0.1)
     def get_pid(self) -> Optional[int]:
         """
-        @return: The PID of the service process or None if the service is not running.
+        
+
+
+        Returns:
+            Optional[int]: The PID of the service process or None if the service is not running.
         """
         process = self.get_process()
         return process.pid if process is not None else None
@@ -269,7 +282,10 @@ class WattsonService(WattsonServiceInterface):
     def poll(self) -> Optional[int]:
         """
         Polls the service process.
-        @return: None or the return code of the process.
+
+
+        Returns:
+            Optional[int]: None or the return code of the process.
         """
         return self.get_process().poll()
 

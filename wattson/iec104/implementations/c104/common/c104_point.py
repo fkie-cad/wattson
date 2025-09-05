@@ -1,10 +1,9 @@
 # necessary for wrapping the c104 upwards to the MTU
 from dataclasses import dataclass
-from math import isnan
 from typing import Optional
 
 import c104
-from c104 import StepCmd
+from wattson.iec104.implementations.c104.common.c104_setter_override import C104SetterOverride
 
 from wattson.iec104.interface.types import QualityBit, QualityByte, TypeID
 from wattson.iec104.common.datapoint import IEC104Point
@@ -66,7 +65,10 @@ class C104Point(IEC104Point):
 
     @value.setter
     def value(self, v):
-        v = self.translate_c104_value(v)
+        try:
+            v = self.translate_c104_value(v)
+        except C104SetterOverride:
+            return
         self._value = v
         self.c104_point.value = v
 
@@ -112,4 +114,14 @@ class C104Point(IEC104Point):
             if not isinstance(value, c104.Double):
                 return c104.Double(value)
             return value
+        if isinstance(self.c104_point.info, c104.ProtectionEventInfo):
+            v = c104.EventState.INDETERMINATE
+            if value == 1 or value is True:
+                v = c104.EventState.ON
+            if value == 0 or value is False:
+                v = c104.EventState.OFF
+            self._value = v
+            self.c104_point.info = c104.ProtectionEventInfo(state=v, elapsed_ms=c104.UInt16(50))
+            raise C104SetterOverride
+
         return self.c104_point.value.__class__(value)

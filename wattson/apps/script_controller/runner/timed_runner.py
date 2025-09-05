@@ -32,21 +32,16 @@ class TimedRunner(Thread):
 
     def add_script(self, script: 'TimedScript'):
         """
-        start_date, speed = script.get_simulated_time_info()
-        if speed is None and self._sim_speed is None:
-            speed = 1
-        if start_date is not None:
-            o_start_date = self._wattson_time
-            self._wattson_time = start_date if type(start_date) == float else start_date.timestamp()
-            if o_start_date is not None and start_date != o_start_date:
-                self._default_logger.warning("Different scripts requested different start times: "
-                                             f"{self._wattson_time} vs {o_start_date}")
+        start_date, speed = script.get_simulated_time_info() if speed is None and self._sim_speed is None: speed = 1 if start_date is not None:
+        o_start_date = self._wattson_time self._wattson_time = start_date if type(start_date) == float else start_date.timestamp() if o_start_date
+        is not None and start_date != o_start_date: self._default_logger.warning("Different scripts requested different start times: " f"{self._wattson_time}
+        vs {o_start_date}")
+        if speed is not None: if self._sim_speed is not None and speed != self._sim_speed: self._default_logger.warning(f"Different scripts requested
+        different simulated speeds: " f"({speed} vs {self._sim_speed})!") self._sim_speed = speed
 
-        if speed is not None:
-            if self._sim_speed is not None and speed != self._sim_speed:
-                self._default_logger.warning(f"Different scripts requested different simulated speeds: "
-                                             f"({speed} vs {self._sim_speed})!")
-            self._sim_speed = speed
+        Args:
+            script ('TimedScript'):
+                
         """
 
         self._scripts.append(script)
@@ -77,14 +72,21 @@ class TimedRunner(Thread):
                    logger: Optional = None, apply_sim_offset: bool = True):
         """
         Queues an action to run at the specified time.
-        :param script: The script that adds this action. Required for relative timings. None defaults all timings to the
-                       Simulated Start Time
-        :param at: Timing information. Either a datetime (in simulated time!), a str representing simulated time in
-                   Y-m-d H:M:S format, or a relative float specifying the simulated time offset from the script's start.
-        :param action: The action to trigger
-        :param logger: An optional logger to pass to the action. Uses a global logger if no specific one is provided.
-        :param apply_sim_offset: Whether the timing should be offset with respect to the simulated time
-        :return:
+
+        Args:
+            script (Optional['TimedScript']):
+                The script that adds this action. Required for relative timings. None defaults all timings to the Simulated Start Time
+            at (Union[datetime, str, float, int]):
+                Timing information. Either a datetime (in simulated time!), a str representing simulated time in Y-m-d H:M:S format, or a relative
+                float specifying the simulated time offset from the script's start.
+            action (Callable):
+                The action to trigger
+            logger (Optional, optional):
+                An optional logger to pass to the action. Uses a global logger if no specific one is provided.
+                (Default value = None)
+            apply_sim_offset (bool, optional):
+                Whether the timing should be offset with respect to the simulated time
+                (Default value = True)
         """
         ref_time = time.time()
         if apply_sim_offset:

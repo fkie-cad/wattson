@@ -15,25 +15,38 @@ if TYPE_CHECKING:
 
 class ConfigurationExpander:
     """
-    Expands the configuration of a WattsonService by replacing expansion placeholders with
-    their current or predefined values.
+    Expands the configuration of a WattsonService by replacing expansion placeholders with their current or predefined values.
+
     """
     def __init__(self, configuration_store: ConfigurationStore):
         self.configuration_store = configuration_store
 
     def expand_node_configuration(self, node: 'WattsonNetworkNode',
-                                  service_configuration: ServiceConfiguration) -> ServiceConfiguration:
+                                  service_configuration: ServiceConfiguration,
+                                  add_default_values: bool = True) -> ServiceConfiguration:
         """
-        Expands the given ServiceConfiguration to a fresh ServiceConfiguration where all expansion handles
-        are replaced by their actual value with context information provided by the ExpansionStore.
+        Expands the given ServiceConfiguration to a fresh ServiceConfiguration where all expansion handles are replaced by their actual value
+        with context information provided by the ExpansionStore.
         If an undefined expansion handle is found, an ExpansionException is raised.
 
-        :param node: The node to expand this configuration for
-        :param service_configuration: The ServiceConfiguration to expand
-        :return: A fresh ServiceConfiguration with all expansion handles replaced
+        Args:
+            node ('WattsonNetworkNode'):
+                The node to expand this configuration for
+            service_configuration (ServiceConfiguration):
+                The ServiceConfiguration to expand
+            add_default_values (bool):
+                Whether to add default values to the expanded configuration (artifact directory, ...)
+
+        Returns:
+            ServiceConfiguration: A fresh ServiceConfiguration with all expansion handles replaced
         """
         try:
             expanded_configuration = ServiceConfiguration()
+            if add_default_values:
+                expanded_configuration["node-directory"] = str(node.get_guest_folder().absolute())
+                expanded_configuration["node-directory-host"] = str(node.get_host_folder().absolute())
+                expanded_configuration["working-directory-host"] = "!working-directory"
+
             for key, value in service_configuration.items():
                 try:
                     expanded_configuration[key] = copy.deepcopy(value)

@@ -186,7 +186,7 @@ class WattsonNetworkHost(WattsonNetworkNode, NetworkHost):
     def open_terminal(self) -> bool:
         """
         Attempts to open a terminal / konsole for the network host.
-        @return:
+
         """
         # Check if DISPLAY environment variable is available
         if "DISPLAY" not in os.environ:

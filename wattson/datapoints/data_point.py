@@ -7,9 +7,7 @@ if TYPE_CHECKING:
 
 
 class DataPoint:
-    """
-    A data point wrapper for maintaining the OOP paradigm
-    """
+    """A data point wrapper for maintaining the OOP paradigm"""
     def __init__(self, identifier: str, manager: "DataPointManager"):
         self._identifier = identifier
         self._manager = manager

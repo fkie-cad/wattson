@@ -43,14 +43,24 @@ class CoSimulationController(WattsonQueryHandler):
         self._config = {}
         self._config.update(kwargs)
         self._configuration_store = ConfigurationStore()
-        self._wattson_time = WattsonTime()
+
+        clock_configuration = kwargs.get("clock", {})
+        self._wattson_time = WattsonTime(
+            wall_clock_reference=clock_configuration.get("wall_clock_reference", None),
+            sim_clock_reference=clock_configuration.get("sim_clock_reference", None),
+            speed=clock_configuration.get("speed", 1)
+        )
 
         self._stopped = threading.Event()
+        self._stop_requested = threading.Event()
+        self._is_waiting_for_clients: bool = False
+        self._clients_connection_event = threading.Event()
 
         self.sim_control_query_socket_string = ""
         self.sim_control_publish_socket_string = ""
 
         self._network_emulator: Optional[NetworkEmulator] = kwargs.get("network_emulator", None)
+        self._async_network_start: bool = kwargs.get("async_start", True)
         if self._network_emulator is not None:
             self._network_emulator.set_controller(self)
         self._physical_simulator: PhysicalSimulator = EmptyPhysicalSimulator()
@@ -81,18 +91,27 @@ class CoSimulationController(WattsonQueryHandler):
         ]
         self._export_notifications = kwargs.get("export_notifications", default_notification_export)
         self._notification_history = kwargs.get("notification_history", default_notification_history)
+        self._fixed_extensions = []
+        if kwargs.get("vcc_proxy", False):
+            from wattson.lib.scenarios.extensions.vcc_proxy import VccProxy
+            self._fixed_extensions.append(VccProxy(co_simulation_controller=self))
 
     def set_data(self, key, value):
         self._data[key] = value
 
-    def get_data(self, key, default = None):
+    def get_data(self, key, default=None):
         return self._data.get(key, default)
+
+    @property
+    def is_waiting_for_clients(self):
+        return self._is_waiting_for_clients
 
     @property
     def network_emulator(self) -> NetworkEmulator:
         if self._network_emulator is None:
             from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator import WattsonNetworkEmulator
-            self._network_emulator = WattsonNetworkEmulator()
+            self._network_emulator = WattsonNetworkEmulator(async_start=self._async_network_start,
+                                                            disable_link_properties=self._config.get("disable_link_properties", False))
             self._network_emulator.set_controller(self)
         return self._network_emulator
 
@@ -152,12 +171,9 @@ class CoSimulationController(WattsonQueryHandler):
 
     def start(self):
         """
-        Starts the co-simulation by performing the following steps:
-        * Creates the network emulation
-        * Creates the physical process simulation
-        * Starts the physical process simulation
-        * Deploys network hosts / applications
-        :return:
+        Starts the co-simulation by performing the following steps: * Creates the network emulation * Creates the physical process simulation
+        * Starts the physical process simulation * Deploys network hosts / applications :return:
+
         """
         self._stopped.clear()
         start_time = time.perf_counter()
@@ -168,7 +184,7 @@ class CoSimulationController(WattsonQueryHandler):
         self.network_emulator.send_notification_handler = self.send_notification
         self.network_emulator.enable_management_network()
         if self._sim_control_host is None:
-            self._sim_control_host = WattsonNetworkHost(id=SIM_CONTROL_ID, config={"role": "sim-control"})
+            self._sim_control_host = WattsonNetworkHost(id=SIM_CONTROL_ID, config={"role": "sim-control", "hidden": True})
             self.network_emulator.add_host(self._sim_control_host)
         sim_control_ip = self._sim_control_host.get_management_interface().ip_address
         sim_control_query_socket_string = f"tcp://{sim_control_ip}:{SIM_CONTROL_PORT}"
@@ -186,6 +202,10 @@ class CoSimulationController(WattsonQueryHandler):
         self._configuration_store.register_configuration(
             "sim-control-publish-socket",
             sim_control_publish_socket_string
+        )
+        self._configuration_store.register_configuration(
+            "working-directory",
+            str(self.working_directory.absolute())
         )
 
         self._configuration_store.register_configuration("scenario_path", str(self.scenario_path.absolute()))
@@ -241,6 +261,16 @@ class CoSimulationController(WattsonQueryHandler):
                 self.logger.info(f" Applying {extension.__class__.__name__}")
                 extension.extend_post_start()
 
+        # Wait for physical simulation ready event
+        max_wait_iterations = 10
+        wait_iteration = 0
+        while not self.physical_simulator.wait_until_ready(2):
+            wait_iteration += 1
+            if wait_iteration > max_wait_iterations:
+                self.logger.warning(f"Physical simulator not yet ready - giving up on waiting")
+                break
+            self.logger.info("Waiting for physical simulator to be ready before starting services")
+
         # Deploy host processes
         self.network_emulator.deploy_services()
         stop_time = time.perf_counter()
@@ -257,9 +287,20 @@ class CoSimulationController(WattsonQueryHandler):
                 self.logger.info(f" Applying {extension.__class__.__name__}")
                 extension.extend_on_run()
 
-    def stop(self):
+    def stop(self, attempt_wait_cancel: bool = False):
         if self._stopped.is_set():
             return
+
+        if self._is_waiting_for_clients and attempt_wait_cancel:
+            # On first interrupt, attempt to stop blocking client wait instead of shutting down
+            self.logger.info(f"Stopping during client wait - aborting wait")
+            self._clients_connection_event.set()
+            self._is_waiting_for_clients = False
+            return
+
+        self._stop_requested.set()
+        self._clients_connection_event.set()
+
         self.logger.info("Stopping simulation control server")
         if self._simulation_control_server is not None:
             self._simulation_control_server.stop()
@@ -284,8 +325,12 @@ class CoSimulationController(WattsonQueryHandler):
 
     def cli(self, cli_sig_int_handler: Optional = None):
         """
-        Starts a command-line-interface for the co-simulation
-        :return:
+        Starts a command-line-interface for the co-simulation :return:
+
+        Args:
+            cli_sig_int_handler (Optional, optional):
+                
+                (Default value = None)
         """
         wattson_client = WattsonClient(
             query_server_socket_string=self.sim_control_query_socket_string,
@@ -315,7 +360,7 @@ class CoSimulationController(WattsonQueryHandler):
         self.register_simulator(self._network_emulator)
 
     def load_scenario(self):
-        self.logger.info("Loading scenario")
+        self.logger.info(f"Loading scenario from {self.scenario_path}")
         scenario_type_file = self.scenario_path.joinpath("scenario-type")
         if not scenario_type_file.exists():
             raise InvalidScenarioException("No scenario-type file found")
@@ -366,7 +411,7 @@ class CoSimulationController(WattsonQueryHandler):
                 else:
                     extension = extension_class(co_simulation_controller=self, **config)
                     extensions.append(extension)
-        self._extensions = extensions
+        self._extensions = extensions + self._fixed_extensions
         pre_physical_extensions = [extension for extension in self._extensions if extension.provides_pre_physical()]
         post_physical_extensions = [extension for extension in self._extensions if extension.provides_post_physical()]
 
@@ -381,7 +426,7 @@ class CoSimulationController(WattsonQueryHandler):
         facility_file = self.scenario_path.joinpath("facilities.yml")
         if facility_file.exists():
             from wattson.cosimulation.models.facilities.facility import Facility
-            self.logger.info(f"Loading Facilities from facilities.yml")
+            self.logger.info(f"Loading Facilities from {facility_file}")
             if not self._model_manager.load_from_file(Facility, facility_file):
                 self.logger.error(f"Could not load facilities")
 
@@ -398,7 +443,7 @@ class CoSimulationController(WattsonQueryHandler):
 
         # Load Network Emulator
         if self._sim_control_host is None:
-            self._sim_control_host = WattsonNetworkHost(id=SIM_CONTROL_ID, config={"role": "sim-control"})
+            self._sim_control_host = WattsonNetworkHost(id=SIM_CONTROL_ID, config={"role": "sim-control", "hidden": True})
             self.network_emulator.add_host(self._sim_control_host)
         if not self._config.get("empty_network", False):
             self.network_emulator.load_scenario(self.scenario_path)
@@ -412,6 +457,7 @@ class CoSimulationController(WattsonQueryHandler):
 
         # Load Physical Simulator
         self.physical_simulator.set_network_emulator(self.network_emulator)
+        self.logger.info("Loading physical scenario")
         self.physical_simulator.load_scenario(self.scenario_path)
 
         # Extensions: Post-Physical
@@ -486,33 +532,63 @@ class CoSimulationController(WattsonQueryHandler):
 
     def _wait_for_wattson_clients(self):
         self.logger.info("Waiting for clients to connect")
+        self._is_waiting_for_clients = True
+        wait_event = WaitEvent(timeout=60)
+        all_clients_connected_event = threading.Event()
+
         required_clients = self._required_sim_control_clients
-        clients_connected_event = threading.Event()
-        progress_printer = ProgressPrinter(max_progress=len(required_clients), on_stop_margin=True, stop_event=clients_connected_event)
+        self._clients_connection_event.clear()
+        progress_printer = ProgressPrinter(max_progress=len(required_clients), on_stop_margin=True, stop_event=all_clients_connected_event)
+
+        def _get_missing_clients():
+            _current_clients = _get_connected_clients()
+            _missing_clients = set(required_clients).difference(_current_clients)
+            return _missing_clients
+
+        def _get_connected_clients():
+            return {client.split("_")[0] for client in self._simulation_control_server.get_clients()}
+
+        def _is_client_required(_client_id):
+            _client_node = _client_id.split("_")[0]
+            return _client_node in required_clients
+
+        def _get_required_connected_clients():
+            return {client for client in _get_connected_clients() if _is_client_required(client)}
 
         def update_client_progress(_):
-            progress_printer.set_progress(len(self._simulation_control_server.get_clients()))
+            progress_printer.set_progress(len(_get_required_connected_clients()))
+            if all_clients_connected_event.is_set():
+                self._clients_connection_event.set()
 
         self._simulation_control_server.set_on_client_registration_callback(update_client_progress)
         progress_printer.start()
+        update_client_progress(None)
 
-        wait_event = WaitEvent(timeout=60)
         wait_event.start()
 
         def log_missing_clients(as_warning: bool = False):
             total_clients_num = len(required_clients)
-            current_clients = self._simulation_control_server.get_clients()
-            current_clients_num = len(current_clients)
+            current_clients = _get_required_connected_clients()
             method = self.logger.warning if as_warning else self.logger.info
-            missing_clients = set(required_clients).difference(current_clients)
+            missing_clients = _get_missing_clients()
+            current_clients_num = len(current_clients)
             method(f"{current_clients_num} / {total_clients_num} expected clients have registered. Waiting for: {'  '.join(missing_clients)}")
+            method(f"Connected clients: {'  '.join(_get_connected_clients())}")
 
         while not wait_event.is_set():
-            if clients_connected_event.wait(10):
+            if self._clients_connection_event.wait(10):
                 wait_event.complete()
             else:
                 log_missing_clients()
-        if not clients_connected_event.is_set():
+
+        self._is_waiting_for_clients = False
+
+        if self._stop_requested.is_set():
+            # No logging on teardown
+            return
+
+        if not all_clients_connected_event.is_set():
+            self.logger.warning("Giving up waiting for clients - not all clients connected")
             log_missing_clients(as_warning=True)
         else:
             self.logger.info("All clients connected")

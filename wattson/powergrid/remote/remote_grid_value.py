@@ -31,7 +31,7 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
         self.wattson_client = wattson_client
         self._remote_power_grid_model = remote_power_grid_model
         self._last_synchronization = 0
-        self._synchronization_interval = 20
+        self._synchronization_interval = 60
         super().__init__(
             grid_element=grid_element,
             name=name,
@@ -101,9 +101,13 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
     def grid_value_changed(self, value: Any, timestamp: Optional[float] = None):
         """
         Handler for received grid value changes by the WattsonClient, handled by the associated RemotePowerGridModel
-        @param value: The new value of this GridValue
-        @param timestamp: The timestamp of the update
-        @return:
+
+        Args:
+            value (Any):
+                The new value of this GridValue
+            timestamp (Optional[float], optional):
+                The timestamp of the update
+                (Default value = None)
         """
         if self._last_synchronization == 0:
             self.synchronize()
@@ -114,8 +118,10 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
     def grid_value_state_changed(self, data: dict):
         """
         Handler for received grid value state changes by the WattsonClient.
-        @param data: The dict representation of this grid value, including the new state
-        @return:
+
+        Args:
+            data (dict):
+                The dict representation of this grid value, including the new state
         """
         # self.wattson_client.logger.info(f"Grid value state changed {self.get_identifier()}")
         self._update_from_data(data)
@@ -126,7 +132,7 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
         return self._on_set(value, override_lock)
 
     def synchronize(self, force: bool = False, block: bool = True):
-        if not force and not time.time() - self._last_synchronization > self._synchronization_interval:
+        if not force and (self._synchronization_interval is None or not time.time() - self._last_synchronization > self._synchronization_interval):
             return
 
         overdue = time.time() - self._last_synchronization
@@ -168,5 +174,7 @@ class RemoteGridValue(GridValue, WattsonRemoteObject):
             error = response.data.get("error")
             self.logger.error(f"{self.get_identifier()}: Could not synchronize (on_set): {error=}")
             return False
+        old_value = self.value
         self._update_from_data(response.data)
+        self._trigger_on_set(old_value)
         return True

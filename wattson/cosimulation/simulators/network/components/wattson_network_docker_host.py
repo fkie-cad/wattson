@@ -101,11 +101,17 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
     def add_volume(self, name: str, host_path: str, docker_path: str, permission: str = "rw"):
         """
         Add a volume for mounting to the container (before it is started).
-        @param name: The name for the volume mount (i.e., an ID)
-        @param host_path: The path on the host system
-        @param docker_path: The mount path within the docker container
-        @param permission: The permissions for this folder (r, w, rw)
-        @return:
+
+        Args:
+            name (str):
+                The name for the volume mount (i.e., an ID)
+            host_path (str):
+                The path on the host system
+            docker_path (str):
+                The mount path within the docker container
+            permission (str, optional):
+                The permissions for this folder (r, w, rw)
+                (Default value = "rw")
         """
         self.config.setdefault("volumes", []).append(
             {
@@ -131,7 +137,11 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
     def get_volumes(self, with_default_mount: bool = True) -> List[Dict[str, str]]:
         """
         Returns a list of volumes to mount, represented by a dict with "host_path" and "docker_path" keys
-        @return:
+
+        Args:
+            with_default_mount (bool, optional):
+                
+                (Default value = True)
         """
         volumes = self.config.get("volumes", [])
         # Sanity check volumes
@@ -161,7 +171,11 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
 
     def get_boot_command(self) -> str:
         """
-        @return: The boot command to start the container with.
+        
+
+
+        Returns:
+            str: The boot command to start the container with.
         """
         return self.config.get("command", "/bin/bash")
 

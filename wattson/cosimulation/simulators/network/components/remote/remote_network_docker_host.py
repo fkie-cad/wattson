@@ -14,6 +14,10 @@ class RemoteNetworkDockerHost(RemoteNetworkHost, NetworkDockerHost):
 
     def get_boot_command(self) -> str:
         """
-        @return: The boot command to start the container with.
+        
+
+
+        Returns:
+            str: The boot command to start the container with.
         """
         return self._state.get("boot_command")

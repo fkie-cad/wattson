@@ -17,10 +17,8 @@ from wattson.analysis.statistics.common.statistic_message import StatisticMessag
 
 class StatisticServer(Thread):
     """
-    The statistic server collects (logged) statistics from all its clients
-    and stores them in a consistent format at the given location.
-    To limit the memory overhead, the statistic log can be split into several files after
-    a pre-defined number of entries has been collected.
+    The statistic server collects (logged) statistics from all its clients and stores them in a consistent format at the given location.
+    To limit the memory overhead, the statistic log can be split into several files after a pre-defined number of entries has been collected.
 
     """
     def __init__(self, ip: str, **kwargs):

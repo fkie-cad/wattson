@@ -15,9 +15,7 @@ if TYPE_CHECKING:
 
 
 class RemoteNetworkEntity(WattsonRemoteObject, NetworkEntity):
-    """
-    A remote representation of a WattsonNetworkEntity
-    """
+    """A remote representation of a WattsonNetworkEntity"""
     def __init__(self, entity_id: str, wattson_client: 'WattsonClient', auto_sync: bool = True):
         self._entity_id = entity_id
         self._wattson_client = wattson_client
@@ -83,15 +81,9 @@ class RemoteNetworkEntity(WattsonRemoteObject, NetworkEntity):
         return self.state.get("is_started", False)
 
     def start(self):
-        """
-        Start the WattsonNetworkEntity
-        @return:
-        """
+        """Start the WattsonNetworkEntity"""
         # TODO: Start the actual node
 
     def stop(self):
-        """
-        Stop the WattsonNetworkEntity
-        @return:
-        """
+        """Stop the WattsonNetworkEntity"""
         # TODO

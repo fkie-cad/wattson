@@ -8,9 +8,12 @@ def find_program(candidates: list, fallback: str) -> str:
     """
     Finds a program from the given list of candidates which is installed.
     If no matching program is found, the fallback is returned
-    @param candidates:
-    @param fallback:
-    @return:
+
+    Args:
+        candidates (list):
+            
+        fallback (str):
+            
     """
     process = psutil.Process(os.getpid())
     # Check for used shell as parent process

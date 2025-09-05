@@ -29,6 +29,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     """
     A WattsonNetworkNode is a WattsonNetworkEntity that serves as node. A node can have interfaces and run services.
     Switches, Routers and ordinary hosts are NetworkNodes.
+
     """
     interfaces: List['WattsonNetworkInterface'] = dataclasses.field(default_factory=lambda: [])
     config: dict = dataclasses.field(default_factory=lambda: {})
@@ -121,6 +122,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         Loads and instantiates service instances from the (optional) 'services' list in the node's configuration.
         For each found service, a respective instance is created.
         :return:
+
         """
         services = self.config.get("services", [])
         for service_config in services:
@@ -211,7 +213,11 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def get_host_root(self, ensure_exists: bool = True) -> Path:
         """
         Returns the root folder of this network node.
-        @return:
+
+        Args:
+            ensure_exists (bool, optional):
+                
+                (Default value = True)
         """
         path = self.network_emulator.get_working_directory().joinpath(self.get_hostname())
         if ensure_exists:
@@ -221,7 +227,14 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def get_host_folder(self, ensure_exists: bool = True) -> Path:
         """
         Return the working directory of this node relative to the host machine running Wattson.
-        @return: The working directory of this node relative to the host machine
+
+        Args:
+            ensure_exists (bool, optional):
+                
+                (Default value = True)
+
+        Returns:
+            Path: The working directory of this node relative to the host machine
         """
         path = self.get_host_root(ensure_exists=ensure_exists).joinpath("working_directory")
         if ensure_exists:
@@ -232,7 +245,10 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         """
         Return the working directory of this node relative to this node.
         This is just the host folder / artifact folder, except for nodes that use a different file system (e.g., Docker or VMs)
-        @return: The working directory of this node relative to the node / guest.
+
+
+        Returns:
+            Path: The working directory of this node relative to the node / guest.
         """
         return self.get_host_folder()
 
@@ -257,9 +273,15 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         """
         Executes a file-system related command (e.g., mounting).
         This does not necessarily belong to the network namespace in mixed-namespace environments
-        @param cmd: The command to execute
-        @param kwargs: Any arguments to pass
-        @return: The command's return code
+
+        Args:
+            cmd (List[str]):
+                The command to execute
+            **kwargs:
+                
+
+        Returns:
+            int: The command's return code
         """
         p = subprocess.run(cmd, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, **kwargs)
         return p.returncode
@@ -273,8 +295,9 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def set_config(self, key, value):
         self.config[key] = value
 
-    def update_config(self, config):
+    def update_config(self, config) -> bool:
         self.config.update(config)
+        return True
 
     def get_roles(self) -> List[str]:
         return self.config.get("roles", [])
@@ -310,7 +333,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def open_terminal(self) -> bool:
         """
         Attempts to open a terminal / konsole for the network node.
-        @return:
+
         """
         return False
 
@@ -320,12 +343,24 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def mount(self, mount_point: Path, target: Path, remove_file: bool = False, remove_folder: bool = False, bind: bool = False) -> bool:
         """
         Mounts the target folder at the given mount point.
-        @param mount_point: The mount point
-        @param target: The target folder
-        @param remove_file: Whether to remove the mount point if it is a file
-        @param remove_folder: Whether to remove the mount point if it is a folder
-        @param bind: Whether to mount via --bind (if applicable)
-        @return: Whether the mounting was successful
+
+        Args:
+            mount_point (Path):
+                The mount point
+            target (Path):
+                The target folder
+            remove_file (bool, optional):
+                Whether to remove the mount point if it is a file
+                (Default value = False)
+            remove_folder (bool, optional):
+                Whether to remove the mount point if it is a folder
+                (Default value = False)
+            bind (bool, optional):
+                Whether to mount via --bind (if applicable)
+                (Default value = False)
+
+        Returns:
+            bool: Whether the mounting was successful
         """
         if remove_file and self.file_exists(file=mount_point):
             self.remove_file(mount_point)
@@ -341,10 +376,19 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def unmount(self, mount_point: Path, lazy: bool = False, force: bool = False) -> bool:
         """
         Unmount the given mount point
-        @param mount_point: The mount point
-        @param lazy: Use lazy unmounting
-        @param force: force unmounting
-        @return: Whether the unmounting was successful
+
+        Args:
+            mount_point (Path):
+                The mount point
+            lazy (bool, optional):
+                Use lazy unmounting
+                (Default value = False)
+            force (bool, optional):
+                force unmounting
+                (Default value = False)
+
+        Returns:
+            bool: Whether the unmounting was successful
         """
         cmd = ["umount", str(mount_point.absolute())]
         if lazy:
@@ -387,8 +431,13 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def file_exists(self, file: Path) -> bool:
         """
         Checks whether the given file exists on this node
-        @param file: The file path to check for
-        @return: Whether the file exists (and is actually a file)
+
+        Args:
+            file (Path):
+                The file path to check for
+
+        Returns:
+            bool: Whether the file exists (and is actually a file)
         """
         return self.exec_fs_cmd(["test", "-f", str(file.absolute())]) == 0
 
@@ -398,16 +447,27 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def folder_exists(self, folder: Path) -> bool:
         """
         Checks whether the given folder exists on this node
-        @param folder: The folder path to check for
-        @return: Whether the folder exists (and is actually a folder)
+
+        Args:
+            folder (Path):
+                The folder path to check for
+
+        Returns:
+            bool: Whether the folder exists (and is actually a folder)
         """
         return self.exec_fs_cmd(["test", "-d", str(folder.absolute())]) == 0
 
     def transform_path(self, path: Path) -> Path:
         """
-        Transforms the given path to a node-specific path, i.e., relative paths are transformed to the in-node file system w.r.t. the working directory.
-        @param path: The path to transform
-        @return: The transformed path
+        Transforms the given path to a node-specific path, i.e., relative paths are transformed to the in-node file system w.r.t. the working
+        directory.
+
+        Args:
+            path (Path):
+                The path to transform
+
+        Returns:
+            Path: The transformed path
         """
         if path.is_absolute():
             return path
@@ -459,9 +519,15 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def interface_rename(self, old_name: str, new_name: str) -> bool:
         """
         Renames a physical interface on the node
-        @param old_name: The original interface name
-        @param new_name: The new interface name
-        @return: Whether the action was successful
+
+        Args:
+            old_name (str):
+                The original interface name
+            new_name (str):
+                The new interface name
+
+        Returns:
+            bool: Whether the action was successful
         """
         code, lines = self.exec(["ip", "link", "set", "dev", old_name, "name", new_name])
         if not code == 0:
@@ -470,11 +536,20 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
             return False
         return True
 
-    def interfaces_list_existing(self) -> List[Dict]:
+    def interfaces_list_existing(self, try_num: int = 0, max_tries: int = 10, retry_error_message: str = "") -> List[Dict]:
+        if try_num >= max_tries:
+            self.logger.error(f"Could not load interface information - maximum number of tries exceeded ({retry_error_message})")
+            return []
+
         code, lines = self.exec(["ip", "--json", "a"], stderr=subprocess.PIPE)
         if code != 0:
-            self.logger.error(f"Could not load interface information")
+            self.logger.error(f"Could not load interface information: {code} \n {'\n'.join(lines)}")
             return []
+
+        # Check for interrupted dump
+        if "Dump was interrupted and may be inconsistent" in "\n".join(lines):
+            return self.interfaces_list_existing(try_num=try_num + 1, retry_error_message="Inconsistent dump")
+
         try:
             data = json.loads("\n".join(lines))
         except json.JSONDecodeError:

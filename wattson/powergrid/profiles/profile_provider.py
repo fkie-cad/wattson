@@ -11,12 +11,14 @@ q_mvar). The values of the profile are absolut values that are directly sent
 to the power simulator.
 """
 import datetime
+import json
 import logging
 import threading
 import time
 from pathlib import Path
 from typing import Union, Optional, Dict, List, Callable
 
+import pyprctl
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import StaticGenerator, Load, Storage
 from powerowl.layers.powergrid.elements.enums.static_generator_type import StaticGeneratorType
@@ -156,6 +158,7 @@ class ProfileLoader(threading.Thread):
             self._wattson_client.stop()
 
     def run(self):
+        pyprctl.set_name("W/PG/Prof")
         first_run = True
         while not self._terminate.is_set():
             self._step += 1
@@ -220,8 +223,6 @@ class ProfileLoader(threading.Thread):
                             # Do not actually apply this
                             continue
 
-                        # self.logger.info(f"{element.get_identifier()} // {value_context} // {value_name} = {value}")
-
                         updates.append(
                             {
                                 "element": element,
@@ -234,6 +235,7 @@ class ProfileLoader(threading.Thread):
             self._apply_updates(updates)
 
             if first_run:
+                self.logger.info(f"Initial profiles applied")
                 self.ready_event.set()
             end_time = time.time()
             runtime = end_time - start_time

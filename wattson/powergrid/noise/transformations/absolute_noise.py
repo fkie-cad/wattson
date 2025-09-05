@@ -7,8 +7,9 @@ from wattson.util.random import Random
 class AbsoluteNoise(Noise):
     """
     Applies noise to the given value as an absolut value.
-    The value where the noise should be applied to is then modified to include
-    a normal distributed absolute noise with the scale of the given absolute_scale.
+    The value where the noise should be applied to is then modified to include a normal distributed absolute noise with the scale of the given
+    absolute_scale.
+
     """
     def __init__(self, absolute_scale: float, hard_cap: bool = True):
         self._absolute_scale = abs(absolute_scale)

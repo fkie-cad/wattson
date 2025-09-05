@@ -49,6 +49,7 @@ class ProtectionProvider(DataPointProvider):
         self.source_providers = {}
 
         self._protection_to_data_point_map = {}
+        self._triggered_protections = set()
 
         for identifier, dp in self.data_points.items():
             if "sources" in dp["providers"]:
@@ -65,11 +66,21 @@ class ProtectionProvider(DataPointProvider):
         if self.client is None:
             raise ValueError("No WattsonClient given in provider configuration")
         self.client.subscribe(PowerGridNotificationTopic.PROTECTION_TRIGGERED, self._on_protection_triggering)
+        self.client.subscribe(PowerGridNotificationTopic.PROTECTION_CLEARED, self._on_protection_cleared)
+
+    def _on_protection_cleared(self, notification: WattsonNotification):
+        self._handle_protection(notification, triggered=False)
 
     def _on_protection_triggering(self, notification: WattsonNotification):
+        self._handle_protection(notification, triggered=True)
+
+    def _handle_protection(self, notification: WattsonNotification, triggered: bool):
         grid_element_identifier = notification.notification_data.get("grid_element")
         protection_name = notification.notification_data.get("protection_name")
-        self.logger.warning(f"Protection triggered at {grid_element_identifier} for {protection_name}")
+        if triggered:
+            self.logger.warning(f"Protection triggered at {grid_element_identifier} for {protection_name}")
+        else:
+            self.logger.info(f"Protection event cleared at {grid_element_identifier} for {protection_name}")
 
         # Get identifier
         identifier = self._protection_to_data_point_map.get(grid_element_identifier, {}).get(protection_name)
@@ -77,10 +88,15 @@ class ProtectionProvider(DataPointProvider):
             self.logger.warning(f"Could not find data point for protection event {grid_element_identifier} {protection_name}")
             return
 
+        if triggered:
+            self._triggered_protections.add(identifier)
+        elif identifier in self._triggered_protections:
+            self._triggered_protections.remove(identifier)
+
         # TODO: StateID?
         if self.callbacks is not None:
             for callback in self.callbacks:
-                callback(identifier, 1, "0", "DP_ID")
+                callback(identifier, True if triggered else False, "0", "DP_ID")
 
     def start(self):
         self._wait_until_ready()
@@ -134,5 +150,4 @@ class ProtectionProvider(DataPointProvider):
         return False
 
     def get_value(self, identifier: str, provider_id: int, disable_cache: bool = False, state_id: Optional[str] = None) -> DataPointValue:
-        # TODO: What to return here?
-        return 1
+        return identifier in self._triggered_protections

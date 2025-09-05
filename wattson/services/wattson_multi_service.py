@@ -10,13 +10,11 @@ if TYPE_CHECKING:
 
 
 class WattsonMultiService(WattsonService):
-    """
-    A wrapper to manage multiple individual services at once
-    """
+    """A wrapper to manage multiple individual services at once"""
     def __init__(self, service_configuration: 'ServiceConfiguration', network_node: 'WattsonNetworkNode', services: Optional[List[WattsonService]] = None):
         super().__init__(service_configuration=service_configuration, network_node=network_node)
         self._sub_services: List[WattsonService] = services if services is not None else []
-        self.max_wait = service_configuration.get("max_wait", 5)
+        self.max_wait = service_configuration.get("max_wait", 10)
 
     def is_running(self) -> bool:
         for service in self._sub_services:

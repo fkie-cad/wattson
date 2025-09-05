@@ -6,9 +6,7 @@ InterfaceType = typing.Dict[str, typing.Union[str, typing.List[str]]]
 
 
 class Device(abc.ABC):
-    """
-    Abstract class used for all devices.
-    """
+    """Abstract class used for all devices."""
     def __init__(self, node_id: str,
                  interfaces: InterfaceType) -> None:
         # id of node (from SGAM); converted to string
@@ -51,8 +49,8 @@ class SwitchDevice(Device):
 
 class HostDevice(Device):
     """
-    A device, that has exactly one IP address and a command which is executed
-    to perform some task.
+    A device, that has exactly one IP address and a command which is executed to perform some task.
+
     """
     def __init__(self, node_id, interfaces, start_cmd=""):
         super().__init__(node_id, interfaces)
@@ -94,9 +92,7 @@ class SCADADevice(HostDevice, abc.ABC):
 
 
 class MTUDevice(SCADADevice):
-    """
-    Bundle data required for one MTU entity (formerly called "SCADA").
-    """
+    """Bundle data required for one MTU entity (formerly called "SCADA")."""
     def __init__(self, node_id, interfaces, datapoints,
                  rtu_ips: typing.Dict[int, str]):
         super().__init__(node_id, interfaces, datapoints)
@@ -122,9 +118,7 @@ class MTUDevice(SCADADevice):
 
 
 class RTUDevice(SCADADevice):
-    """
-    Bundle data required for one RTU entity.
-    """
+    """Bundle data required for one RTU entity."""
     def __init__(self, node_id, interfaces,
                  datapoints):
         super().__init__(node_id, interfaces, datapoints)

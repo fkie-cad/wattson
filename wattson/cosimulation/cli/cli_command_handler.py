@@ -13,9 +13,15 @@ class CliCommandHandler(abc.ABC):
     def handle_command(self, command: List[str], prefix: List[str]) -> bool:
         """
         Gets a command divided into a list to apply the respective actions
-        :param command: The command split into a list at spaces
-        :param prefix: The command's prefix. Original input is 'prefix command'
-        :return: True iff the CLI should continue to prompt for the next command
+
+        Args:
+            command (List[str]):
+                The command split into a list at spaces
+            prefix (List[str]):
+                The command's prefix. Original input is 'prefix command'
+
+        Returns:
+            bool: True iff the CLI should continue to prompt for the next command
         """
         ...
 
@@ -24,21 +30,34 @@ class CliCommandHandler(abc.ABC):
         """
         Generates a nested dictionary that provides all possible auto complete options.
         In case a level is given, the dictionary's nesting level can be restricted to this level.
-        :param prefix The command prefix that is relevant for this auto completion
-        :param level Optional restriction of the maximum nesting level of the dictionary that allows to skip
-                     non-static command completions on lower nesting levels
-        :return: A nested dictionary with auto complete options. Each dictionary key is a string that contains no spaces
+
+        Args:
+            prefix (List[str]):
+                The command prefix that is relevant for this auto completion
+            level (Optional[int], optional):
+                Optional restriction of the maximum nesting level of the dictionary that allows to skip non-static command completions on lower
+                nesting levels
+                (Default value = None)
+
+        Returns:
+            dict: A nested dictionary with auto complete options. Each dictionary key is a string that contains no spaces
         """
         ...
 
     def help(self, prefix: List[str], subcommand: Optional[List[str]] = None) -> Optional[str]:
         """
         Returns the help string to be printed in result of a `help XY` command.
-        In case the help-page is requested for a subcommand, the respective command is provided as a list
-        as the first argument
-        :param prefix: The command's prefix
-        :param subcommand: The optionally requested subcommand
-        :return: The help text for the requested command
+        In case the help-page is requested for a subcommand, the respective command is provided as a list as the first argument
+
+        Args:
+            prefix (List[str]):
+                The command's prefix
+            subcommand (Optional[List[str]], optional):
+                The optionally requested subcommand
+                (Default value = None)
+
+        Returns:
+            Optional[str]: The help text for the requested command
         """
         return None
 

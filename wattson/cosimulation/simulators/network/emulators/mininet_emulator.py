@@ -1,11 +1,14 @@
 import threading
 from typing import Union, Optional, Type, Any, List
 
-import mininet.nodelib  # without this import tings break
-import mininet.net
-from mininet.cli import CLI
-import mininet.log
-import mininet.node
+try:
+    import mininet.nodelib  # without this import tings break
+    import mininet.net
+    from mininet.cli import CLI
+    import mininet.log
+    import mininet.node
+except ImportError:
+    raise ImportError("Mininet is not installed")
 
 import wattson.util
 from wattson.cosimulation.exceptions import NamespaceNotFoundException, InvalidSimulationControlQueryException, \
@@ -242,10 +245,7 @@ class MininetEmulator(NetworkEmulator):
             pass
 
     def reset_all_flows(self):
-        """
-        Resets all configures flows of Open vSwitches
-        @return:
-        """
+        """Resets all configures flows of Open vSwitches"""
         self.logger.info("Resetting Flows")
         for switch in self.get_switches():
             switch.reset_flows()

@@ -1,7 +1,5 @@
 class ConfigurationStore(dict):
-    """
-    Stores (global) configurations accessible by all nodes
-    """
+    """Stores (global) configurations accessible by all nodes"""
     def __init__(self):
         super().__init__()
         self["short-notations"] = {}

@@ -11,6 +11,7 @@ class EmptyPhysicalSimulator(PhysicalSimulator):
     """
     This physical simulator does not do anything, it just implements the required interface.
     This is useful to use Wattson for a pure network representation.
+
     """
     def start(self):
         self.set_simulator_ready_event()

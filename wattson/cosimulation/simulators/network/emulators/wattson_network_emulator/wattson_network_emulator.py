@@ -1,9 +1,9 @@
+import multiprocessing.pool
 import os
-import pwd
 import resource
-import shutil
 import subprocess
 import threading
+import traceback
 import typing
 from typing import Union, Optional, Dict, Any
 
@@ -40,9 +40,13 @@ class WattsonNetworkEmulator(NetworkEmulator):
         self._wrappers: Dict[str, EntityWrapper] = {}
         self._namespaces: Dict[str, Namespace] = {}
         self._print_progress: bool = kwargs.get("print_progress", True)
+        self._async_start: bool = kwargs.get("async_start", True)
+        # Size of the ThreadPool to use for the async start. Lower values increase stability at the cost of startup speed
+        self._async_threads: int = int(kwargs.get("async_thread", 200))
         self._started = threading.Event()
         # Namespace object to represent the default / initial / system namespace
         self._main_namespace: Namespace = Namespace("w_main")
+        self._disable_tc_link = kwargs.get("disable_link_properties", False)
 
         self._topology_change_timer: Optional[ResettableTimer] = None
         self._topology_change_cache = None
@@ -100,7 +104,7 @@ class WattsonNetworkEmulator(NetworkEmulator):
         return interface
     
     def add_link(self, link: WattsonNetworkLink) -> WattsonNetworkLink:
-        wrapper = LinkWrapper(entity=link, emulator=self)
+        wrapper = LinkWrapper(entity=link, emulator=self, enable_link_properties=not self._disable_tc_link)
         self._wrappers[link.entity_id] = wrapper
         link = super().add_link(link)
         link.add_on_link_property_change_callback(self._on_link_property_change_callback)
@@ -167,37 +171,48 @@ class WattsonNetworkEmulator(NetworkEmulator):
         try:
             limit = resource.getrlimit(resource.RLIMIT_NOFILE)
             resource.setrlimit(resource.RLIMIT_NOFILE, (limit[1], limit[1]))
-            self.logger.info(f"Adjusting limits from {limit[0]} to {limit[1]}")
+            resource.setrlimit(resource.RLIMIT_AS, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+            resource.setrlimit(resource.RLIMIT_MEMLOCK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+            self.logger.info(f"Adjusting limits (open file descriptors) from {limit[0]} to {limit[1]}")
         except Exception as e:
             self.logger.error(f"Could not adjust resource limits: {e=}")
 
         # ARP Cache Size
         # This is necessary to make sure routers and other hosts don't run in problems, e.g., during an nmap scan
-        arp_cache_size = 4096
+        arp_cache_size = 4096 * 4
         self.logger.info(f"Adjusting arp cache size to {arp_cache_size}")
-        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh1={arp_cache_size}", shell=True)
-        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh2={2 * arp_cache_size}", shell=True)
-        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh3={4 * arp_cache_size}", shell=True)
+        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh1={arp_cache_size}", shell=True, stdout=subprocess.DEVNULL)
+        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh2={2 * arp_cache_size}", shell=True, stdout=subprocess.DEVNULL)
+        subprocess.check_call(f"sysctl net.ipv4.neigh.default.gc_thresh3={4 * arp_cache_size}", shell=True, stdout=subprocess.DEVNULL)
 
         # Reserve ports for Wattson-related servers
         reserved_ports = ["2404", "51000-51006"]
         self.logger.info(f"Reserving ports: {', '.join(reserved_ports)}")
-        subprocess.check_call(f"sysctl net.ipv4.ip_local_reserved_ports={','.join(reserved_ports)}", shell=True)
+        subprocess.check_call(f"sysctl net.ipv4.ip_local_reserved_ports={','.join(reserved_ports)}", shell=True, stdout=subprocess.DEVNULL)
 
         # ConnTrack
         conn_track_max = 524288
         self.logger.info(f"Adjusting connection track maximum limit to {conn_track_max}")
-        subprocess.check_call(f"sysctl net.netfilter.nf_conntrack_max={conn_track_max}", shell=True)
+        subprocess.check_call(f"sysctl net.netfilter.nf_conntrack_max={conn_track_max}", shell=True, stdout=subprocess.DEVNULL)
 
         # Multicast Groups
         max_multicast_groups = 2048
         self.logger.info(f"Adjusting number of multicast group limit to {max_multicast_groups}")
-        subprocess.check_call(f"sysctl net.ipv4.igmp_max_memberships={max_multicast_groups}", shell=True)
+        subprocess.check_call(f"sysctl net.ipv4.igmp_max_memberships={max_multicast_groups}", shell=True, stdout=subprocess.DEVNULL)
 
         # inotify Limit
         inotify_max = 1024
         self.logger.info(f"Adjusting inotify limit to {inotify_max}")
-        subprocess.check_call(f"sysctl fs.inotify.max_user_instances={inotify_max}", shell=True)
+        subprocess.check_call(f"sysctl fs.inotify.max_user_instances={inotify_max}", shell=True, stdout=subprocess.DEVNULL)
+
+        # Routing Limits
+        max_send_window_size = 16 * 2**20
+        max_receiver_window_size = 16 * 2**20
+        route_garbage_collector = 2**18
+        self.logger.info("Adjusting routing limits")
+        subprocess.check_call(f"sysctl net.core.wmem_max={max_send_window_size}", shell=True, stdout=subprocess.DEVNULL)
+        subprocess.check_call(f"sysctl net.core.rmem_max={max_receiver_window_size}", shell=True, stdout=subprocess.DEVNULL)
+        subprocess.check_call(f"sysctl net.ipv4.xfrm4_gc_thresh={route_garbage_collector}", shell=True, stdout=subprocess.DEVNULL)
 
     def start(self):
         if not self._main_namespace.exists():
@@ -205,37 +220,74 @@ class WattsonNetworkEmulator(NetworkEmulator):
         super().start()
         self._adjust_resource_limits()
 
-        self.logger.info(f"Creating nodes")
-        # Create node namespaces
-        progress_printer = ProgressPrinter(max_progress=len(self.get_nodes()), enable_print=self._print_progress, on_stop_margin=True)
-        progress_printer.start()
-        for node in self.get_nodes():
-            wrapper = self.get_wrapper(entity=node)
-            if not wrapper.create():
-                self.logger.error(f"Could not create node {node.entity_id} ({node.display_name})")
-                raise Exception(f"Could not create node {node.entity_id} ({node.display_name})")
-            progress_printer.inc()
-        progress_printer.stop()
+        if self._async_start:
+            self.logger.warning(f"Asynchronous start enabled - be aware of potential stability issues")
+        else:
+            self.logger.info("Using synchronous start. Reduced startup performance.")
 
-        self.logger.info(f"Creating interfaces")
-        # Create interfaces
-        progress_printer = ProgressPrinter(max_progress=len(self.get_interfaces()), enable_print=self._print_progress, on_stop_margin=True)
-        progress_printer.start()
-        for interface in self.get_interfaces():
-            wrapper = self.get_wrapper(entity=interface)
-            wrapper.create()
-            progress_printer.inc()
-        progress_printer.stop()
+        exception_lock: threading.Lock = threading.Lock()
+        first_exception: Optional[Exception] = None
 
-        self.logger.info(f"Setting up links")
-        # Links
-        progress_printer = ProgressPrinter(max_progress=len(self.get_links()), enable_print=self._print_progress, on_stop_margin=True)
-        progress_printer.start()
-        for link in self.get_links():
-            wrapper = self.get_wrapper(entity=link)
-            wrapper.create()
-            progress_printer.inc()
-        progress_printer.stop()
+        def _entity_action(action: str, _entity: WattsonNetworkEntity, _logger, _progress_printer):
+            nonlocal first_exception
+            nonlocal exception_lock
+
+            if action == "create":
+                _wrapper = self.get_wrapper(entity=_entity)
+                if not _wrapper.create():
+                    _logger.error(f"Could not create {_entity.__class__.__name__} {_entity.entity_id}")
+                    with exception_lock:
+                        if first_exception is None:
+                            first_exception = Exception(f"Could not create {_entity.__class__.__name__} {_entity.entity_id}")
+                            return False
+            elif action == "start":
+                try:
+                    _entity.start()
+                except Exception as e:
+                    _logger.error(f"Could not start {_entity.__class__.__name__} {_entity.entity_id}")
+                    _logger.error(traceback.format_exc())
+                    with exception_lock:
+                        if first_exception is None:
+                            first_exception = Exception(f"Could not start {_entity.__class__.__name__} {_entity.entity_id}")
+                            return False
+            else:
+                _logger.error(f"Invalid action {action}")
+                with exception_lock:
+                    if first_exception is None:
+                        first_exception = Exception(f"Invalid action {action}")
+                        return False
+            _progress_printer.inc()
+            return True
+
+        # Wrapper creation
+        wrapper_types = [
+            ("nodes", self.get_nodes()),
+            ("interfaces", self.get_interfaces()),
+            ("links", self.get_links()),
+        ]
+        for type_name, entities in wrapper_types:
+            self.logger.info(f"Creating {type_name}")
+            # Create wrappers
+            progress_printer = ProgressPrinter(max_progress=len(entities), enable_print=self._print_progress, on_stop_margin=True)
+            progress_printer.start()
+
+            tasks = []
+            for entity in entities:
+                if self._async_start:
+                    OvsWrapper.enable_batch()
+                    tasks.append(("create", entity, self.logger, progress_printer))
+                else:
+                    if not _entity_action("create", entity, self.logger, progress_printer) and first_exception is not None:
+                        raise first_exception
+
+            if len(tasks) > 0:
+                with multiprocessing.pool.ThreadPool(processes=min(self._async_threads, len(tasks))) as pool:
+                    pool.starmap(_entity_action, tasks)
+
+            if self._async_start:
+                OvsWrapper.flush_batch()
+                OvsWrapper.disable_batch()
+            progress_printer.stop()
 
         self._started.set()
 
@@ -243,13 +295,27 @@ class WattsonNetworkEmulator(NetworkEmulator):
         self.logger.info(f"Starting entities")
         progress_printer = ProgressPrinter(max_progress=len(self.get_entities()), enable_print=self._print_progress, on_stop_margin=True)
         progress_printer.start()
-        for entity_node in self.get_entities():
-            entity_node.start()
-            progress_printer.inc()
+        # threads = []
+        tasks = []
+        for entity in self.get_entities():
+            if self._async_start:
+                tasks.append(("start", entity, self.logger, progress_printer))
+                #t = threading.Thread(target=_entity_action, args=("start", entity, self.logger, progress_printer))
+                #threads.append(t)
+                #t.start()
+            else:
+                if not _entity_action("start", entity, self.logger, progress_printer) and first_exception is not None:
+                    raise first_exception
+
+        if len(tasks) > 0:
+            with multiprocessing.pool.ThreadPool(processes=min(self._async_threads, len(tasks))) as pool:
+                pool.starmap(_entity_action, tasks)
+
         progress_printer.stop()
 
     def stop(self):
         super().stop()
+        OvsWrapper.enable_batch()
         self._started.clear()
         self.stop_services()
         self.logger.info(f"Cleaning up interfaces")
@@ -269,6 +335,7 @@ class WattsonNetworkEmulator(NetworkEmulator):
             t.start()
         for t in interface_threads:
             t.join()
+        OvsWrapper.flush_batch()
         progress_printer.stop()
 
         self.logger.info(f"Cleaning up nodes")
@@ -277,7 +344,6 @@ class WattsonNetworkEmulator(NetworkEmulator):
 
         node_threads = []
 
-        OvsWrapper.enable_batch()
         for node in self.get_nodes():
             wrapper = self.get_wrapper(entity=node)
             t = threading.Thread(target=_clean_wrapper, args=(wrapper, progress_printer), daemon=True)
@@ -303,16 +369,18 @@ class WattsonNetworkEmulator(NetworkEmulator):
         progress_printer = ProgressPrinter(max_progress=len(services), on_stop_margin=True, enable_print=self._print_progress, show_custom_prefix=True)
         progress_printer.start()
         longest_service_name_length = 0
+
         if len(services) > 0:
             longest_service_name_length = len(sorted(services, key=lambda s: len(s.name), reverse=True)[0].name)
             longest_service_name_length = min(longest_service_name_length, 30)
+
         for service in sorted(services, key=lambda s: s.get_priority().get_global(), reverse=True):
             progress_printer.set_custom_prefix(str(service.name).ljust(longest_service_name_length))
             if service.autostart_delay > 0:
                 service.delay_start(service.autostart_delay)
             else:
                 service.start()
-            progress_printer.inc()
+                progress_printer.inc()
         progress_printer.stop()
 
     def stop_services(self):

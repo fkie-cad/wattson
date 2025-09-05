@@ -91,7 +91,10 @@ class TypeID(IntEnum):
 
     @property
     def invalidated_for_IEC104(self) -> bool:
-        """ For supported type-table, see DIN EN 60870-5-104, Section 9.5 """
+        """
+        For supported type-table, see DIN EN 60870-5-104, Section 9.5
+
+        """
         invalid_types_for_104 = {
             TypeID.M_SP_TA_1,
             TypeID.M_DP_TA_1,
@@ -112,9 +115,9 @@ class TypeID(IntEnum):
     @property
     def expects_IOA_as_0(self) -> bool:
         """
-        If an APDU send with this TypeID expects the IOA to be set to 0
-        This is the case when the information requested/ command does not belong to an
-            IO with an IOA. (Clock-synch, global interro, ...)
+        If an APDU send with this TypeID expects the IOA to be set to 0 This is the case when the information requested/ command does not belong
+        to an IO with an IOA. (Clock-synch, global interro, ...)
+
         """
         types_with_IOA_as_0 = {
             TypeID.C_CS_NA_1,
@@ -127,7 +130,10 @@ class TypeID(IntEnum):
 
     @property
     def expects_single_IO(self) -> bool:
-        """ If an APDU with this TypeID should only have 1 IO to be considered valid. """
+        """
+        If an APDU with this TypeID should only have 1 IO to be considered valid.
+
+        """
         if self.expects_IOA_as_0:
             return True
         only_single_IOs = {
@@ -137,7 +143,10 @@ class TypeID(IntEnum):
 
     @staticmethod
     def values() -> Set[int]:
-        """ Defined Type-IDs as integers"""
+        """
+        Defined Type-IDs as integers
+
+        """
         return deepcopy(set(TypeID._value2member_map_.keys()))
 
     @staticmethod
@@ -177,7 +186,13 @@ class TypeID(IntEnum):
 
     @staticmethod
     def type_converter(iec_type) -> Type:
-        """ {type_id -> (python) val_type: val_type expected for val for type_id set }"""
+        """
+        {type_id -> (python) val_type: val_type expected for val for type_id set }
+
+        Args:
+            iec_type:
+                
+        """
         converter: Dict[TypeID, type] = {
             TypeID.M_SP_NA_1: bool,
             TypeID.M_ST_NA_1: int,
@@ -200,10 +215,12 @@ class TypeID(IntEnum):
 
     def convert_val_by_type(self, val) -> IEC_SINGLE_VALUE:
         """
-        Converts val to its expected (python) datatype
-        This _might_ not be its final value.
-        (floats will be transformed into IEEE-RE32 floats which
-            have a different accuracy than Python-floats)
+        Converts val to its expected (python) datatype This _might_ not be its final value.
+        (floats will be transformed into IEEE-RE32 floats which have a different accuracy than Python-floats)
+
+        Args:
+            val:
+                
         """
         return TypeID.type_converter(self)(val)
 
@@ -223,14 +240,18 @@ class TypeID(IntEnum):
 
     @property
     def global_coa_compatible(self) -> bool:
-        """ If an APDU with this typeID is valid with the global COA 0xFFFF """
+        """
+        If an APDU with this typeID is valid with the global COA 0xFFFF
+
+        """
         return self in (TypeID.C_IC_NA_1, TypeID.C_CI_NA_1, TypeID.C_CS_NA_1, TypeID.C_RP_NA_1)
 
     @property
     def carries_normalised_value(self) -> bool:
         """
-        Applies to ASDUs carrying IOs with an NVA (Normalised Value; Type 4.1)
-        Other normalised values values of 60870-5-4 are not implemented by 60870-5-104
+        Applies to ASDUs carrying IOs with an NVA (Normalised Value; Type 4.1) Other normalised values values of 60870-5-4 are not implemented
+        by 60870-5-104
+
         """
         return self in (
                 TypeID.M_ME_NA_1,
@@ -249,8 +270,8 @@ class TypeID(IntEnum):
     @property
     def can_send_periodic_update(self) -> bool:
         """
-        A Type can send periodic updates iff it defines a format of 'measured value' without timestamp
-        (9, 11, 13, 21)
+        A Type can send periodic updates iff it defines a format of 'measured value' without timestamp (9, 11, 13, 21)
+
         """
         return self in (
             TypeID.M_ME_NA_1,

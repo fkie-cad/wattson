@@ -2,10 +2,10 @@ from threading import Event
 from typing import Type, Optional
 import logging
 
+from powerowl.layers.network.configuration.protocols.protocol_name import ProtocolName
 from wattson.analysis.statistics.client.statistic_client import StatisticClient
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.datapoints.manager import DataPointManager
-from wattson.hosts.rtu.rtu_iec104 import RtuIec104
 from wattson.hosts.rtu.rtu_logic import RTULogic
 
 from wattson.iec104.common import SERVER_UPDATE_PERIOD_MS
@@ -17,15 +17,11 @@ from wattson.iec104.interface.server import IECServerInterface
 
 class RTU:
     """
-        Model of an RTU. The naming of the data points was adopted from the
-        cps-ids package. The "server_datapoints" are those which are used for the
-        "up-stream" communication, hence the communication to the central
-        SCADA entity on the WAN.
-        Implemented features of the entire RTU:
-         - set/set values of datapoints
-         - send periodic updates
-         - receive ASDUs and log them
-         - respond to general interrogation
+    Model of an RTU. The naming of the data points was adopted from the cps-ids package. The "server_datapoints" are those which are used for
+    the "up-stream" communication, hence the communication to the central SCADA entity on the WAN.
+    Implemented features of the entire RTU: - set/set values of datapoints - send periodic updates - receive ASDUs and log them - respond to
+    general interrogation
+
     """
 
     def __init__(
@@ -56,11 +52,14 @@ class RTU:
         self.periodic_updates_enable = kwargs.get("periodic_updates_enable", True)
         self.iec104_port = kwargs.get("iec104_port", 2404)
 
+        self.iec61850_port = kwargs.get("iec61850_port", 102)
+
         self._local_control = kwargs.get("local_control", False)
 
         self.logger = kwargs.get("logger")
         if self.logger is None:
             self.logger = get_logger(f"RTU {self.coa}", level=logging.INFO, syslog_config=kwargs.get("use_syslog", False))
+        # self.logger.setLevel(logging.DEBUG)
         self.logger.info(f"Starting RTU {self.coa}")
         self.logger.info(f"Primary IP: {self.ip}")
         if self._local_control:
@@ -159,7 +158,7 @@ class RTU:
                 return logic.handle_get_value(identifier)
         return self.manager.get_value(identifier)
 
-    def set_value(self, identifier, value):
+    def set_value(self, identifier, value) -> bool:
         for logic in self.logics:
             if logic.handles_set_value(identifier, value):
                 return logic.handle_set_value(identifier, value)
@@ -197,7 +196,9 @@ class RTU:
         # Identify protocols
         self.protocol_sockets = {}
         for identifier, dp in self.data_point_dict.items():
-            protocol = dp["protocol"]
+            protocol = dp.get("protocol")
+            if protocol is None:
+                continue
             if protocol not in self.protocol_sockets:
                 if protocol == "60870-5-104":
                     self._init_iec104_socket()
@@ -206,13 +207,18 @@ class RTU:
                 elif protocol == "MODBUS/TCP":
                     # self._init_modbus_backend()
                     raise NotImplementedError("No MODBUS/TCP Handler implemented")
-                elif protocol == "61850":
-                    raise NotImplementedError("No 61850 Handler implemented")
+                elif protocol == ProtocolName.IEC61850_MMS.value:
+                    #raise NotImplementedError("No 61850 Handler implemented")
+                    self._init_iec61850_socket()
+                elif protocol == "61850-rcb":
+                    # These "points" (report control blocks) will be handled in the 61850.
+                    pass
                 else:
                     raise NotImplementedError(f"No Handler for {protocol} implemented")
 
     # IEC 104 specific socket
     def _init_iec104_socket(self):
+        from wattson.hosts.rtu.rtu_iec104 import RtuIec104
         rtu_iec104 = RtuIec104(
             self,
             periodic_update_ms=self.periodic_update_ms,
@@ -224,6 +230,20 @@ class RTU:
         )
         rtu_iec104.setup_socket()
         self.protocol_sockets["60870-5-104"] = rtu_iec104
+
+    def _init_iec61850_socket(self):
+        from wattson.hosts.rtu.rtu_iec61850 import RtuIec61850
+        rtu_iec61850 = RtuIec61850(
+                rtu=self,
+                port=self.iec61850_port
+        )
+        if rtu_iec61850 is None:
+            raise Exception("Could not initialize rtu_iec61850.")
+
+        rtu_iec61850.setup_socket()
+        self.logger.debug("Set up rtu_iec61850 socket.")
+
+        self.protocol_sockets[ProtocolName.IEC61850_MMS.value] = rtu_iec61850
 
     # def _init_modbus_backend(self):
     #     self.protocol_sockets["MODBUS/TCP"] = MODBUS_Client_Maintainer(

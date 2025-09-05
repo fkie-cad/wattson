@@ -104,15 +104,24 @@ class CLI:
     def register_command(self, command_hierarchy: Union[str, List[str]], handler: CliCommandHandler):
         """
         Alias for register_handler.
+
+        Args:
+            command_hierarchy (Union[str, List[str]]):
+                
+            handler (CliCommandHandler):
+                
         """
         return self.register_handler(command_hierarchy=command_hierarchy, handler=handler)
 
     def register_handler(self, command_hierarchy: Union[str, List[str]], handler: CliCommandHandler):
         """
         Registers a new handler for the given command (hierarchy).
-        @param command_hierarchy: The command or combination of command and subcommand(s)
-        @param handler: The handler to assign for the given hierarchy.
-        @return:
+
+        Args:
+            command_hierarchy (Union[str, List[str]]):
+                The command or combination of command and subcommand(s)
+            handler (CliCommandHandler):
+                The handler to assign for the given hierarchy.
         """
         if type(command_hierarchy) == str:
             command_hierarchy = [command_hierarchy]
@@ -121,8 +130,13 @@ class CLI:
     def get_handler(self, command: Union[str, List[str]]) -> Tuple[List[str], Optional[CliCommandHandler]]:
         """
         Returns the command and a CliCommandHandler for the given command if registered
-        @param command: The command to get the handler for
-        @return: The prefix matched for the handler and the assigned Handler, if any
+
+        Args:
+            command (Union[str, List[str]]):
+                The command to get the handler for
+
+        Returns:
+            Tuple[List[str],Optional[CliCommandHandler]]: The prefix matched for the handler and the assigned Handler, if any
         """
         if type(command) == str:
             command = command.split(" ")
@@ -166,8 +180,13 @@ class CLI:
     def handle_command(self, command: Union[List[str], str]) -> bool:
         """
         Handles the given command
-        @param command: The command to handle
-        @return: Whether the next command should be handled. False if the CLI should terminate.
+
+        Args:
+            command (Union[List[str], str]):
+                The command to handle
+
+        Returns:
+            bool: Whether the next command should be handled. False if the CLI should terminate.
         """
         command: List[str] = self._sanitize_command(command)
         if len(command) == 0:
@@ -194,16 +213,20 @@ class CLI:
     def invalid_command(self, command: Union[str, List[str]]):
         """
         Handles invalid commands
-        @param command: The invalid command
-        @return:
+
+        Args:
+            command (Union[str, List[str]]):
+                The invalid command
         """
         print(f"Invalid command: {self.get_command_str(command)}")
 
     def unknown_command(self, command: Union[str, List[str]]):
         """
         Handles unknown commands
-        @param command: The unknown command
-        @return:
+
+        Args:
+            command (Union[str, List[str]]):
+                The unknown command
         """
         print(f"Unknown command: {self.get_command_str(command)}")
 

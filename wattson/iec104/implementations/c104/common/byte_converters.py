@@ -11,7 +11,13 @@ from wattson.iec104.common import GLOBAL_COA
 
 
 def build_apdu_from_c104_bytes(data: bytes) -> APDU:
-    """ Builds basic APDU from a given raw message """
+    """
+    Builds basic APDU from a given raw message
+
+    Args:
+        data (bytes):
+            
+    """
 
     msg = explain_bytes(data)
     expl = [s.strip() for s in msg.split("|")]
@@ -28,7 +34,13 @@ def build_apdu_from_c104_bytes(data: bytes) -> APDU:
 
 
 def extract_ioa(data: bytes) -> int:
-    """ Currently assumes just <= 1 IO """
+    """
+    Currently assumes just <= 1 IO
+
+    Args:
+        data (bytes):
+            
+    """
     expl = [s.strip() for s in explain_bytes(data).split("|")]
     if "OBJECT" not in expl[-1]:
         return 0

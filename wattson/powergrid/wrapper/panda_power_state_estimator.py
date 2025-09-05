@@ -37,24 +37,17 @@ class PandaPowerStateEstimator(Thread):
         """
         Initializes and configures the state estimator.
 
-        @param power_grid_model: The (PowerOwl) PandaPowerGridModel
-        @param update_required: The event to use for triggering a new estimation iteration. Optional.
-        @param estimation_done_callback: A callback to call every time the estimation is completed (successful or not)
-        @param estimation_started_callback: A callback to call every time a new estimation iteration is started.
-        @param kwargs: Additional arguments
-
-        Keyword Arguments:
-        * fault_detection (bool) = True --
-          Whether to try to detect faulty lines
-        * interval (float) = 0.5 --
-          The internal waiting interval in seconds
-        * max_delay (float) = 10 --
-          The maximum time in seconds between two iterations
-        * estimation_mode (str) = "default" --
-          How to handle measurement validit. Either "default" or "decay"
-        * measurement_decay (float) = 12 --
-          The number of seconds a periodic measurement is valid. Only used for "decay" mode
-
+        Args:
+            power_grid_model (PandaPowerGridModel):
+                The (PowerOwl) PandaPowerGridModel
+            update_required (Optional[Event]):
+                The event to use for triggering a new estimation iteration. Optional.
+            estimation_done_callback (Callable):
+                A callback to call every time the estimation is completed (successful or not)
+            estimation_started_callback (Callable):
+                A callback to call every time a new estimation iteration is started.
+            **kwargs (Any):
+                
         """
         super().__init__()
         self.power_grid_model = power_grid_model
@@ -218,7 +211,7 @@ class PandaPowerStateEstimator(Thread):
         # Estimate
         success = False
         algorithm_iterations = {
-            "bad": 100,
+            # "bad": 100,
             'wls_with_zero_constraint': 1000,
             'wls': 1000,
             # 'opt': [50, 1e-08],

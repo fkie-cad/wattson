@@ -7,8 +7,8 @@ from wattson.util.random import Random
 class PercentageNoise(Noise):
     """
     Applies noise to the given value as a percentage.
-    The value is scaled by the given scale with a randomized value resulting
-    from a normal distribution.
+    The value is scaled by the given scale with a randomized value resulting from a normal distribution.
+
     """
     def __init__(self, percentage: float, hard_cap: bool = True):
         self._percentage = percentage

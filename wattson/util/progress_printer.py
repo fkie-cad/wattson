@@ -4,9 +4,7 @@ from typing import Optional
 
 
 class ProgressPrinter:
-    """
-    Allows to print a progress bar and indicator on the same line in the terminal.
-    """
+    """Allows to print a progress bar and indicator on the same line in the terminal."""
     def __init__(self,
                  max_progress: int,
                  current_progress: int = 0,

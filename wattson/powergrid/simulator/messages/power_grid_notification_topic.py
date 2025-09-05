@@ -7,6 +7,7 @@ class PowerGridNotificationTopic(str, enum.Enum):
     GRID_VALUE_STATE_CHANGED = "grid-value-state-changed"
     SIMULATION_STEP_DONE = "simulation-step-done"
     PROTECTION_TRIGGERED = "protection-triggered"
+    PROTECTION_CLEARED = "protection-cleared"
 
     def __eq__(self, other):
         if isinstance(other, str):

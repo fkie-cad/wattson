@@ -61,5 +61,6 @@ class QualityByte:
         """
         assumes that ONLY a substituded value keeps the packet as generally accepted,
         whereas all others require handling similar to an invalid value
+
         """
         return self.value in (0, QualityBit.SUBSTITUTED)

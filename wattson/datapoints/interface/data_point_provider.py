@@ -8,8 +8,8 @@ if TYPE_CHECKING:
 
 class DataPointProvider(ABC):
     """
-    Provider that implement this interface serve the purpose of reading and writing values from and to
-    a specific backend.
+    Provider that implement this interface serve the purpose of reading and writing values from and to a specific backend.
+
     """
     def __init__(self, provider_configuration: dict, points: dict, manager: 'DataPointManager'):
         self.config = provider_configuration

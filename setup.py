@@ -19,8 +19,8 @@ setup(
     install_requires=[
         'wheel',
         'ifcfg',
-        'ninja',
         'testresources',
+        # Current c104 master is bugged.
         'c104==2.0.1',
         'python-dateutil',
         'docker',
@@ -32,12 +32,13 @@ setup(
         'netifaces>=0.11.0',
         'networkx>=2.5',
         'numba>=0.57.1',
-        'numpy<2',
-        'pandapower',
+        'numpy',
+        'pandapower>=3.0.0',
         'pandas>=1.3.4',
         'psutil>=5.7.0',
         'pydot',
-        'pymodbus', 
+        'pymodbus',
+        'pyprctl',
         'pytest',
         'igraph>=0.9.9',
         'python-iptables@git+https://github.com/lennart-bader/python-iptables.git',
@@ -53,8 +54,9 @@ setup(
         'pyyaml>=5.4',
         'pyzmq>=20.0.0',
         'scapy>=2.4.4',
-        'scipy>=1.11.2',
-        'setuptools>=65.5.1,<=70.0.0',
+        #'scipy>=1.14.1',
+        'scipy',
+        'setuptools>=65.5.1',
         'shapely',
         'sqlalchemy>=1.3.16',
         'tabulate',
@@ -62,7 +64,8 @@ setup(
         "unidecode",
         'ifcfg'
     ],
-    python_requires=">=3.10.0",
+    python_requires=">=3.12.0",
     author="Lennart Bader (Fraunhofer FKIE)",
     author_email="lennart.bader@fkie.fraunhofer.de",
 )
+

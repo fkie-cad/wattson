@@ -1,14 +1,12 @@
 import logging
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Set
 
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.cosimulation.control.messages.wattson_event import WattsonEvent
 from wattson.hosts.ccx.app_gateway import AppGatewayServer
 from wattson.hosts.ccx.app_gateway.notification_exporter import NotificationExporter
 from wattson.hosts.ccx.clients.ccx_client import CCXProtocolClient
-from wattson.hosts.ccx.clients.iec104 import Iec104CCXProtocolClient
-from wattson.hosts.ccx.clients.iec61850mms import Iec61850MMSCCXProtocolClient
 from wattson.hosts.ccx.connection_status import CCXConnectionStatus
 from wattson.hosts.ccx.logics.logic_return_action import LogicReturnAction
 from wattson.hosts.ccx.protocols import CCXProtocol
@@ -22,6 +20,7 @@ class ControlCenterExchangeGateway:
     A more comprehensive version of an MTU that bundles multiple protocols,
     allows apps to receive measurements, issue commands, and listen to protocol-specific traffic,
     and implements logics that influence the behavior of the gateway.
+
     """
 
     def __init__(self, **kwargs):
@@ -36,7 +35,9 @@ class ControlCenterExchangeGateway:
                 "do_general_interrogation": True
             },
             "wattson_client_config": None,
-            "iec61850_mms": {},
+            "iec61850_mms": {
+                "enable_single_server": False
+            },
             "logics": [],
             "export": {
                 "enabled": False,
@@ -52,6 +53,15 @@ class ControlCenterExchangeGateway:
         # Maps data point ids to values and latest updates
         self.data_point_cache = {}
         self.data_points = self.options.get("data_points", {})
+
+        self.protocols: Set[CCXProtocol] = set()
+
+        if self.options.get("iec61850_mms", {}).get("enable_single_server", False):
+            for data_point in self.data_points.values():
+                if data_point.get("protocol") == CCXProtocol.IEC61850_MMS:
+                    self.servers = {102: self.servers[102]}
+                    break
+
         # Maps grid value identifiers to data points
         self.grid_value_mapping: Dict[str, List[str]] = {}
         self.protocol_info = {}
@@ -69,9 +79,12 @@ class ControlCenterExchangeGateway:
             if protocol == CCXProtocol.IEC104:
                 dp["server_key"] = dp["protocol_data"]["coa"]
             elif protocol == CCXProtocol.IEC61850_MMS:
-                self.logger.error("NIY: 61850-MMS data points")
-                pass
+                dp["server_key"] = dp["protocol_data"]["server"]
+            else:
+                self.logger.error(f"Unknown CCXProtocol: {protocol}")
             self.protocol_info.setdefault(protocol, {})[dp_id] = dp
+
+        self.protocols = set(self.protocol_info.keys())
 
         # Assign data points to grid values
         for dp_id, dp in self.data_points.items():
@@ -121,16 +134,22 @@ class ControlCenterExchangeGateway:
                 query_server_socket_string=self.wattson_client_config["query_socket"],
                 publish_server_socket_string=self.wattson_client_config["publish_socket"],
                 namespace=None,
-                client_name="WattsonCCX"
+                client_name=f"{self.options.get('entity_id', 'WattsonCCX')}_CCX"
             )
 
     def init_protocol_clients(self):
         # Initializes the clients for all required protocols
+        self.logger.info("Initialize protocol clients")
         for protocol in self.protocol_info.keys():
             if protocol == CCXProtocol.IEC104:
+                from wattson.hosts.ccx.clients.iec104 import Iec104CCXProtocolClient
                 self.clients[CCXProtocol.IEC104] = Iec104CCXProtocolClient(self)
             elif protocol == CCXProtocol.IEC61850_MMS:
-                self.clients[CCXProtocol.IEC61850_MMS] = Iec61850MMSCCXProtocolClient(self)
+                from wattson.hosts.ccx.clients.iec61850mms import Iec61850MMSCCXProtocolClient
+                self.clients[CCXProtocol.IEC61850_MMS] = Iec61850MMSCCXProtocolClient(
+                    self,
+                    enable_single_server=self.options.get("iec61850_mms", {}).get("enable_single_server", False)
+                )
             else:
                 raise NotImplementedError(f"No CCX implementation for protocol {protocol}")
 

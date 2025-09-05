@@ -19,8 +19,8 @@ class ServiceConfiguration(dict):
     def priority(self) -> 'ServicePriority':
         """
         Returns the starting priority of this service.
-        Higher priority-services should be started first
-        :return: The priority
+        Higher priority-services should be started first :return: The priority
+
         """
         if "priority" not in self:
             self["priority"] = ServicePriority(priority_value=DEFAULT_SERVICE_PRIORITY, is_local=True)
@@ -33,11 +33,15 @@ class ServiceConfiguration(dict):
     def set_priority(self, priority: float, is_local: bool = True):
         """
         Sets the service's priority to the given value.
-        If relative is True, the given value is interpreted as the desired difference to the
-        DEFAULT_SERVICE_PRIORITY, i.e., it will be added to this value. Otherwise, the given value will be set directly.
-        :param priority: The desired priority (offset)
-        :param is_local: Indicator for whether the given priority should be seen as a node-specific offset or an absolute value
-        :return:
+        If relative is True, the given value is interpreted as the desired difference to the DEFAULT_SERVICE_PRIORITY, i.e., it will be added
+        to this value. Otherwise, the given value will be set directly.
+
+        Args:
+            priority (float):
+                The desired priority (offset)
+            is_local (bool, optional):
+                Indicator for whether the given priority should be seen as a node-specific offset or an absolute value
+                (Default value = True)
         """
         priority_instance = self.priority
         if is_local:

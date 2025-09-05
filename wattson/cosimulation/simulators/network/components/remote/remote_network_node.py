@@ -40,11 +40,16 @@ class RemoteNetworkNode(RemoteNetworkEntity, NetworkNode):
     def popen(self, cmd: Union[list[str], str], **kwargs) -> RemotePopen:
         """
         Spawn a new process on the remote network node.
-        The result is a RemotePopen object that represents the spawned process and mimics the behavior of a
-        default subprocess.Popen object.
-        @param cmd: The command to execute
-        @param kwargs:
-        @return: A RemotePopen object representing the spawned process.
+        The result is a RemotePopen object that represents the spawned process and mimics the behavior of a default subprocess.Popen object.
+
+        Args:
+            cmd (Union[list[str], str]):
+                The command to execute
+            **kwargs:
+                
+
+        Returns:
+            RemotePopen: A RemotePopen object representing the spawned process.
         """
         query = WattsonNetworkQuery(
             WattsonNetworkQueryType.PROCESS_ACTION,
@@ -109,18 +114,12 @@ class RemoteNetworkNode(RemoteNetworkEntity, NetworkNode):
         return response.data.get("contents")
 
     def start_services(self):
-        """
-        Start all services associated with this WattsonNetworkEntity
-        @return:
-        """
+        """Start all services associated with this WattsonNetworkEntity"""
         self.synchronize()
         super().start_services()
 
     def stop_services(self):
-        """
-        Stop all services associated with this WattsonNetworkEntity
-        @return:
-        """
+        """Stop all services associated with this WattsonNetworkEntity"""
         self.synchronize()
         super().stop_services()
 
@@ -275,7 +274,10 @@ class RemoteNetworkNode(RemoteNetworkEntity, NetworkNode):
     def open_terminal(self) -> bool:
         """
         Attempts to open a terminal / konsole for this node (on the simulation server)
-        @return: Whether a terminal could be opened.
+
+
+        Returns:
+            bool: Whether a terminal could be opened.
         """
         query = WattsonNetworkQuery(
             WattsonNetworkQueryType.NODE_ACTION,

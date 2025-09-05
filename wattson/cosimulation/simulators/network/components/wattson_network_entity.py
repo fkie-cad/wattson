@@ -124,8 +124,14 @@ class WattsonNetworkEntity(NetworkEntity):
     def to_remote_representation(self, force_state_synchronization: bool = True) -> RemoteNetworkEntityRepresentation:
         """
         Creates a dictionary for synchronization with a RemoteNetworkEntity.
-        @param force_state_synchronization: Whether to force a synchronization of the internal state with the actual state
-        @return: A dictionary representation of this WattsonNetworkEntity for synchronization with a RemoteNetworkEntity.
+
+        Args:
+            force_state_synchronization (bool, optional):
+                Whether to force a synchronization of the internal state with the actual state
+                (Default value = True)
+
+        Returns:
+            RemoteNetworkEntityRepresentation: A dictionary representation of this WattsonNetworkEntity for synchronization with a RemoteNetworkEntity.
         """
         return RemoteNetworkEntityRepresentation({
             "entity_id": self.entity_id,

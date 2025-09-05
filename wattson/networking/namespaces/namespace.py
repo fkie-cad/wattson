@@ -49,8 +49,11 @@ class Namespace:
     def create(self, clean: bool = True) -> bool:
         """
         Creates a new networking namespace with the specified name
-        :param clean: Whether to try to clean any existing namespace with the same name
-        :return:
+
+        Args:
+            clean (bool, optional):
+                Whether to try to clean any existing namespace with the same name
+                (Default value = True)
         """
         if clean:
             self.clean()
@@ -100,8 +103,8 @@ class Namespace:
 
     def clean(self) -> bool:
         """
-        Cleans up the networking namespace
-        :return:
+        Cleans up the networking namespace :return:
+
         """
         succ = self._exec(f"ip netns delete {self.name}")[0]
         self._exec(f"rm -r /etc/netns/{self.name}")
@@ -109,8 +112,8 @@ class Namespace:
 
     def thread_attach(self):
         """
-        Moves the calling thread to this networking namespace
-        :return:
+        Moves the calling thread to this networking namespace :return:
+
         """
         libc = ctypes.CDLL("libc.so.6")
         ns_file = Namespace.NAMESPACE_PATH_VAR.joinpath(self.name)
@@ -122,8 +125,11 @@ class Namespace:
         """
         Moves the given process to this networking namespace.
         If no PID is given, moves the current process.
-        :param pid: The PID of the process to attach. None for current process
-        :return:
+
+        Args:
+            pid (Optional[int], optional):
+                The PID of the process to attach. None for current process
+                (Default value = None)
         """
         if pid is None:
             pid = os.getpid()
@@ -132,8 +138,12 @@ class Namespace:
     def exec(self, command: Union[str, List[str]], **kwargs) -> Tuple[bool, List[str]]:
         """
         Executes a command in the network namespace
-        :param command:
-        :return:
+
+        Args:
+            command (Union[str, List[str]]):
+                
+            **kwargs:
+                
         """
         if isinstance(command, str):
             command = shlex.split(command)
@@ -143,9 +153,15 @@ class Namespace:
     def popen(self, cmd: Union[str, List[str]], **kwargs) -> subprocess.Popen:
         """
         Spawns a new process in the network namespace
-        :param cmd: The cmd to execute
-        :param kwargs:
-        :return: Popen
+
+        Args:
+            cmd (Union[str, List[str]]):
+                The cmd to execute
+            **kwargs:
+                
+
+        Returns:
+            subprocess.Popen: Popen
         """
         # print(f"Default namespace POpen {cmd}")
         netns_cmd = kwargs.pop("wrap_command", f"ip netns exec {self.name}")
@@ -186,16 +202,16 @@ class Namespace:
 
     def exists(self) -> bool:
         """
-        Checks whether the namespace exists
-        :return: True if the namespace exists
+        Checks whether the namespace exists :return: True if the namespace exists
+
         """
         # Just execute a dummy operation
         return self.exec("echo")[0]
 
     def loopback_up(self) -> bool:
         """
-        Sets the loopback interface in the namespace up
-        :return:
+        Sets the loopback interface in the namespace up :return:
+
         """
         ret, _ = self.exec("ip link set dev lo up")
         return ret == 0
@@ -220,9 +236,16 @@ class Namespace:
     def call(self, function: Callable, arguments: Optional[Tuple] = None) -> Any:
         """
         Executes a function in this namespace.
-        @param function: The function (callable) to run
-        @param arguments: (Optional) parameters to pass to the function
-        @return: The return value of the called function
+
+        Args:
+            function (Callable):
+                The function (callable) to run
+            arguments (Optional[Tuple], optional):
+                (Optional) parameters to pass to the function
+                (Default value = None)
+
+        Returns:
+            Any: The return value of the called function
         """
 
         if self._call_pool is None:

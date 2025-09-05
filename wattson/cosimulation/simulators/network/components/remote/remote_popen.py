@@ -13,9 +13,7 @@ if TYPE_CHECKING:
 
 
 class RemotePopen(WattsonRemoteObject):
-    """
-    Represents a process running on a remote node.
-    """
+    """Represents a process running on a remote node."""
     def __init__(self, remote_node: 'RemoteNetworkNode', pid: int):
         # There is no super class call by design!
         self._remote_node = remote_node

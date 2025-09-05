@@ -12,8 +12,13 @@ from wattson.cosimulation.simulators.network.network_emulator import NetworkEmul
 def get_powergrid_size(grid: pp.pandapowerNet) -> float:
     """
     Returns the size of the power grid as a single value
-    :param grid: The pandapower grid
-    :return: The grid size
+
+    Args:
+        grid (pp.pandapowerNet):
+            The pandapower grid
+
+    Returns:
+        float: The grid size
     """
     sizes = {}
     for key in ["bus", "trafo", "sgen", "load", "line"]:

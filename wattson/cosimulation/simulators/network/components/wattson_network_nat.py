@@ -111,8 +111,10 @@ class WattsonNetworkNAT(WattsonNetworkHost, NetworkNAT):
     def _block_traffic_from_host(self, host: WattsonNetworkHost):
         """
         Adjust iptables to block traffic
-        @param host:
-        @return:
+
+        Args:
+            host (WattsonNetworkHost):
+                
         """
         if not self.is_started:
             return
@@ -126,8 +128,10 @@ class WattsonNetworkNAT(WattsonNetworkHost, NetworkNAT):
     def _allow_traffic_from_host(self, host: WattsonNetworkHost):
         """
         Adjust iptables to allow traffic
-        @param host:
-        @return:
+
+        Args:
+            host (WattsonNetworkHost):
+                
         """
         if not self.is_started:
             return
@@ -216,7 +220,7 @@ class WattsonNetworkNAT(WattsonNetworkHost, NetworkNAT):
     def get_nat_interface(self) -> WattsonNetworkInterface | None:
         """
         if self.nat_interface is not None:
-            return self.nat_interface
+
         """
         management_interface: Optional[WattsonNetworkInterface] = None
         for interface in self.get_interfaces():

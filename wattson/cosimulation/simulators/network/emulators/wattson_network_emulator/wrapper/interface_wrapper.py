@@ -1,5 +1,9 @@
+import math
+import time
 import typing
+from typing import Optional
 
+from powerowl.performance.function_performance import measure
 from wattson.cosimulation.simulators.network.components.interface.network_entity import NetworkEntity
 from wattson.cosimulation.simulators.network.components.network_link_model import NetworkLinkModel
 from wattson.cosimulation.simulators.network.components.wattson_network_interface import WattsonNetworkInterface
@@ -36,7 +40,32 @@ class InterfaceWrapper(EntityWrapper):
                 return True
         return False
 
-    def create(self):
+    def wait_exists(self, timeout: float = 5) -> bool:
+        """
+        Waits for the interface to exist for the given timeout.
+        Args:
+            timeout: The timeout in seconds to wait for the interface. (Default value = 5)
+
+        Returns:
+            True if the interface exists, False otherwise.
+        """
+        if timeout < 0:
+            return self.exists()
+
+        poll_interval = 1
+        if poll_interval > timeout:
+            poll_interval = timeout
+        else:
+            polls = math.ceil(timeout / poll_interval)
+            poll_interval = timeout / polls
+        wait_end = time.time() + timeout
+        while time.time() < wait_end:
+            if self.exists():
+                return True
+            time.sleep(poll_interval)
+        return self.exists()
+
+    def create(self, wait_timeout: typing.Optional[float] = None) -> bool:
         if self.interface.is_physical():
             self.flush_ip()
             self.push_to_namespace()
@@ -55,7 +84,7 @@ class InterfaceWrapper(EntityWrapper):
                 for line in lines:
                     print(line)
                 self.push_to_namespace()
-                self.configure()
+                self.configure(wait_timeout=2)
                 return True
             else:
                 # Link will handle creation
@@ -83,7 +112,10 @@ class InterfaceWrapper(EntityWrapper):
     def flush_ip(self) -> bool:
         """
         Flushes the IP from the interface.
-        @return: Whether the command was successful
+
+
+        Returns:
+            bool: Whether the command was successful
         """
         return self.interface.node.interface_flush_ip(self.interface)
 
@@ -97,7 +129,10 @@ class InterfaceWrapper(EntityWrapper):
     def down(self) -> bool:
         """
         Sets the interface down
-        @return: Whether the command was successful
+
+
+        Returns:
+            bool: Whether the command was successful
         """
         if self.has_additional_namespace():
             self.get_additional_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "down"])
@@ -108,7 +143,10 @@ class InterfaceWrapper(EntityWrapper):
     def up(self) -> bool:
         """
         Sets the interface up
-        @return: Whether the command was successful
+
+
+        Returns:
+            bool: Whether the command was successful
         """
         if self.has_additional_namespace():
             self.get_additional_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
@@ -117,21 +155,20 @@ class InterfaceWrapper(EntityWrapper):
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
         return code0
 
-    def configure(self):
-        """
-        Configures the interface with IP, MAC, and other properties
-        @return:
-        """
+    def configure(self, wait_timeout: typing.Optional[float] = None) -> bool:
+        """Configures the interface with IP, MAC, and other properties"""
         interface = self.interface
-        if not self.exists():
+
+        if (wait_timeout is None and not self.exists()) or (wait_timeout is not None and not self.wait_exists(wait_timeout)):
             self.logger.warning(f"Cannot configure interface {interface.interface_name}")
+            # self.logger.warning(repr(self.interface.node.interfaces_list_existing()))
             return False
         # self.down()
         # Set mac if given
         self.update_mac_address()
         # Set IP
         self.update_ip_address()
-        self.up()
+        return self.up()
 
     def update_mac_address(self):
         interface = self.interface
@@ -166,7 +203,7 @@ class InterfaceWrapper(EntityWrapper):
     def pull_to_main_namespace(self) -> bool:
         """
         Moves the interface from its associated namespace to the main namespace
-        @return:
+
         """
         interface = self.interface
         node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
@@ -182,8 +219,11 @@ class InterfaceWrapper(EntityWrapper):
     def push_to_namespace(self, namespace: typing.Optional[Namespace] = None) -> bool:
         """
         Pushes the interface from the main namespace to the given or associated namespace
-        @param namespace: The namespace to put this interface into. If None, the nodes namespace is used.
-        @return:
+
+        Args:
+            namespace (typing.Optional[Namespace], optional):
+                The namespace to put this interface into. If None, the nodes namespace is used.
+                (Default value = None)
         """
         interface = self.interface
         if namespace is None:
@@ -202,8 +242,13 @@ class InterfaceWrapper(EntityWrapper):
         """
         Applies the properties specified by the link wrapper to this interface.
         Requires tc.
-        @param link_model: The link wrapper to use
-        @return: Whether the properties could be applied
+
+        Args:
+            link_model (NetworkLinkModel):
+                The link wrapper to use
+
+        Returns:
+            bool: Whether the properties could be applied
         """
         # Additional namespace is external, i.e., native for the host machine
         namespace = self.get_additional_namespace()

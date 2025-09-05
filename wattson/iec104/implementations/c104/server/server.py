@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 class IEC104Server(IECServerInterface):
     def __init__(self, rtu: 'RTU', ip: str, **kwargs):
-        #c104.set_debug_mode(c104.Debug.Point | c104.Debug.Server | c104.Debug.Client
+        # c104.set_debug_mode(c104.Debug.Point | c104.Debug.Server)
         #                    | c104.Debug.Callback | c104.Debug.Connection | c104.Debug.Gil)
         # c104.set_debug_mode(c104.Debug.Server)
 

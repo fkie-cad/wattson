@@ -34,10 +34,15 @@ def get_subnet(ip_addr: Union[str, ipaddress.IPv4Address],
                pref_len: int = 24) -> ipaddress.IPv4Network:
     """
     Return subnet of a given IP address. Uses the stdlib package "ipaddress".
-    :param ip_addr: Passed IP address (either str or
-    :param pref_len: Assumed prefix length. defaults to 24. Also extracts
-    from ip_addr if included.
-    :return: subnet (in "ipaddress" format)
+
+    Args:
+        ip_addr (Union[str, ipaddress.IPv4Address]):
+            Passed IP address (either str or
+        pref_len (int, optional):
+            Assumed prefix length. defaults to 24. Also extracts from ip_addr if included.
+
+    Returns:
+        ipaddress.IPv4Network: subnet (in "ipaddress" format)
     """
     if isinstance(ip_addr, ipaddress.IPv4Address):
         ip_addr = str(ip_addr)
@@ -68,11 +73,13 @@ def wait_for_cpu(max_load: int = 60):
 
 def get_zmqipc(ip_addr: str, port: int):
     """
-    Return the IPC Filename based on an IP address and a Port usually used
-    for TCP communication.
-    :param ip_addr: The IP address
-    :param port: The Port (former TCP Port)
-    :return ZMQ IPC File in /tmp/
+    Return the IPC Filename based on an IP address and a Port usually used for TCP communication.
+
+    Args:
+        ip_addr (str):
+            The IP address
+        port (int):
+            The Port (former TCP Port)
     """
     iphash = hashlib.sha1(ip_addr.encode()).hexdigest()[:8]
     porthash = hashlib.sha1(str(port).encode()).hexdigest()[:8]

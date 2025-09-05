@@ -24,6 +24,7 @@ class AppGatewayResponsePromise(AppGatewayResponse):
     def is_resolved(self) -> bool:
         """
         Checks whether the associated query has already been resolved
+
         """
         return self._resolve_event.is_set()
 
@@ -32,6 +33,11 @@ class AppGatewayResponsePromise(AppGatewayResponse):
         Wait for the query to resolve.
         If a timeout is given, the waiting is stopped after this timeout (in seconds).
         Returns True iff the query has been resolved.
+
+        Args:
+            timeout (Optional[float], optional):
+                
+                (Default value = None)
         """
         self._resolve_event.wait(timeout=timeout)
         return self.is_resolved()
@@ -40,6 +46,7 @@ class AppGatewayResponsePromise(AppGatewayResponse):
         """
         If the associated query has been resolved, the respective WattsonResponse is returned.
         Otherwise, None is returned.
+
         """
         if not self.is_resolved():
             return None
@@ -48,8 +55,10 @@ class AppGatewayResponsePromise(AppGatewayResponse):
     def on_resolve(self, callback: Callable[[AppGatewayResponse], None]):
         """
         Adds a callback to be called as soon as the promise resolves.
-        @param callback: The callback to call
-        @return:
+
+        Args:
+            callback (Callable[[AppGatewayResponse], None]):
+                The callback to call
         """
         self._on_resolve_callbacks.append(callback)
         self._start_watchdog()
@@ -58,7 +67,7 @@ class AppGatewayResponsePromise(AppGatewayResponse):
         """
         As soon as the response resolves, it is checked for its success.
         In case it is not successful, an exception is raised.
-        @return:
+
         """
         def callback(response):
             if not response.successful():

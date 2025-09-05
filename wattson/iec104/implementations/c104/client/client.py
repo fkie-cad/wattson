@@ -28,12 +28,19 @@ class FakeLock:
 
 
 class IEC104Client(IECClientInterface, th.Thread):
-    """ Currently having to hack local ConnectionState as Interro-Status is not available :/"""
+    """Currently having to hack local ConnectionState as Interro-Status is not available :/"""
     def __init__(self, org: int = 0, **kwargs):
         """
         Initializes the client and sets up internal callbacks as requested.
-        :param org: COA for this client. Defaults to 0.
-        :return: None
+
+        Args:
+            org (int, optional):
+                COA for this client. Defaults to 0.
+            **kwargs:
+                
+
+        Returns:
+            None
         """
         #c104.set_debug_mode(0)
         #c104.set_debug_mode(c104.Debug.Message | c104.Debug.Point | c104.Debug.Gil)
@@ -88,6 +95,7 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Returns the queue.Queue used for received messages.
         :return: The receive queue.Queue
+
         """
         return self._receive_queue
 
@@ -95,6 +103,7 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Starts the client and all managed connections.
         :return:
+
         """
         self.logger.debug("Start Super")
         self.logger.debug("Bind")
@@ -108,8 +117,11 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Requests an asynchronous stop for this client.
         For waiting for a complete shutdown, use join on this client afterwards.
-        :param force: Force the stop regardless of client state.
-        :return:
+
+        Args:
+            force (bool, optional):
+                Force the stop regardless of client state.
+                (Default value = False)
         """
         self.logger.info("Stopping")
         with self._cb_lock:
@@ -121,10 +133,13 @@ class IEC104Client(IECClientInterface, th.Thread):
         Queues the data point identified by COA and IOA for transmission.
         The given COT will be used during this transmission.
 
-        :param coa: The Common Address of the respective Server
-        :param ioa: The Data Point's IOA
-        :param cot: The COT to use for transmission
-        :return:
+        Args:
+            coa (int):
+                The Common Address of the respective Server
+            ioa (int):
+                The Data Point's IOA
+            cot (c104.Cot):
+                The COT to use for transmission
         """
         if not self.has_datapoint(coa, ioa):
             self.logger.warning(f"Cannot send non-existent Datapoint {coa}.{ioa}")
@@ -136,8 +151,13 @@ class IEC104Client(IECClientInterface, th.Thread):
     def has_server(self, coa: int) -> bool:
         """
         Checks whether the requested server COA exists.
-        :param coa: The COA to check for
-        :return: True iff a server with the given COA exists in this client.
+
+        Args:
+            coa (int):
+                The COA to check for
+
+        Returns:
+            bool: True iff a server with the given COA exists in this client.
         """
         return str(coa) in self._servers
 
@@ -145,6 +165,7 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Returns a list of COAs of RTUs / servers that are known to this client.
         :return: A list of COAs
+
         """
         return copy.deepcopy(list(self._servers.keys()))
 
@@ -152,10 +173,16 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Adds a new RTU's server to the cache.
 
-        :param ip: IP the server is publishing from
-        :param coa: RTUs COA
+        Args:
+            ip (str):
+                IP the server is publishing from
+            coa (int):
+                RTUs COA
+            **kwargs:
+                
 
-        :return: False if coa already known to client, otherwise coa of newly inserted server
+        Returns:
+            Union[bool,int]: False if coa already known to client, otherwise coa of newly inserted server
         """
         if str(coa) in self._servers:
             return False
@@ -182,9 +209,13 @@ class IEC104Client(IECClientInterface, th.Thread):
     def get_server_IP(self, coa: int) -> str:
         """
         Returns the IP of the RTU / server identified by the given COA.
-        :param coa: The COA of the RTU
-        :raises: ValueError if the COA is not known.
-        :return: The IP address of the server / RTU.
+
+        Args:
+            coa (int):
+                The COA of the RTU
+
+        Returns:
+            str: The IP address of the server / RTU.
         """
         if not self.has_server(coa):
             raise ValueError("No server for that coa available.")
@@ -193,8 +224,13 @@ class IEC104Client(IECClientInterface, th.Thread):
     def get_server_port(self, coa: int) -> int:
         """
         Returns the port used by the RTU server identified by the given COA.
-        :param coa: The COA of the RTU / Server to get the port of
-        :return: The port number of the requested RTU or -1 if the RTU is unknown.
+
+        Args:
+            coa (int):
+                The COA of the RTU / Server to get the port of
+
+        Returns:
+            int: The port number of the requested RTU or -1 if the RTU is unknown.
         """
         with self._cb_lock:
             if not self.has_server(coa):
@@ -209,9 +245,12 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Returns the connection state of the RTU identified by the given COA.
 
-        :param coa: ID of RTU
-        :raise ValueError: For unknown COA
-        :return: The ConnectionState
+        Args:
+            coa (int):
+                ID of RTU
+
+        Returns:
+            ConnectionState: The ConnectionState
         """
         state_map = {
             c104.ConnectionState.CLOSED: ConnectionState.CLOSED,
@@ -229,8 +268,13 @@ class IEC104Client(IECClientInterface, th.Thread):
     def connect_server(self, server: Union[str, int, dict]):
         """
         (Re-)Establishes a connection to the given server / RTU.
-        :param server: The COA of the server as str or int, or the server dictionary
-        :return: None
+
+        Args:
+            server (Union[str, int, dict]):
+                The COA of the server as str or int, or the server dictionary
+
+        Returns:
+            None
         """
         server = self._get_server(server)
         if server["connection"] is None:
@@ -371,6 +415,7 @@ class IEC104Client(IECClientInterface, th.Thread):
         Works on messages / commands queued for transmission and sends them to the server.
         Continues these tasks until termination is requested, e.g., by the stop method.
         :return:
+
         """
 
         while not self._terminate.is_set():
@@ -426,9 +471,15 @@ class IEC104Client(IECClientInterface, th.Thread):
     def has_datapoint(self, coa: int, ioa: int) -> bool:
         """
         Checks whether this client knows a certain data point identified by COA and IOA.
-        :param coa: The COA of the station associated with the data point
-        :param ioa: The (station-unique) IOA of the data point
-        :return: True iff the data point is known to the client, False otherwise
+
+        Args:
+            coa (int):
+                The COA of the station associated with the data point
+            ioa (int):
+                The (station-unique) IOA of the data point
+
+        Returns:
+            bool: True iff the data point is known to the client, False otherwise
         """
         if not self.has_server(coa):
             self.logger.warning("server is none")
@@ -440,10 +491,17 @@ class IEC104Client(IECClientInterface, th.Thread):
         """
         Returns the data point (as object or dict) identified by COA and IOA.
 
-        :param coa: The COA of the station responsible for the data point.
-        :param ioa: The IOA of the data point.
-        :param as_dict: Whether to return the point as a dict (if False, a C104Point is returned)
-        :return: The data point.
+        Args:
+            coa (int):
+                The COA of the station responsible for the data point.
+            ioa (int):
+                The IOA of the data point.
+            as_dict (bool, optional):
+                Whether to return the point as a dict (if False, a C104Point is returned)
+                (Default value = True)
+
+        Returns:
+            Union[C104Point,dict]: The data point.
         """
         if not self.has_datapoint(coa, ioa):
             raise ValueError(f"Doesn't have datapoint with coa:ioa {coa}:{ioa}")
@@ -459,7 +517,19 @@ class IEC104Client(IECClientInterface, th.Thread):
 
     def on_explicit_control_exit(self, coa: int, p: C104Point, success: bool,
                                  orig_cot: c104.Cot) -> None:
-        """ Manually put into place, naming the same for style """
+        """
+        Manually put into place, naming the same for style
+
+        Args:
+            coa (int):
+                
+            p (C104Point):
+                
+            success (bool):
+                
+            orig_cot (c104.Cot):
+                
+        """
         with self._cb_lock:
             try:
                 if self.callbacks['on_explicit_control_exit'] is not None:
@@ -470,10 +540,17 @@ class IEC104Client(IECClientInterface, th.Thread):
     def update_datapoint(self, coa: int, ioa: int, value) -> bool:
         """
         Updates the value of the given data point
-        :param coa: The COA of the station responsible for the data point
-        :param ioa: The IOA of the data point
-        :param value: The new value to be assigned to the data point
-        :return: True iff the new value has been set, False otherwise
+
+        Args:
+            coa (int):
+                The COA of the station responsible for the data point
+            ioa (int):
+                The IOA of the data point
+            value:
+                The new value to be assigned to the data point
+
+        Returns:
+            bool: True iff the new value has been set, False otherwise
         """
         with self._cb_lock:
             server = self._get_server(coa)

@@ -9,9 +9,17 @@ class QueueEvent(threading.Event):
         """
         A QueueEvent allows subscribers to queue setting this event and wait for other clients to set it as well.
         Thus, multiple queues get accumulated to a single trigger of this event
-        @param max_queue_time_s: How long to wait at most before triggering this event (after at least one client requested triggering)
-        @param max_wait_time_s: How long to wait for another client before triggering
-        @param max_queue_interval_s: How many seconds to wait at least between clearing and triggering.
+
+        Args:
+            max_queue_time_s (float, optional):
+                How long to wait at most before triggering this event (after at least one client requested triggering)
+                (Default value = 5)
+            max_wait_time_s (float, optional):
+                How long to wait for another client before triggering
+                (Default value = 0.2)
+            max_queue_interval_s (float, optional):
+                How many seconds to wait at least between clearing and triggering.
+                (Default value = 0)
         """
         super().__init__()
         self._max_queue_time_s = max_queue_time_s
@@ -21,6 +29,9 @@ class QueueEvent(threading.Event):
         self._lock = threading.RLock()
         self._wait_started = 0
         self._wait_event = WaitEvent(event=self)
+
+    def set_max_queue_interval_s(self, seconds: float):
+        self._max_queue_interval_s = seconds
 
     def queue(self):
         if self.is_set():

@@ -59,12 +59,13 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def has_role(self, role: str) -> bool:
         return role in self.get_roles()
 
-    def get_subnets(self, include_management: bool = False, exclude_interfaces: Optional[List['NetworkInterface']] = None) -> List[ipaddress.IPv4Network]:
+    def get_subnets(self, include_management: bool = False, exclude_interfaces: Optional[List['NetworkInterface']] = None,
+                    subnet_cache: Optional[Dict[str, ipaddress.IPv4Network]] = None) -> List[ipaddress.IPv4Network]:
         subnets = []
         if exclude_interfaces is None:
             exclude_interfaces = []
         for interface in self.get_interfaces():
-            subnet = interface.get_subnet(include_management=include_management, exclude_interfaces=exclude_interfaces)
+            subnet = interface.get_subnet(include_management=include_management, exclude_interfaces=exclude_interfaces, subnet_cache=subnet_cache)
             if subnet is not None and subnet not in subnets:
                 subnets.append(subnet)
         return subnets
@@ -72,8 +73,13 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def has_subnet(self, subnet: ipaddress.IPv4Network) -> bool:
         """
         Checks whether this node has an interface that belongs to the given subnet.
-        @param subnet: The subnet to check for
-        @return: Whether this node lies within the given subnet
+
+        Args:
+            subnet (ipaddress.IPv4Network):
+                The subnet to check for
+
+        Returns:
+            bool: Whether this node lies within the given subnet
         """
         for existing_subnet in self.get_subnets():
             if existing_subnet.supernet_of(subnet):
@@ -87,8 +93,10 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def add_interface(self, interface: 'NetworkInterface'):
         """
         Adds an Interface and links it to this node.
-        :param interface: The interface instance
-        :return:
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface instance
         """
         ...
 
@@ -107,8 +115,14 @@ class NetworkNode(NetworkEntity, abc.ABC):
         """
         Start a packet capture on this node for the given interface.
         If the interface is None, all packets for all interfaces are captured.
-        @param interface: (Optional) interface to start the PCAP for
-        @return: A list of services that represent the packet capturing processes.
+
+        Args:
+            interface (Optional['NetworkInterface'], optional):
+                (Optional) interface to start the PCAP for
+                (Default value = None)
+
+        Returns:
+            List['WattsonServiceInterface']: A list of services that represent the packet capturing processes.
         """
         ...
 
@@ -117,8 +131,11 @@ class NetworkNode(NetworkEntity, abc.ABC):
         """
         Stops a packet capture on this node for the given interface.
         If the interface is None, packet captures for all interfaces are stopped.
-        @param interface: (Optional) interface to stop the PCAP
-        @return:
+
+        Args:
+            interface (Optional['NetworkInterface'], optional):
+                (Optional) interface to stop the PCAP
+                (Default value = None)
         """
         ...
 
@@ -126,8 +143,8 @@ class NetworkNode(NetworkEntity, abc.ABC):
         """
         Returns a list of all IP addresses of this node.
         Each IP is formatted as a string, indicating the IP itself in decimal notation and the prefix length.
-        E.g.: 192.168.0.1/24
-        :return: A list of (formatted) IP addresses.
+        E.g.: 192.168.0.1/24 :return: A list of (formatted) IP addresses.
+
         """
         addresses = []
         for interface in self.get_interfaces():
@@ -145,7 +162,10 @@ class NetworkNode(NetworkEntity, abc.ABC):
         """
         Returns whether this node is reachable, but only reachable via the management network.
         Nodes without interfaces are NOT pure management nodes
-        @return: If the node is a pure management node
+
+
+        Returns:
+            bool: If the node is a pure management node
         """
         interfaces = self.get_interfaces()
         for interface in interfaces:
@@ -156,7 +176,7 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def is_not_pure_management_node(self) -> bool:
         """
         Returns whether this node has any interface that is not a management interface.
-        @return:
+
         """
         interfaces = self.get_interfaces()
         for interface in interfaces:
@@ -177,8 +197,13 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def has_ip(self, ip: Union[ipaddress.IPv4Address, str]) -> bool:
         """
         Checks whether this node has an interface with the given IP address
-        @param ip: The IP address to check for
-        @return: True iff any interface of this node has the given IP address
+
+        Args:
+            ip (Union[ipaddress.IPv4Address, str]):
+                The IP address to check for
+
+        Returns:
+            bool: True iff any interface of this node has the given IP address
         """
         if isinstance(ip, str):
             ip = ipaddress.IPv4Address(ip)
@@ -192,6 +217,11 @@ class NetworkNode(NetworkEntity, abc.ABC):
         Returns the IP address of the management interface of this node, if it exists.
         Otherwise, None is returned.
         :return: The node's management IP address, or None
+
+        Args:
+            with_subnet_length (bool, optional):
+                
+                (Default value = True)
         """
         management_interface = self.get_management_interface()
         if management_interface is None:
@@ -205,6 +235,11 @@ class NetworkNode(NetworkEntity, abc.ABC):
         Returns the IP address of the first non-management interface of this node, if it exists.
         Otherwise, None is returned.
         :return: The node's first non-management IP address, or None
+
+        Args:
+            with_subnet_length (bool, optional):
+                
+                (Default value = True)
         """
         for interface in self.get_interfaces():
             if interface.has_ip() and not interface.is_management:
@@ -218,8 +253,8 @@ class NetworkNode(NetworkEntity, abc.ABC):
     """
     def has_services(self) -> bool:
         """
-        Returns True iff the node's configuration already has a service section
-        :return:
+        Returns True iff the node's configuration already has a service section :return:
+
         """
         return len(self.get_services()) > 0
 
@@ -227,8 +262,10 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def add_service(self, service: WattsonServiceInterface):
         """
         Adds a service to this node. This does not start the service.
-        :param service: The service to add to this node.
-        :return:
+
+        Args:
+            service (WattsonServiceInterface):
+                The service to add to this node.
         """
         ...
 
@@ -280,23 +317,36 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def enable_mirror(self, interface: 'NetworkInterface') -> bool:
         """
         Enable network mirroring at this node and use the given interface as mirror port
-        @param interface: The interface to use as mirror port
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface to use as mirror port
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
     def disable_mirror(self, interface: 'NetworkInterface') -> bool:
         """
         Disable mirroring output to the given interface
-        @param interface: The interface used as mirror port
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface used as mirror port
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
     def clear_mirrors(self) -> bool:
         """
         Clear all existing mirror ports at this node
-        @return: Whether the action has been successfully performed
+
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
@@ -306,40 +356,65 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def interface_set_mac(self, interface: 'NetworkInterface') -> bool:
         """
         Set the MAC / hardware address for the given interface
-        @param interface: The interface to set the MAC address for
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface to set the MAC address for
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
     def interface_up(self, interface: 'NetworkInterface') -> bool:
         """
         Set an interface up
-        @param interface: The interface to set up
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface to set up
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
     def interface_down(self, interface: 'NetworkInterface') -> bool:
         """
         Set an interface down
-        @param interface: The interface to set down
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface to set down
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
     def interface_flush_ip(self, interface: 'NetworkInterface') -> bool:
         """
         Flush (remove) the IP address of an interface
-        @param interface: The interface to flush the IP address of
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface to flush the IP address of
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
     def interface_set_ip(self, interface: 'NetworkInterface') -> bool:
         """
         Set the IP address for an interface
-        @param interface: The interface to set the IP address of
-        @return: Whether the action has been successfully performed
+
+        Args:
+            interface ('NetworkInterface'):
+                The interface to set the IP address of
+
+        Returns:
+            bool: Whether the action has been successfully performed
         """
         return False
 
@@ -347,7 +422,10 @@ class NetworkNode(NetworkEntity, abc.ABC):
         """
         Returns a list of actual interfaces existing on the node.
         Each interface information consists of the interface's name, its hardware address, ip addresses, and potential statistics.
-        @return: A list of dictionaries containing interface information
+
+
+        Returns:
+            List[Dict]: A list of dictionaries containing interface information
         """
         return []
 
@@ -357,8 +435,13 @@ class NetworkNode(NetworkEntity, abc.ABC):
     def file_get_contents(self, path: Path) -> Optional[str]:
         """
         Returns the contents of a file on the file system of this node.
-        @param path: The path of the file to read.
-        @return: The contents of the file or None if the file does not exist or is not readable.
+
+        Args:
+            path (Path):
+                The path of the file to read.
+
+        Returns:
+            Optional[str]: The contents of the file or None if the file does not exist or is not readable.
         """
         return None
 
@@ -366,8 +449,14 @@ class NetworkNode(NetworkEntity, abc.ABC):
         """
         Writes the given content string to the file on the file system of this node specified by path.
         Returns whether the operation succeeded.
-        @param path: The path of the file to write to.
-        @param contents: The contents of the file to write.
-        @return: Whether the operation succeeded and the potentially transformed path of the target file.
+
+        Args:
+            path (Path):
+                The path of the file to write to.
+            contents (str):
+                The contents of the file to write.
+
+        Returns:
+            Tuple[bool,Optional[Path]]: Whether the operation succeeded and the potentially transformed path of the target file.
         """
         return False, None

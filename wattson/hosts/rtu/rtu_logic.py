@@ -29,18 +29,30 @@ class RTULogic(ABC):
         """
         Returns whether this logic scripts wants to handle the set operation for the given data point and value.
         If true, handle_set_value is called by the managing RTU afterward.
-        @param identifier: The data point's identifier
-        @param value: The value to set
-        @return: Whether this logic wants to handle the set operation
+
+        Args:
+            identifier:
+                The data point's identifier
+            value:
+                The value to set
+
+        Returns:
+            bool: Whether this logic wants to handle the set operation
         """
         return False
 
     def handle_set_value(self, identifier, value) -> bool:
         """
         Handles the setting of the data point value instead of the default handler.
-        @param identifier: The data point's identifier
-        @param value: The value to set
-        @return: Whether the value has been set successfully
+
+        Args:
+            identifier:
+                The data point's identifier
+            value:
+                The value to set
+
+        Returns:
+            bool: Whether the value has been set successfully
         """
         return False
 
@@ -48,16 +60,26 @@ class RTULogic(ABC):
         """
         Returns whether this logic scripts wants to handle the get operation for the given data point.
         If true, handle_get_value is called by the managing RTU afterward.
-        @param identifier: The data point's identifier
-        @return: Whether this logic wants to handle the set operation
+
+        Args:
+            identifier:
+                The data point's identifier
+
+        Returns:
+            bool: Whether this logic wants to handle the set operation
         """
         return False
 
     def handle_get_value(self, identifier) -> Any:
         """
         Handles the retrieval of the data point value instead of the default handler.
-        @param identifier: The data point's identifier
-        @return: The value of the data point
+
+        Args:
+            identifier:
+                The data point's identifier
+
+        Returns:
+            Any: The value of the data point
         """
         return None
 

@@ -5,8 +5,15 @@ from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.interface_wrapper import InterfaceWrapper
 from wattson.networking.namespaces.namespace import Namespace
 
+if typing.TYPE_CHECKING:
+    from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator import WattsonNetworkEmulator
+
 
 class LinkWrapper(EntityWrapper):
+    def __init__(self, entity: WattsonNetworkLink, emulator: 'WattsonNetworkEmulator', enable_link_properties: bool = True):
+        super().__init__(entity, emulator)
+        self._enable_link_properties = enable_link_properties
+
     def get_namespace(self) -> Namespace:
         raise RuntimeError("Links do not have a dedicated namespace")
 
@@ -35,10 +42,11 @@ class LinkWrapper(EntityWrapper):
             self.logger.debug("\n".join(lines))
             return False
         # Move interfaces to namespaces and configure them
+        wait_timeout = 2
         if interface_wrapper_a.push_to_namespace():
-            interface_wrapper_a.configure()
+            interface_wrapper_a.configure(wait_timeout=wait_timeout)
         if interface_wrapper_b.push_to_namespace():
-            interface_wrapper_b.configure()
+            interface_wrapper_b.configure(wait_timeout=wait_timeout)
         self.link.cached_is_up = True
         return True
 
@@ -50,6 +58,8 @@ class LinkWrapper(EntityWrapper):
         interface_wrapper_b.clean()
 
     def apply_link_properties(self) -> bool:
+        if not self._enable_link_properties:
+            return True
         link = self.link
         interface_wrapper_a: InterfaceWrapper = typing.cast(InterfaceWrapper, self.emulator.get_wrapper(link.interface_a))
         interface_wrapper_b: InterfaceWrapper = typing.cast(InterfaceWrapper, self.emulator.get_wrapper(link.interface_b))

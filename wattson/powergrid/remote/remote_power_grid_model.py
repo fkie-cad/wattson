@@ -1,3 +1,4 @@
+import threading
 import typing
 from typing import Any, Type, List, Callable
 
@@ -28,9 +29,17 @@ class RemotePowerGridModel(PowerGridModel, WattsonRemoteObject):
         super().__init__(**kwargs)
         self.wattson_client = wattson_client
         self.logger = self.wattson_client.logger.getChild("RemotePowerGridModel")
-        self.synchronize(force=True, block=True)
+
         self._on_grid_value_changed_callbacks: List[Callable[[RemoteGridValue, Any, Any], Any]] = []
         self._on_grid_value_state_changed_callbacks: List[Callable[[RemoteGridValue], Any]] = []
+        self._update_cache = []
+        self._initialized = threading.Event()
+
+        # Subscribe to element updates
+        self.wattson_client.subscribe(PowerGridNotificationTopic.GRID_VALUES_UPDATED, self._grid_values_updated)
+        self.wattson_client.subscribe(PowerGridNotificationTopic.GRID_VALUE_STATE_CHANGED, self._grid_value_state_changed)
+
+        self.synchronize(force=True, block=True)
 
     def add_on_grid_value_change_callback(self, callback: Callable[[RemoteGridValue, Any, Any], Any]):
         if callback not in self._on_grid_value_changed_callbacks:
@@ -54,6 +63,7 @@ class RemotePowerGridModel(PowerGridModel, WattsonRemoteObject):
 
     def synchronize(self, force: bool = False, block: bool = True):
         self.elements = {}
+
         query = PowerGridQuery(
             query_type=PowerGridQueryType.GET_GRID_REPRESENTATION,
             query_data={}
@@ -90,15 +100,30 @@ class RemotePowerGridModel(PowerGridModel, WattsonRemoteObject):
                         )
                         grid_value.add_on_set_callback(self._on_grid_value_set)
                         grid_element.set(grid_value.name, grid_value.value_context, grid_value)
-        # Subscribe to element updates
-        self.wattson_client.subscribe(PowerGridNotificationTopic.GRID_VALUES_UPDATED, self._grid_values_updated)
-        self.wattson_client.subscribe(PowerGridNotificationTopic.GRID_VALUE_STATE_CHANGED, self._grid_value_state_changed)
+
+        self._initialized.set()
+        self._clear_deferred_notifications()
 
     def get_grid_value_by_identifier(self, grid_value_identifier: str) -> RemoteGridValue:
         grid_value = super().get_grid_value_by_identifier(grid_value_identifier=grid_value_identifier)
         return typing.cast(RemoteGridValue, grid_value)
 
+    def _defer_notification(self, notification: WattsonNotification, method: Callable):
+        self._update_cache.append((notification, method))
+
+    def _clear_deferred_notifications(self):
+        for notification, method in self._update_cache:
+            method(notification)
+        self._update_cache.clear()
+
     def _grid_values_updated(self, notification: WattsonNotification):
+        if not self._initialized.is_set():
+            self._defer_notification(
+                notification=notification,
+                method=self._grid_values_updated
+            )
+            return
+
         changed_values = notification.notification_data.get("grid_values", {})
         for identifier, data in changed_values.items():
             value = data["value"]
@@ -106,6 +131,12 @@ class RemotePowerGridModel(PowerGridModel, WattsonRemoteObject):
             grid_value.grid_value_changed(value, data["wall_clock_time"])
 
     def _grid_value_state_changed(self, notification: WattsonNotification):
+        if not self._initialized.is_set():
+            self._defer_notification(
+                notification=notification,
+                method=self._grid_value_state_changed
+            )
+            return
         grid_value = self.get_grid_value_by_identifier(notification.notification_data["grid_value"]["identifier"])
         data = notification.notification_data["grid_value"]["representation"]
         grid_value.grid_value_state_changed(data)

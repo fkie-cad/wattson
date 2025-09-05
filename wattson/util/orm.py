@@ -12,9 +12,7 @@ Base = declarative_base()
 
 
 class RecvdASDU(Base): #type:ignore
-    """
-    Represents a received ASDU.
-    """
+    """Represents a received ASDU."""
     __tablename__ = "rcvdAsdus"
     id = Column(Integer, primary_key=True)
     type = Column(Integer)

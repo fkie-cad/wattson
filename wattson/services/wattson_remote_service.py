@@ -20,9 +20,7 @@ if TYPE_CHECKING:
 
 
 class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
-    """
-    A remote representation for a WattsonService
-    """
+    """A remote representation for a WattsonService"""
     def __init__(self, wattson_client: 'WattsonClient', service_id: Optional[int] = None, auto_sync: bool = True):
         self._configuration: Optional[ServiceConfiguration] = None
         self._expanded_configuration: Optional[ServiceConfiguration] = None
@@ -87,13 +85,24 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
     def connected(self) -> bool:
         """
         Whether this service is connected to a WattsonService (i.e., whether the associated WattsonService exists)
-        @return: True iff the associated WattsonService exists.
+
+
+        Returns:
+            bool: True iff the associated WattsonService exists.
         """
         return self.synchronize()
 
     def synchronize(self, force: bool = False, block: bool = True):
         """
         Synchronizes the service state with the actual service.
+
+        Args:
+            force (bool, optional):
+                
+                (Default value = False)
+            block (bool, optional):
+                
+                (Default value = True)
         """
         if not force and time.time() - self._sync_time < self._sync_interval:
             return True
@@ -106,7 +115,10 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
     def _on_service_state_change(self, notification: WattsonNotification):
         """
         Callback for Notifications on service state changes.
-        @return:
+
+        Args:
+            notification (WattsonNotification):
+                
         """
         if notification.notification_topic == WattsonNetworkNotificationTopic.SERVICE_EVENT:
             service_info = notification.notification_data.get("service", {})
@@ -199,8 +211,10 @@ class WattsonRemoteService(WattsonRemoteObject, WattsonServiceInterface):
     def sync_from_remote_representation(self, service_info: WattsonRemoteServiceRepresentation) -> bool:
         """
         Synchronize internal state from API information.
-        @param service_info: API information of the WattsonService
-        @return:
+
+        Args:
+            service_info (WattsonRemoteServiceRepresentation):
+                API information of the WattsonService
         """
         if service_info is None:
             return False

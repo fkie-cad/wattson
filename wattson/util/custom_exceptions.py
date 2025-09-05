@@ -2,7 +2,7 @@ from typing import Union
 
 
 class UnsupportedError(NotImplementedError):
-    """ Occurs for any not-yet implmeneted case. """
+    """Occurs for any not-yet implmeneted case."""
     pass
 
 
@@ -46,7 +46,5 @@ class CLIError(RuntimeError):
 
 
 class NormNotTransferredError(NotImplementedError):
-    """
-    Where the detected norm is not implemented for the specifric method yet
-    """
+    """Where the detected norm is not implemented for the specifric method yet"""
     pass

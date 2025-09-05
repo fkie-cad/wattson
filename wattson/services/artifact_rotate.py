@@ -39,8 +39,8 @@ class ArtifactRotate:
 
     def rotate(self):
         """
-        Rotates all existing artifacts by one position and optionally calls the on_rotate_callback
-        :return:
+        Rotates all existing artifacts by one position and optionally calls the on_rotate_callback :return:
+
         """
         self._history.insert(0, self._base_name)
         if self._is_folder:

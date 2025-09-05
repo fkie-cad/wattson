@@ -5,9 +5,11 @@ from collections import deque
 class UPSManager:
     def __init__(self, target_ups=0.0):
         """
+        
 
-        :param target_ups: Target UPS (updates per seconds). Default value 0 (
-        do not limit the UPS)
+        Args:
+            target_ups:
+                Target UPS (updates per seconds). Default value 0 ( do not limit the UPS)
         """
         self._events = deque(
             maxlen=int((target_ups + 1) * 5) if target_ups > 0 else 10240)
@@ -17,8 +19,8 @@ class UPSManager:
 
     def add(self):
         """
-        Call to add an event to the manager (sth happened)
-        :return:
+        Call to add an event to the manager (sth happened) :return:
+
         """
 
         self._events.append(time.time())
@@ -27,6 +29,7 @@ class UPSManager:
     def current_ups(self) -> float:
         """
         :return: actual UPS value
+
         """
         if len(self._events) <= 1 or self._events[-1] == self._events[0]:
             current_ups = self.target_ups
@@ -38,10 +41,9 @@ class UPSManager:
     def get_wait_time(self) -> float:
         """
         Determine time to wait such that the target UPS is reached.
-        For now, this is only a trivial implementation: don't wait if we are
-        "behind schedule", otherwise wait the maximum time (1 / target_UPS).
-        As a result, we will always be slightly behind the schedule. Never too fast)
-        :return: Recommended time to wait
+        For now, this is only a trivial implementation: don't wait if we are "behind schedule", otherwise wait the maximum time (1 / target_UPS).
+        As a result, we will always be slightly behind the schedule. Never too fast) :return: Recommended time to wait
+
         """
         delay = 0.0
         if not self._unlimited():

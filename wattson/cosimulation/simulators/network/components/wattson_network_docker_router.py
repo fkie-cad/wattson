@@ -12,9 +12,7 @@ from wattson.services.routing.wattson_fr_routing_multi_service import WattsonFrR
 
 @dataclasses.dataclass(kw_only=True)
 class WattsonNetworkDockerRouter(WattsonNetworkRouter, WattsonNetworkDockerHost):
-    """
-    A network router that does not rely on IP mininet
-    """
+    """A network router that does not rely on IP mininet"""
 
     @classmethod
     def get_class_id(cls):

@@ -6,8 +6,13 @@ class WattsonRemoteObject(abc.ABC):
     def synchronize(self, force: bool = False, block: bool = True):
         """
         Synchronize this object with its instance in the simulation
-        @param force: Whether to force an update
-        @param block: Whether to block during the update
-        @return:
+
+        Args:
+            force (bool, optional):
+                Whether to force an update
+                (Default value = False)
+            block (bool, optional):
+                Whether to block during the update
+                (Default value = True)
         """
         ...

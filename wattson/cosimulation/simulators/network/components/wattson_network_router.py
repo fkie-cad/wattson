@@ -11,9 +11,7 @@ from wattson.services.routing.wattson_fr_routing_multi_service import WattsonFrR
 
 @dataclasses.dataclass(kw_only=True)
 class WattsonNetworkRouter(WattsonNetworkHost, NetworkRouter):
-    """
-    A network router that does not rely on IP mininet
-    """
+    """A network router that does not rely on IP mininet"""
     class_id: ClassVar[int] = 0
 
     def __post_init__(self):

@@ -6,6 +6,7 @@ class CCXDefaultConfiguration(ServiceConfiguration):
         super().__init__()
         self.update({
             "node_id": "!nodeid",
+            "entity_id": "!entityid",
             "data_points": "!datapoints.!nodeid",
             "name": "WattsonCCX",
             "servers": "!rtu_map.!entityid",    # TODO: Adjust for multiple protocols

@@ -1,21 +1,18 @@
-import datetime
-import json
-import queue
-import sys
 import threading
 import time
 import traceback
 from pathlib import Path
 from typing import Union, Type, Optional, Set, Dict, List, Any
 
+
 import yaml
 
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import GridElement
-from powerowl.layers.powergrid.elements.grid_node import GridNode
 from powerowl.layers.powergrid.values.grid_value import GridValue
 from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 from powerowl.simulators.pandapower import PandaPowerGridModel
+from wattson.cosimulation.control.messages.wattson_async_group_response import WattsonAsyncGroupResponse
 from wattson.cosimulation.control.messages.wattson_async_response import WattsonAsyncResponse
 
 from wattson.cosimulation.exceptions import InvalidScenarioException, InvalidSimulationControlQueryException
@@ -23,7 +20,7 @@ from wattson.cosimulation.control.messages.wattson_query import WattsonQuery
 from wattson.cosimulation.control.messages.wattson_response import WattsonResponse
 from wattson.datapoints.data_point_loader import DataPointLoader
 from wattson.powergrid.noise.noise_manager import NoiseManager
-from wattson.powergrid.profiles.profile_provider import ProfileLoaderFactory, ProfileLoader
+from wattson.powergrid.profiles.profile_provider import  ProfileLoader
 from wattson.powergrid.simulator.default_configurations.ccx_default_configuration import CCXDefaultConfiguration
 from wattson.powergrid.simulator.messages.power_grid_query_type import PowerGridQueryType
 from wattson.powergrid.simulator.threads.export_thread import ExportThread
@@ -45,7 +42,6 @@ from wattson.powergrid.simulator.messages.power_grid_query import PowerGridQuery
 from wattson.powergrid.simulator.threads.simulation_thread import SimulationThread
 from wattson.util.events.multi_event import MultiEvent
 from wattson.util.events.queue_event import QueueEvent
-from wattson.util.json.pickle_encoder import PickleEncoder
 from wattson.util.performance.timed_cache import TimedCache
 
 
@@ -65,9 +61,21 @@ class PowerGridSimulator(PhysicalSimulator):
         self._grid_model.set_measurement_noise_callback(self._noise_manager.measurement_noise)
         self._grid_model.set_on_simulation_configuration_changed_callback(self.queue_iteration_required)
 
+        max_queue_interval_s = kwargs.get("minimum_iteration_pause_seconds", 1)
+        self._auto_interval_enable = kwargs.get("auto_iteration_pause_seconds", True)
+        self._auto_interval_current = max_queue_interval_s
+        self._auto_interval_last_start = None
+        self._auto_interval_last_durations = []
+        # Keep Sim-CPU at ~25%
+        self._auto_interval_target_factor = 3
+        self._auto_interval_history_size = 10
+        self._auto_interval_adjustment_difference = 0.3
+        self._auto_interval_minimum = max_queue_interval_s
+        self._auto_interval_maximum = kwargs.get("auto_iteration_maximum_pause_seconds", 20)
+
         self._termination_requested = threading.Event()
         self._simulator_thread: Optional[SimulationThread] = None
-        self._simulation_required = QueueEvent(max_queue_time_s=2, max_wait_time_s=0.05, max_queue_interval_s=0.5)
+        self._simulation_required = QueueEvent(max_queue_time_s=2, max_wait_time_s=0.05, max_queue_interval_s=max_queue_interval_s)
         self._required_sim_control_clients = set()
         self._profile_thread: Optional[ProfileLoader] = None
         self._export_thread: Optional[ExportThread] = None
@@ -81,15 +89,16 @@ class PowerGridSimulator(PhysicalSimulator):
         self._flush_interval = 0.5
         self._flush_thread = threading.Thread(target=self._flush_bulk_grid_value_updates_loop)
 
-        self._grid_representation_cache = TimedCache(cache_refresh_callback=self._get_grid_representation, cache_timeout_seconds=10)
+        self._grid_representation_cache = TimedCache(cache_refresh_callback=self._get_grid_representation, cache_timeout_seconds=30)
+        self._async_group_responses: Dict[str, WattsonAsyncGroupResponse] = {}
 
     def start(self):
         self._termination_requested.clear()
         self._simulation_required.set()
 
-        simulator_noise_config = self.get_configuration_store().get("configuration", {}).get("power-grid", {}).get("noise", {})
+        simulator_noise_config = self.get_configuration_store().get_configuration("configuration", {}).get("power-grid", {}).get("noise", {})
         scenario_path = Path(self.get_configuration_store().get_configuration("scenario_path", "."))
-        simulator_config = self.get_configuration_store().get("configuration", {}).get("power-grid", {}).get("simulator_config", {})
+        simulator_config = self.get_configuration_store().get_configuration("configuration", {}).get("power-grid", {}).get("simulator_config", {})
 
         pre_sim_noise = simulator_noise_config.get("pre_sim")
         post_sim_noise = simulator_noise_config.get("post_sim")
@@ -105,6 +114,7 @@ class PowerGridSimulator(PhysicalSimulator):
             on_value_change_callback=self._on_value_change,
             on_value_state_change_callback=self._on_value_state_change,
             on_protection_equipment_triggered_callback=self._on_protection_equipment_triggered,
+            on_protection_equipment_cleared_callback=self._on_protection_equipment_cleared,
             **simulator_config
         )
         self._simulator_thread.daemon = True
@@ -129,9 +139,9 @@ class PowerGridSimulator(PhysicalSimulator):
             self._simulator_thread.ready_event,
             self._profile_thread.ready_event
         )
-        self._export_thread.start()
-        self._simulator_thread.start()
         self._profile_thread.start()
+        self._export_thread.start(wait_for_event=self._simulator_thread.ready_event)
+        self._simulator_thread.start(wait_for_event=self._profile_thread.ready_event)
 
     @staticmethod
     def _get_default_profile_config():
@@ -213,7 +223,7 @@ class PowerGridSimulator(PhysicalSimulator):
         if not power_grid_file.exists():
             raise InvalidScenarioException("Scenario requires power-grid.yml")
         with power_grid_file.open("r") as f:
-            power_grid_data = yaml.load(f, Loader=yaml.Loader)
+            power_grid_data = yaml.load(f, Loader=yaml.CLoader)
         self._grid_model.from_primitive_dict(power_grid_data)
         self._configuration_store.register_configuration("power_grid_model", power_grid_data)
 
@@ -302,13 +312,15 @@ class PowerGridSimulator(PhysicalSimulator):
                     response_elements = self._grid_representation_cache.get_raw_content()
                     return WattsonResponse(successful=True, data={"grid_elements": response_elements})
                 else:
-                    response = WattsonAsyncResponse()
+                    # This query allows for a group response if multiple clients request the same data
+                    response = self._get_async_group_response(PowerGridQueryType.GET_GRID_REPRESENTATION)
 
                     def resolve_power_grid_task(r, d):
                         _response_elements = self._grid_representation_cache.get_content()
                         return WattsonResponse(successful=True, data={"grid_elements": _response_elements})
 
-                    response.resolve_with_task(resolve_power_grid_task)
+                    if not response.is_resolvable():
+                        response.resolve_with_task(resolve_power_grid_task)
                     return response
 
             if query.query_type == PowerGridQueryType.SET_GRID_VALUE_STATE:
@@ -362,6 +374,24 @@ class PowerGridSimulator(PhysicalSimulator):
                     "data": element.get_data()
                 }
         return response_elements
+
+    def _get_async_group_response(self, group_key: str) -> WattsonAsyncGroupResponse:
+        response = WattsonAsyncGroupResponse(group_key)
+        if group_key not in self._async_group_responses:
+            self._async_group_responses[group_key] = response
+            response.block()
+        else:
+            cached_response = self._async_group_responses.get(group_key)
+            if not cached_response.is_resolving:
+                # Response is still waiting
+                if cached_response.block():
+                    response = cached_response
+                else:
+                    response.block()
+            else:
+                self._async_group_responses[group_key] = response
+                response.block()
+        return response
 
     def _configure_network_nodes(self):
         if self._configuration_store is None:
@@ -434,6 +464,7 @@ class PowerGridSimulator(PhysicalSimulator):
                         node.add_service(WattsonPythonService(GuiDeployment, vcc_configuration, node))
                     else:
                         from wattson.apps.vcc.deployment import VccDeployment
+                        vcc_configuration["export_config"] = self.get_configuration_store().get_configuration("configuration", {}).get("vcc_export", [])
                         node.add_service(WattsonPythonService(VccDeployment, vcc_configuration, node))
                 except ImportError as e:
                     self.logger.warning(f"Cannot add VCC service as the module cannot be found ({e=})")
@@ -464,7 +495,8 @@ class PowerGridSimulator(PhysicalSimulator):
         return self._required_sim_control_clients.copy()
 
     def _on_simulation_iteration_start(self):
-        pass
+        if self._auto_interval_enable:
+            self._auto_interval_last_start = time.perf_counter()
 
     def _on_simulation_iteration_sync(self, successful: bool):
         pass
@@ -495,9 +527,34 @@ class PowerGridSimulator(PhysicalSimulator):
                             export_dict[grid_value.get_identifier()] = value
             self._export_thread.export(timestamp=t, values=export_dict)
 
+        # Potentially adjust simulation interval
+        if successful and self._auto_interval_enable and self._auto_interval_last_start is not None:
+            duration = time.perf_counter() - self._auto_interval_last_start
+            self._auto_interval_last_durations.append(duration)
+            if len(self._auto_interval_last_durations) > self._auto_interval_history_size:
+                self._auto_interval_last_durations = self._auto_interval_last_durations[1:]
+            average_duration = sum(self._auto_interval_last_durations) / len(self._auto_interval_last_durations)
+            calculated_interval = average_duration * self._auto_interval_target_factor
+            applicable_interval = min(max(calculated_interval, self._auto_interval_minimum), self._auto_interval_maximum)
+            adjustment_step = abs(self._auto_interval_current - applicable_interval)
+
+            if adjustment_step > self._auto_interval_adjustment_difference:
+                self.logger.debug(f"Adjusting simulation interval from {self._auto_interval_current}s to {applicable_interval}s")
+                self._auto_interval_current = applicable_interval
+                self._simulation_required.set_max_queue_interval_s(self._auto_interval_current)
+
     def _on_protection_equipment_triggered(self, grid_element: GridElement, protection_name: str):
         self.send_notification(PowerGridNotification(
             notification_topic=PowerGridNotificationTopic.PROTECTION_TRIGGERED,
+            notification_data={
+                "grid_element": grid_element.get_identifier(),
+                "protection_name": protection_name
+            }
+        ))
+
+    def _on_protection_equipment_cleared(self, grid_element: GridElement, protection_name: str):
+        self.send_notification(PowerGridNotification(
+            notification_topic=PowerGridNotificationTopic.PROTECTION_CLEARED,
             notification_data={
                 "grid_element": grid_element.get_identifier(),
                 "protection_name": protection_name
@@ -512,6 +569,16 @@ class PowerGridSimulator(PhysicalSimulator):
             # Potentially trigger callbacks for related grid values
             related.get_value()
         if grid_value.value_context == GridValueContext.CONFIGURATION:
+            # TODO: Evaluate how storage processing affects the performance.
+            #  This should not lead to problems with auto interval enabled.
+            #  Hence, we do not skip any configurations now
+            """
+            skipped_configurations = [("storage", "current_charge"), ("storage", "state_of_charge")]            
+            parts = grid_value.get_identifier().split(".")
+            for e_type, v_name in skipped_configurations:
+                if e_type == parts[0] and v_name == parts[3]:
+                    return
+            """
             self.queue_iteration_required()
 
     def _queue_grid_value_update_notification(self, grid_value: GridValue):
@@ -577,5 +644,4 @@ class PowerGridSimulator(PhysicalSimulator):
                 internal_grid_value.set_value(value)
             except Exception as e:
                 self.logger.error(f"{e=}")
-                self.logger.error(f"{traceback.print_exception(*sys.exc_info())}")
-
+                self.logger.error(f"{traceback.format_exc()}")

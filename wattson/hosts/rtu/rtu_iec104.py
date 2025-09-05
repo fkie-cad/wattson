@@ -1,5 +1,6 @@
 import datetime
 import logging
+import traceback
 from typing import Optional, TYPE_CHECKING
 
 import numpy as np
@@ -28,6 +29,8 @@ class RtuIec104:
             self.logger.info("Globally disabling periodic updates")
         self.server = None
 
+        self.logger.info("Initialized RtuIec104")
+
     def setup_socket(self):
         def update_datapoint(point: IEC104Point):
             identifier = f"{point.coa}.{point.ioa}"
@@ -44,10 +47,11 @@ class RtuIec104:
                 point.value = val
                 #point.value = point.value.__class__(val)
             except Exception as e:
-                self.logger.error(f"Error reading {identifier} // {val=} @ {point.value.__class__} vs {val.__class__}: {e}")
+                self.logger.error(f"Error reading {identifier} ({type(point)}) // {val=} @ {point.value.__class__} vs {val.__class__}: {e}")
+                self.logger.error(traceback.print_exc())
 
         def on_unexpected_msg(server, message, cause):
-            self.logger.warning(f"Received unexpected, likely bad msg with cause {cause}: {message.type}")
+            self.logger.warning(f"Received unexpected, likely bad message with cause {cause}: {message.type}")
                                 #f"{message.cot} {message.ioa} {message.value} {message.quality}")
 
         def on_clock_synch(new_ts: datetime.datetime):

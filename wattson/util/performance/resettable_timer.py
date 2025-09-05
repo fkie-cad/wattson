@@ -25,7 +25,14 @@ class ResettableTimer(Thread):
         self.finished.set()
 
     def reset(self, interval=None):
-        """ Reset the timer """
+        """
+        Reset the timer
+
+        Args:
+            interval:
+                
+                (Default value = None)
+        """
         if interval:
             self.interval = interval
         self.resetted = True

@@ -68,8 +68,10 @@ class PowerGridProvider(DataPointProvider):
         """
         Subscribes to the given data point identifiers for on_change events.
         For future change events linked to one of the given identifiers, the configured callbacks are called.
-        @param ids: The set or list of data point identifiers
-        @return:
+
+        Args:
+            ids (Iterable):
+                The set or list of data point identifiers
         """
         super().add_filter_ids(ids)
         paths = set()
@@ -80,8 +82,10 @@ class PowerGridProvider(DataPointProvider):
     def add_filter_paths(self, paths: Set):
         """
         Subscribes to changes of the identified grid value identifiers (paths), e.g., bus.1.voltage.
-        :param paths: A set of grid value identifiers / paths to monitor.
-        :return:
+
+        Args:
+            paths (Set):
+                A set of grid value identifiers / paths to monitor.
         """
         self.filter_paths.update(paths)
         for path in paths:
@@ -130,6 +134,7 @@ class PowerGridProvider(DataPointProvider):
     def _on_set(self, grid_value: GridValue, old_value: Any, new_value: Any):
         path = grid_value.get_identifier()
         changed = True
+        # self.logger.info(f"{grid_value.get_identifier()} | {old_value} -> {new_value}")
         try:
             changed = old_value != new_value
         except Exception:
@@ -190,11 +195,14 @@ class PowerGridProvider(DataPointProvider):
 
     def _add_identifier_to_map(self, identifier: str, data_point: dict):
         """
-        Get all power grid value / attribute identifiers (e_type.e_index.a_context.a_name) for this data point
-        and map them to the data point identifier.
-        :param identifier: The data point identifier
-        :param data_point: The data point configuration dictionary
-        :return:
+        Get all power grid value / attribute identifiers (e_type.e_index.a_context.a_name) for this data point and map them to the data point
+        identifier.
+
+        Args:
+            identifier (str):
+                The data point identifier
+            data_point (dict):
+                The data point configuration dictionary
         """
         paths = set()
         dp = data_point
@@ -217,12 +225,19 @@ class PowerGridProvider(DataPointProvider):
                                                   grid_value_context: str,
                                                   grid_value_name: str) -> List[str]:
         """
-        Given a grid value path (i.e., the grid element's identifier and grid value name), returns a list
-        of data point identifiers that are linked to this grid value.
-        @param grid_element_identifier: The element identifier, e.g., bus.0
-        @param grid_value_context: The grid value context, e.g., MEASUREMENT
-        @param grid_value_name: The name of the grid value
-        @return: A list of data point identifiers that are linked to the specified grid value
+        Given a grid value path (i.e., the grid element's identifier and grid value name), returns a list of data point identifiers that are
+        linked to this grid value.
+
+        Args:
+            grid_element_identifier (str):
+                The element identifier, e.g., bus.0
+            grid_value_context (str):
+                The grid value context, e.g., MEASUREMENT
+            grid_value_name (str):
+                The name of the grid value
+
+        Returns:
+            List[str]: A list of data point identifiers that are linked to the specified grid value
         """
         path = f"{grid_element_identifier}.{grid_value_context}.{grid_value_name}"
         return self._path_to_identifier_map.get(path, set())

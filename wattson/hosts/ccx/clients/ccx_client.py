@@ -1,6 +1,7 @@
 import abc
 from typing import TYPE_CHECKING, Optional, Callable, Any, Dict
 
+from wattson.hosts.ccx.app_gateway.data_objects.ccx_report import CCXReport
 from wattson.hosts.ccx.connection_status import CCXConnectionStatus
 from wattson.hosts.ccx.protocols import CCXProtocol
 
@@ -92,3 +93,6 @@ class CCXProtocolClient(abc.ABC):
 
     def trigger_on_client_event(self, event: Dict):
         self.trigger_all("client_event", self, event)
+
+    def trigger_on_report(self, server_key: str, server_ip: str, server_port: int, report_identifier: str, report: CCXReport, protocol_data: Optional[Dict] = None):
+        self.trigger_all("report", self, server_key, server_ip, server_port, report_identifier, report, protocol_data)

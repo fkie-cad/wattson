@@ -53,7 +53,7 @@ class PowerOwlProfileLoader(PowerProfileLoader):
                 self.logger.error(f"Could not find file: {file}")
                 continue
             with file.open("r") as f:
-                self.logger.debug(f"Loading {self.domain} profile from {file.absolute().__str__()}")
+                self.logger.info(f"Loading {self.domain} profile from {file.absolute().__str__()}")
                 raw_profiles = json.load(f)
                 normalized_profiles.update(self._normalize_profiles(raw_profiles))
         return normalized_profiles

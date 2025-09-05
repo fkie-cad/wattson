@@ -1,6 +1,5 @@
 import abc
 import ipaddress
-import json
 import logging
 import subprocess
 import sys
@@ -101,16 +100,16 @@ class NetworkEmulator(Simulator):
     @abc.abstractmethod
     def cli(self):
         """
-        Start a command-line-interface to interact with the network emulator
-        :return:
+        Start a command-line-interface to interact with the network emulator :return:
+
         """
         ...
 
     @abc.abstractmethod
     def deploy_services(self):
         """
-        Start services attached to network nodes
-        :return:
+        Start services attached to network nodes :return:
+
         """
         ...
 
@@ -120,8 +119,10 @@ class NetworkEmulator(Simulator):
     def add_node(self, node: WattsonNetworkNode) -> WattsonNetworkNode:
         """
         Adds a WattsonNetworkNode to the network emulation
-        :param node: The network node to add
-        :return:
+
+        Args:
+            node (WattsonNetworkNode):
+                The network node to add
         """
         self._add_graph_node(node)
         node.network_emulator = self
@@ -135,9 +136,15 @@ class NetworkEmulator(Simulator):
     def replace_node(self, original_node: WattsonNetworkNode, new_node: WattsonNetworkNode) -> WattsonNetworkNode:
         """
         Replaces an existing node with a new one, moving all interfaces from the original node to the new node while preserving links
-        @param original_node: The node to be replaced
-        @param new_node: The new node to replace the existing one.
-        @return: The newly inserted node
+
+        Args:
+            original_node (WattsonNetworkNode):
+                The node to be replaced
+            new_node (WattsonNetworkNode):
+                The new node to replace the existing one.
+
+        Returns:
+            WattsonNetworkNode: The newly inserted node
         """
         # Delete original node (also removes edges to interfaces)
         self.remove_node(original_node, handle_interfaces=False)
@@ -170,8 +177,13 @@ class NetworkEmulator(Simulator):
     def has_entity(self, entity: Union[str, WattsonNetworkEntity]) -> bool:
         """
         Checks whether the given entity exists within the internal network graph.
-        :param entity: The WattsonNetworkEntity or its unique entity_id
-        :return: True iff the entity has a corresponding node in the graph
+
+        Args:
+            entity (Union[str, WattsonNetworkEntity]):
+                The WattsonNetworkEntity or its unique entity_id
+
+        Returns:
+            bool: True iff the entity has a corresponding node in the graph
         """
         entity_id = entity.entity_id if isinstance(entity, WattsonNetworkEntity) else entity
         return entity_id in self._graph.nodes
@@ -210,9 +222,17 @@ class NetworkEmulator(Simulator):
     def find_node_by_name(self, node_name: str) -> WattsonNetworkNode:
         """
         Searches for a node with the given display name.
-        @raise NetworkNodeNotFoundException if no node with the given name is found
-        @param node_name: The name to search for
-        @return: The (first) the node with the given display name
+
+        Args:
+            node_name (str):
+                The name to search for
+
+        Returns:
+            WattsonNetworkNode: The (first) the node with the given display name
+
+        Raises:
+            NetworkNodeNotFoundException:            if no node with the given name is found
+
         """
         for node in self.get_nodes():
             if node.display_name == node_name:
@@ -222,9 +242,17 @@ class NetworkEmulator(Simulator):
     def find_node_by_id(self, node_id: str) -> WattsonNetworkNode:
         """
         Searches for a node with the given (non-prefixed) ID and returns the node.
-        @raise NetworkNodeNotFoundException if no node with the given ID is found
-        @param node_id: The id of the node to search for
-        @return: The node with the given Id
+
+        Args:
+            node_id (str):
+                The id of the node to search for
+
+        Returns:
+            WattsonNetworkNode: The node with the given Id
+
+        Raises:
+            NetworkNodeNotFoundException:            if no node with the given ID is found
+
         """
         for node in self.get_nodes():
             if node.id == node_id:
@@ -241,8 +269,13 @@ class NetworkEmulator(Simulator):
     def find_nodes_by_ip_address(self, ip_address: Union[str, ipaddress.IPv4Address]) -> List[WattsonNetworkNode]:
         """
         Searches for all nodes with the given IP address and returns the nodes.
-        @param ip_address: The IP address to search for
-        @return: A list of nodes with the given IP address
+
+        Args:
+            ip_address (Union[str, ipaddress.IPv4Address]):
+                The IP address to search for
+
+        Returns:
+            List[WattsonNetworkNode]: A list of nodes with the given IP address
         """
         nodes = []
         for node in self.get_nodes():
@@ -338,9 +371,12 @@ class NetworkEmulator(Simulator):
     def add_interface(self, node: Union[str, WattsonNetworkNode], interface: WattsonNetworkInterface) -> WattsonNetworkInterface:
         """
         Adds the given WattsonNetworkInterface to the specified node
-        :param node: The node to add the interface to, either an ID or the node instance
-        :param interface: The interface instance
-        :return:
+
+        Args:
+            node (Union[str, WattsonNetworkNode]):
+                The node to add the interface to, either an ID or the node instance
+            interface (WattsonNetworkInterface):
+                The interface instance
         """
         node = self.get_node(node)
         interface.network_emulator = self
@@ -423,10 +459,17 @@ class NetworkEmulator(Simulator):
         """
         Count the number of hops between the node and the target node.
         Optionally restrict the result path to nodes within the given set of allowed subnets.
-        @param node: The source node
-        @param target_node: The target node
-        @param allowed_subnets: The optional set of allowed subnets
-        @return: The number of hops (i.e., number of links) between the node and the target node. Returns -1 if no path exists.
+
+        Args:
+            node (WattsonNetworkNode):
+                The source node
+            target_node (WattsonNetworkNode):
+                The target node
+            allowed_subnets (Optional[Set[ipaddress.IPv4Network]]):
+                The optional set of allowed subnets
+
+        Returns:
+            int: The number of hops (i.e., number of links) between the node and the target node. Returns -1 if no path exists.
         """
         # BFS
         if node == target_node:
@@ -494,8 +537,10 @@ class NetworkEmulator(Simulator):
     def load_scenario(self, scenario_path: Path):
         """
         Loads the network scenario defined in the given scenario path.
-        :param scenario_path: The path to the scenario configuration
-        :return:
+
+        Args:
+            scenario_path (Path):
+                The path to the scenario configuration
         """
         loader = NetworkScenarioLoader()
         loader.load_scenario(scenario_path=scenario_path, network_emulator=self)
@@ -1319,7 +1364,12 @@ class NetworkEmulator(Simulator):
     def open_browser(self, node: WattsonNetworkNode) -> bool:
         """
         Open a (local) browser for this node if possible
-        @param node: The node to open a browser for
-        @return: Whether a browser could be opened
+
+        Args:
+            node (WattsonNetworkNode):
+                The node to open a browser for
+
+        Returns:
+            bool: Whether a browser could be opened
         """
         return False

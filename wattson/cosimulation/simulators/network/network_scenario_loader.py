@@ -27,7 +27,7 @@ class NetworkScenarioLoader:
         if not network_file.exists():
             raise InvalidScenarioException(f"Network configuration does not exist in {network_file}")
         with network_file.open("r") as f:
-            network_data = yaml.load(f, Loader=yaml.SafeLoader)
+            network_data = yaml.load(f, Loader=yaml.CLoader)
 
         # Add Nodes
         for node_id, node in network_data["nodes"].items():

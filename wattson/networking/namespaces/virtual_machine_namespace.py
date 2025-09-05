@@ -54,8 +54,8 @@ class VirtualMachineNamespace(Namespace):
 
     def loopback_up(self) -> bool:
         """
-        Sets the loopback interface in the namespace up
-        :return:
+        Sets the loopback interface in the namespace up :return:
+
         """
         if self.get_os() == "linux":
             return super().loopback_up()

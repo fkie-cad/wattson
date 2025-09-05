@@ -47,6 +47,7 @@ class ProfileCalculator:
         }
 
         self._profiles = profiles
+
         self.grid_model = grid_model
         self.seed = seed
         self.noise = noise
@@ -80,20 +81,35 @@ class ProfileCalculator:
     def get_value(self, element: GridElement, date_time, dimension: str = "active_power") -> Optional[float]:
         """
         Returns the percentage target value of the chosen dimension for the specified grid element and date_time
-        @param element: The grid element to get the value for
-        @param date_time: The date time within the simulation to get the value for
-        @param dimension: The dimension of the grid element
-        @return: The percentage value
+
+        Args:
+            element (GridElement):
+                The grid element to get the value for
+            date_time:
+                The date time within the simulation to get the value for
+            dimension (str, optional):
+                The dimension of the grid element
+                (Default value = "active_power")
+
+        Returns:
+            Optional[float]: The percentage value
         """
         element_type = element.prefix
+        if element_type not in self._profiles:
+            return None
+
         element_profile = self._default_classes[element_type]["_default"]
         try:
             custom_element_profile = element.get_generic_value("profile_name")
-            if custom_element_profile is not None and not self.activate_none_profiles:
+            if custom_element_profile is None and not self.activate_none_profiles:
                 return None
+            if custom_element_profile is not None:
+                element_profile = custom_element_profile
         except KeyError:
             pass
         if element_type not in self._profiles or self._profiles[element_type] is None:
+            if element_profile is not None:
+                self.logger.warning(f"Profile {element_profile} not available for {element_type}")
             return None
         profile = self._profiles[element_type].get(element_profile)
         if profile is None:

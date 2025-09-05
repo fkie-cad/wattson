@@ -1,4 +1,5 @@
 import threading
+import traceback
 from typing import Optional, TYPE_CHECKING, Dict, Any, List, Type
 
 import zmq
@@ -12,6 +13,7 @@ from wattson.hosts.ccx.app_gateway.messages.app_gateway_query import AppGatewayQ
 from wattson.hosts.ccx.app_gateway.messages.app_gateway_response import AppGatewayResponse
 from wattson.hosts.ccx.app_gateway.notification_server import AppGatewayNotificationServer
 from wattson.hosts.ccx.connection_status import CCXConnectionStatus
+from wattson.hosts.ccx.protocols import CCXProtocol
 from wattson.util import get_logger
 
 if TYPE_CHECKING:
@@ -57,10 +59,14 @@ class AppGatewayServer(threading.Thread):
         return self._notification_socket_string
 
     def register_default_query_handlers(self):
-        from wattson.hosts.ccx.app_gateway.handlers.iec104_query_handler import Iec104QueryHandler
         from wattson.hosts.ccx.app_gateway.handlers.default_query_handler import DefaultQueryHandler
         self.register_query_handler_class(DefaultQueryHandler, 0)
-        self.register_query_handler_class(Iec104QueryHandler, 5)
+        if CCXProtocol.IEC104 in self.ccx.protocols:
+            from wattson.hosts.ccx.app_gateway.handlers.iec104_query_handler import Iec104QueryHandler
+            self.register_query_handler_class(Iec104QueryHandler, 5)
+        if CCXProtocol.IEC61850_MMS in self.ccx.protocols:
+            from wattson.hosts.ccx.app_gateway.handlers.iec61850_query_handler import Iec61850QueryHandler
+            self.register_query_handler_class(Iec61850QueryHandler, 5)
 
     def register_query_handler(self, query_handler: QueryHandler, priority: Optional[int] = None):
         self._query_handlers.append(query_handler)
@@ -137,6 +143,7 @@ class AppGatewayServer(threading.Thread):
                     return response
             except Exception as e:
                 self.logger.error(f"Failed to handle query: {e=}")
+                self.logger.error(traceback.format_exc())
         return AppGatewayResponse(False, {"error": "Unhandled query"})
 
     def send_notification(self, notification: AppGatewayNotification):
@@ -148,9 +155,12 @@ class AppGatewayServer(threading.Thread):
     def resolve_async_response(self, async_response: AppGatewayAsyncResponse, response: AppGatewayResponse):
         """
         Sends a (delayed) response to a former WattsonQuery.
-        :param async_response: The async response object to resolve.
-        :param response: The (resolved) response object.
-        :return:
+
+        Args:
+            async_response (AppGatewayAsyncResponse):
+                The async response object to resolve.
+            response (AppGatewayResponse):
+                The (resolved) response object.
         """
         client_id = async_response.client_id
         reference_id = async_response.reference_id

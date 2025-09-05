@@ -27,7 +27,15 @@ class TimedCache:
     def get_content(self, *args, **kwargs) -> Any:
         """
         Returns the cache's content. If the content is outdated, calls the refresh callback first.
-        @return: The cache's (updated) content
+
+        Args:
+            *args:
+                
+            **kwargs:
+                
+
+        Returns:
+            Any: The cache's (updated) content
         """
         try:
             if self._async_refresh:
@@ -44,7 +52,10 @@ class TimedCache:
     def get_raw_content(self) -> Any:
         """
         Returns the cache's content. This does not update the content.
-        @return: The cache's (potentially outdated) content
+
+
+        Returns:
+            Any: The cache's (potentially outdated) content
         """
         return self._content
 

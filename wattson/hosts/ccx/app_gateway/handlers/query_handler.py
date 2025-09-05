@@ -29,7 +29,12 @@ class QueryHandler(abc.ABC):
         Attempts to handle the given query.
         If it is handled, the AppGatewayResponse should be returned.
         If it is not handled, None should be returned.
-        @param query: The received AppGatewayQuery
-        @return: The AppGatewayResponse or None
+
+        Args:
+            query (AppGatewayQuery):
+                The received AppGatewayQuery
+
+        Returns:
+            Optional[AppGatewayResponse]: The AppGatewayResponse or None
         """
         return None

@@ -171,9 +171,15 @@ class WattsonNetworkVirtualMachineHost(WattsonNetworkHost, NetworkVirtualMachine
     def interface_rename(self, old_name: str, new_name: str) -> bool:
         """
         Renames a physical interface on the node
-        @param old_name: The original interface name
-        @param new_name: The new interface name
-        @return: Whether the action was successful
+
+        Args:
+            old_name (str):
+                The original interface name
+            new_name (str):
+                The new interface name
+
+        Returns:
+            bool: Whether the action was successful
         """
         self.logger.debug(f"Renaming interface {old_name} to {new_name}")
         if self.os == "linux":

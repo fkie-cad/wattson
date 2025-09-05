@@ -80,8 +80,13 @@ class Iec104QueryHandler(QueryHandler):
         Attempts to handle the given query.
         If it is handled, the AppGatewayResponse should be returned.
         If it is not handled, None should be returned.
-        @param query: The received AppGatewayQuery
-        @return: The AppGatewayResponse or None
+
+        Args:
+            query (AppGatewayQuery):
+                The received AppGatewayQuery
+
+        Returns:
+            Optional[AppGatewayResponse]: The AppGatewayResponse or None
         """
         q_type = query.query_type
         q_data = query.query_data
@@ -115,7 +120,10 @@ class Iec104QueryHandler(QueryHandler):
         """
         Data Point Setting Commands
         """
-        if q_type == AppGatewayMessageType.SET_DATA_POINT_COMMAND:
+        if q_type in [AppGatewayMessageType.SET_DATA_POINT_COMMAND,
+                      AppGatewayMessageType.WRITE_DATA_POINT_COMMAND,
+                      AppGatewayMessageType.CONTROL_DATA_POINT_COMMAND]:
+            # For IEC104, SET = WRITE = CONTROL
             data_point_identifier = q_data.get("data_point_identifier")
             data_point = self.get_iec_104_data_point(data_point_identifier)
             value = q_data.get("value")

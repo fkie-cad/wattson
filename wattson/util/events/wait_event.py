@@ -6,6 +6,7 @@ class WaitEvent(threading.Event):
     """
     Triggers the internal event after the given timeout (in seconds).
     Allows to manually set, wait and check the internal event.
+
     """
     def __init__(self, timeout: float = 0, event: Optional[threading.Event] = None):
         super().__init__()
@@ -22,8 +23,11 @@ class WaitEvent(threading.Event):
     def start(self, timeout: Optional[float] = None):
         """
         Starts the timer.
-        @param timeout: Optionally overrides the initially given timeout
-        @return:
+
+        Args:
+            timeout (Optional[float], optional):
+                Optionally overrides the initially given timeout
+                (Default value = None)
         """
         if self._thread is None or not self._thread.is_alive():
             self._cancel.clear()
@@ -38,18 +42,12 @@ class WaitEvent(threading.Event):
             self._cancel.set()
 
     def cancel(self):
-        """
-        Cancels the waiting immediately which does NOT fire the internal event
-        @return:
-        """
+        """Cancels the waiting immediately which does NOT fire the internal event"""
         self._restart.clear()
         self._cancel.set()
 
     def complete(self):
-        """
-        Cancels the waiting immediately and fires the internal event.
-        @return:
-        """
+        """Cancels the waiting immediately and fires the internal event."""
         self._cancel.set()
         self._event.set()
 

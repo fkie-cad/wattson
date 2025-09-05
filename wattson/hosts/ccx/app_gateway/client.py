@@ -28,7 +28,7 @@ class AppGatewayClient(threading.Thread):
         self._query_socket_string = query_socket_string
 
         if client_name is None:
-            client_name = f"generic-client-{uuid.uuid4()}"
+            client_name = f"generic-client"
 
         if self._notification_socket_string is None:
             if ip_address is None:
@@ -41,7 +41,7 @@ class AppGatewayClient(threading.Thread):
             else:
                 self._query_socket_string = f"tcp://{ip_address}:{APP_GATEWAY_QUERY_PORT}"
 
-        self._client_name = client_name
+        self._client_name = f"{client_name}-{uuid.uuid4()}"
         self._client_id: Optional[str] = None
         self._registered: bool = False
 
@@ -105,7 +105,7 @@ class AppGatewayClient(threading.Thread):
             query = self._async_queries.get(reference_id)
             if query is None:
                 self._pre_resolved_queries[reference_id] = notification
-                self.logger.warning(f"Unknown async query response {reference_id=} resolved")
+                self.logger.warning(f"Unknown async query response {reference_id=} resolved by client {self.client_id} (for client {recipient})")
                 return
             # Remove entry / mark as resolved
             self._async_queries.pop(reference_id)

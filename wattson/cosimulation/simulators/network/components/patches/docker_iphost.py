@@ -26,8 +26,16 @@ class IPDocker(Docker, IPHost):
 
     def _image_exists(self, repo, tag, _id=None):
         """
-        Checks if the repo:tag image exists locally
-        :return: True if the image exists locally. Else false.
+        Checks if the repo:tag image exists locally :return: True if the image exists locally. Else false.
+
+        Args:
+            repo:
+                
+            tag:
+                
+            _id:
+                
+                (Default value = None)
         """
         images = self.dcli.images()
         imageTag = "%s:%s" % (repo, tag)

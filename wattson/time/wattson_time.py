@@ -16,8 +16,8 @@ class WattsonTime:
     """
     A representation for time in both, the wall-clock perspective and the simulated time.
     Simulated time is defined at a different speed and with a given offset to wall-clock time, i.e.,
-    the offset is derived from a representation of a wall-clock timestamp that corresponds to a
-    simulation clock timestamp.
+    the offset is derived from a representation of a wall-clock timestamp that corresponds to a simulation clock timestamp.
+
     """
     def __init__(self,
                  wall_clock_reference: float = None,
@@ -25,13 +25,19 @@ class WattsonTime:
                  speed: float = 1):
         """
         Creates a new WattsonTime object.
-        If no parameters are given, this instance represents the concurrent execution of both, the wall-clock and
-        the simulation clock.
-        @param wall_clock_reference: The start time of the simulation as wall-clock timestamp
-        @param sim_clock_reference: The start time of the simulation in simulated time, i.e., the simulated timestamp
-            that corresponds to the wall-clock timestamp
-        @param speed: The speed factor between wall-clock and simulation clock. A value of 2 indicates that for each
-            wall-clock second, two simulated seconds pass.
+        If no parameters are given, this instance represents the concurrent execution of both, the wall-clock and the simulation clock.
+
+        Args:
+            wall_clock_reference (float, optional):
+                The start time of the simulation as wall-clock timestamp
+                (Default value = None)
+            sim_clock_reference (float, optional):
+                The start time of the simulation in simulated time, i.e., the simulated timestamp that corresponds to the wall-clock timestamp
+                (Default value = None)
+            speed (float, optional):
+                The speed factor between wall-clock and simulation clock. A value of 2 indicates that for each wall-clock second, two simulated
+                seconds pass.
+                (Default value = 1)
         """
         self._reference_wall: float = time.time() if wall_clock_reference is None else wall_clock_reference
         self._reference_sim: float = self._reference_wall if sim_clock_reference is None else sim_clock_reference
@@ -99,11 +105,19 @@ class WattsonTime:
         ):
         """
         Synchronize this time instance with other participants in the simulation.
-        @param wattson_client: The WattsonClient to use for simulation
-        @param enable_pull: Whether to apply received time updates locally
-        @param enable_push: Whether to submit local time to the WattsonServer
-        @param prefer_local: Whether to initially submit the local time to the WattsonServer
-        @return:
+
+        Args:
+            wattson_client ('WattsonClient'):
+                The WattsonClient to use for simulation
+            enable_pull (bool, optional):
+                Whether to apply received time updates locally
+                (Default value = True)
+            enable_push (bool, optional):
+                Whether to submit local time to the WattsonServer
+                (Default value = True)
+            prefer_local (bool, optional):
+                Whether to initially submit the local time to the WattsonServer
+                (Default value = False)
         """
         self._wattson_client = wattson_client
         self._wattson_client.subscribe(topic=WattsonNotificationTopic.WATTSON_TIME, callback=self._update_from_server)
@@ -150,8 +164,14 @@ class WattsonTime:
     def time(self, time_type: WattsonTimeType = WattsonTimeType.WALL) -> float:
         """
         Returns the current timestamp for the selected time type
-        @param time_type: The type to return (wall or simulated)
-        @return: The current timestamp
+
+        Args:
+            time_type (WattsonTimeType, optional):
+                The type to return (wall or simulated)
+                (Default value = WattsonTimeType.WALL)
+
+        Returns:
+            float: The current timestamp
         """
         if time_type == WattsonTimeType.WALL:
             return self.wall_clock_time()
@@ -160,12 +180,14 @@ class WattsonTime:
     def wall_clock_time(self) -> float:
         """
         Returns the current (wall-clock) timestamp
+
         """
         return self._wall_clock_function()
 
     def sim_clock_time(self) -> float:
         """
         Returns the current simulation clock timestamp
+
         """
         sim_time_passed = self.passed_sim_clock_seconds()
         return self._reference_sim + sim_time_passed
@@ -173,8 +195,13 @@ class WattsonTime:
     def start_timestamp(self, time_type: WattsonTimeType) -> float:
         """
         The timestamp the simulation started at in wall-clock time
-        @param time_type: The time type to return (wall or simulation)
-        @return: The wall-clock timestamp that the simulation started
+
+        Args:
+            time_type (WattsonTimeType):
+                The time type to return (wall or simulation)
+
+        Returns:
+            float: The wall-clock timestamp that the simulation started
         """
         if time_type == WattsonTimeType.WALL:
             return self._reference_wall
@@ -183,22 +210,27 @@ class WattsonTime:
     def sim_start_time(self) -> float:
         """
         Returns the timestamp the simulation started at in sim-clock time
-        @return:
+
         """
         return self.start_timestamp(time_type=WattsonTimeType.SIM)
 
     def wall_start_time(self) -> float:
         """
         Returns the timestamp the simulation started at in wall-clock time
-        @return:
+
         """
         return self.start_timestamp(time_type=WattsonTimeType.WALL)
 
     def passed_seconds(self, time_type: WattsonTimeType) -> float:
         """
         Returns the number of seconds passed since the start of the simulation in wall clock time
-        @param time_type: The time type to return (wall or simulation)
-        @return The number of seconds passed since the start of the simulation
+
+        Args:
+            time_type (WattsonTimeType):
+                The time type to return (wall or simulation)
+
+        Returns:
+            float: The number of seconds passed since the start of the simulation
         """
         if time_type == WattsonTimeType.WALL:
             return self.passed_wall_clock_seconds()
@@ -210,6 +242,7 @@ class WattsonTime:
     def passed_sim_clock_seconds(self) -> float:
         """
         Returns the number of seconds passed since the start of the simulation in simulation clock time
+
         """
         return self.passed_wall_clock_seconds() * self.speed
 
@@ -219,9 +252,16 @@ class WattsonTime:
     def start_datetime(self, time_type: WattsonTimeType, timezone: datetime.tzinfo = datetime.timezone.utc) -> datetime.datetime:
         """
         Returns a datetime object representing the simulation start time of the given time type
-        @param time_type: The time type to return (wall or simulation)
-        @param timezone: The timezone (tzinfo) to use.
-        @return: The datetime object representing the simulation's start time
+
+        Args:
+            time_type (WattsonTimeType):
+                The time type to return (wall or simulation)
+            timezone (datetime.tzinfo, optional):
+                The timezone (tzinfo) to use.
+                (Default value = datetime.timezone.utc)
+
+        Returns:
+            datetime.datetime: The datetime object representing the simulation's start time
         """
         return datetime.datetime.fromtimestamp(self.start_timestamp(time_type=time_type), tz=timezone)
 
@@ -233,9 +273,16 @@ class WattsonTime:
                     timezone: datetime.tzinfo = datetime.timezone.utc) -> datetime.datetime:
         """
         Returns the represented time as a datetime.datetime object.
-        @param time_type: The time type to return (wall or simulation)
-        @param timezone: The timezone (tzinfo) to use.
-        @return: The datetime object representing the current time
+
+        Args:
+            time_type (WattsonTimeType):
+                The time type to return (wall or simulation)
+            timezone (datetime.tzinfo, optional):
+                The timezone (tzinfo) to use.
+                (Default value = datetime.timezone.utc)
+
+        Returns:
+            datetime.datetime: The datetime object representing the current time
         """
         return datetime.datetime.fromtimestamp(self.time(time_type=time_type), tz=timezone)
 
@@ -254,13 +301,28 @@ class WattsonTime:
                   force_dashes: bool = True) -> str:
         """
         Returns the current wall time as a datetime string for usage as a file name in ISO 8601.
-        @param time_type: The time type to return (wall or simulation)
-        @param as_local: Whether to use the local timezone or UTC.
-        @param with_time: Whether to include the time besides the date in the string
-        @param with_milliseconds: Whether to add milliseconds to the string (requires with_time = True)
-        @param with_timestamp: Whether to add the timestamp to the string
-        @param force_dashes: Replace dots and colons with dashes for better file system compatibility
-        @return: A String representation of the current time to be used as a filename
+
+        Args:
+            time_type (WattsonTimeType):
+                The time type to return (wall or simulation)
+            as_local (bool, optional):
+                Whether to use the local timezone or UTC.
+                (Default value = False)
+            with_time (bool, optional):
+                Whether to include the time besides the date in the string
+                (Default value = True)
+            with_milliseconds (bool, optional):
+                Whether to add milliseconds to the string (requires with_time = True)
+                (Default value = False)
+            with_timestamp (bool, optional):
+                Whether to add the timestamp to the string
+                (Default value = False)
+            force_dashes (bool, optional):
+                Replace dots and colons with dashes for better file system compatibility
+                (Default value = True)
+
+        Returns:
+            str: A String representation of the current time to be used as a filename
         """
         dt = self.to_local_datetime(time_type=time_type) if as_local else self.to_utc_datetime(time_type=time_type)
         ts = self.time(time_type=time_type)

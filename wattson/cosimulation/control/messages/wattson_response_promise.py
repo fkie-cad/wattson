@@ -31,6 +31,7 @@ class WattsonResponsePromise(WattsonResponse):
     def is_resolved(self) -> bool:
         """
         Checks whether the associated query has already been resolved
+
         """
         return self._resolve_event.is_set()
 
@@ -39,6 +40,11 @@ class WattsonResponsePromise(WattsonResponse):
         Wait for the query to resolve.
         If a timeout is given, the waiting is stopped after this timeout (in seconds).
         Returns True iff the query has been resolved.
+
+        Args:
+            timeout (Optional[float], optional):
+                
+                (Default value = None)
         """
         return self._resolve_event.wait(timeout=timeout)
 
@@ -46,6 +52,7 @@ class WattsonResponsePromise(WattsonResponse):
         """
         If the associated query has been resolved, the respective WattsonResponse is returned.
         Otherwise, None is returned.
+
         """
         if not self.is_resolved():
             return None
@@ -54,8 +61,10 @@ class WattsonResponsePromise(WattsonResponse):
     def on_resolve(self, callback: Callable[[WattsonResponse], None]):
         """
         Adds a callback to be called as soon as the promise resolves.
-        @param callback: The callback to call
-        @return:
+
+        Args:
+            callback (Callable[[WattsonResponse], None]):
+                The callback to call
         """
         self._on_resolve_callbacks.append(callback)
         self._start_watchdog()
@@ -64,7 +73,7 @@ class WattsonResponsePromise(WattsonResponse):
         """
         As soon as the response resolves, it is checked for its success.
         In case it is not successful, an exception is raised.
-        @return:
+
         """
         def callback(response):
             if not response.is_successful():

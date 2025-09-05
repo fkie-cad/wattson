@@ -56,8 +56,10 @@ class WattsonNetworkLink(WattsonNetworkEntity, NetworkLink):
     def add_on_link_property_change_callback(self, callback: Callable[['WattsonNetworkLink', str, Any], None]):
         """
         Sets a callback to be called whenever a link model property is updated.
-        @param callback: The callback to call. Takes the link instance, the changed property name and the new value
-        @return:
+
+        Args:
+            callback (Callable[['WattsonNetworkLink', str, Any], None]):
+                The callback to call. Takes the link instance, the changed property name and the new value
         """
         self._on_link_property_change_callbacks.append(callback)
 

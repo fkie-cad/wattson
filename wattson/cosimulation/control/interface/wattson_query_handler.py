@@ -21,8 +21,13 @@ class WattsonQueryHandler(abc.ABC):
     def handles_simulation_query_type(self, query: Union[WattsonQuery, Type[WattsonQuery]]) -> bool:
         """
         Checks whether the physical simulator handles specific SimulationControlQueries.
-        :param query: The query instance or class to be checked.
-        :return: Whether this simulator can handle this query type
+
+        Args:
+            query (Union[WattsonQuery, Type[WattsonQuery]]):
+                The query instance or class to be checked.
+
+        Returns:
+            bool: Whether this simulator can handle this query type
         """
         ...
 
@@ -31,7 +36,9 @@ class WattsonQueryHandler(abc.ABC):
         """
         Handles the given WattsonQuery and provides an optional response.
         If the query type is not supported, this should raise an InvalidSimulationControlQueryException.
-        :param query:
-        :return:
+
+        Args:
+            query (WattsonQuery):
+                
         """
         ...

@@ -20,7 +20,10 @@ class WattsonServiceInterface(abc.ABC):
     def get_start_command(self) -> List[str]:
         """
         Returns the command to be executed for starting this service on the network node
-        @return: The start command as a list of strings.
+
+
+        Returns:
+            List[str]: The start command as a list of strings.
         """
         ...
 
@@ -28,7 +31,10 @@ class WattsonServiceInterface(abc.ABC):
     def get_priority(self) -> ServicePriority:
         """
         Returns the service's priority
-        @return: The associated ServicePriority object
+
+
+        Returns:
+            ServicePriority: The associated ServicePriority object
         """
         ...
 
@@ -36,8 +42,14 @@ class WattsonServiceInterface(abc.ABC):
     def start(self, refresh_config: bool = False) -> bool:
         """
         Start the service.
-        @param refresh_config: Whether to refresh the config even if it already exists.
-        @return: True iff the service has been started.
+
+        Args:
+            refresh_config (bool, optional):
+                Whether to refresh the config even if it already exists.
+                (Default value = False)
+
+        Returns:
+            bool: True iff the service has been started.
         """
         ...
 
@@ -45,10 +57,20 @@ class WattsonServiceInterface(abc.ABC):
     def stop(self, wait_seconds: float = 5, auto_kill: bool = False, async_callback: Optional[Callable[['WattsonServiceInterface'], None]] = None) -> bool:
         """
         Stop the service.
-        @param wait_seconds: Number of seconds to wait for the service to gracefully terminate.
-        @param auto_kill: Whether to kill the service automatically after the waiting timeout has been exceeded.
-        @param async_callback: An optional callback to call once the service has terminated. Makes the stop method return immediately.
-        @return: None if an async_callback is given, else True iff the service has been terminated.
+
+        Args:
+            wait_seconds (float, optional):
+                Number of seconds to wait for the service to gracefully terminate.
+                (Default value = 5)
+            auto_kill (bool, optional):
+                Whether to kill the service automatically after the waiting timeout has been exceeded.
+                (Default value = False)
+            async_callback (Optional[Callable[['WattsonServiceInterface'], None]], optional):
+                An optional callback to call once the service has terminated. Makes the stop method return immediately.
+                (Default value = None)
+
+        Returns:
+            bool: None if an async_callback is given, else True iff the service has been terminated.
         """
         ...
 
@@ -56,8 +78,14 @@ class WattsonServiceInterface(abc.ABC):
     def restart(self, refresh_config: bool = False) -> bool:
         """
         Restarts the service. Shortcut for (blocking) stop and start calls.
-        @param refresh_config: Whether to refresh the config even if it already exists
-        @return: Whether the service has been restarted successfully.
+
+        Args:
+            refresh_config (bool, optional):
+                Whether to refresh the config even if it already exists
+                (Default value = False)
+
+        Returns:
+            bool: Whether the service has been restarted successfully.
         """
         ...
 
@@ -65,28 +93,43 @@ class WattsonServiceInterface(abc.ABC):
     def kill(self) -> bool:
         """
         Sends the SIGKILL to the process.
-        @return: True iff the service has been terminated.
+
+
+        Returns:
+            bool: True iff the service has been terminated.
         """
         ...
 
     @abc.abstractmethod
     def is_running(self) -> bool:
         """
-        @return: Whether the service is currently running.
+        
+
+
+        Returns:
+            bool: Whether the service is currently running.
         """
         ...
 
     @abc.abstractmethod
     def is_killed(self) -> bool:
         """
-        @return: Whether the service has been killed.
+        
+
+
+        Returns:
+            bool: Whether the service has been killed.
         """
         ...
 
     @abc.abstractmethod
     def get_pid(self) -> Optional[int]:
         """
-        @return: The PID of the service process or None if the service is not running.
+        
+
+
+        Returns:
+            Optional[int]: The PID of the service process or None if the service is not running.
         """
         ...
 
@@ -94,7 +137,10 @@ class WattsonServiceInterface(abc.ABC):
     def poll(self) -> Optional[int]:
         """
         Polls the service process.
-        @return: None or the return code of the process.
+
+
+        Returns:
+            Optional[int]: None or the return code of the process.
         """
         ...
 
@@ -103,7 +149,13 @@ class WattsonServiceInterface(abc.ABC):
         """
         Waits for the service process to terminate.
         If a timeout is given and the process does not terminate during the timeout, a TimeoutExpired exception is thrown.
-        @param timeout: An optional timeout.
-        @return: The processes return code.
+
+        Args:
+            timeout (Optional[float], optional):
+                An optional timeout.
+                (Default value = None)
+
+        Returns:
+            int: The processes return code.
         """
         ...

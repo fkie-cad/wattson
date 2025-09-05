@@ -9,9 +9,7 @@ from wattson.hosts.rtu.rtu_logic import RTULogic
 
 
 class PhysicalAttackLogic(RTULogic):
-    """
-    RTU Logic that simulates a crash after a waiting period
-    """
+    """RTU Logic that simulates a crash after a waiting period"""
 
     def __init__(self, rtu: 'RTU', **kwargs):
         super().__init__(rtu, **kwargs)

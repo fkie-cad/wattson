@@ -19,8 +19,8 @@ class TimedScript(Script):
         Returns the (simulated) time that this script should start.
         A float value represents a relative offset to the starting simulated time (coordinator).
         A datetime represents an absolute value.
-        None equals the float value 0 (i.e., script starts as soon as the simulation starts)
-        :return:
+        None equals the float value 0 (i.e., script starts as soon as the simulation starts) :return:
+
         """
         return None
 

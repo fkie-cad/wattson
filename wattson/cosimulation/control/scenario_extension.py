@@ -26,6 +26,7 @@ class ScenarioExtension(abc.ABC):
         """
         Called after the initial network creation, but before the physical simulator adds its modifications.
         :return:
+
         """
         pass
 
@@ -33,19 +34,14 @@ class ScenarioExtension(abc.ABC):
         """
         Called after the initial network creation and after the physical simulator adds its modifications.
         :return:
+
         """
         pass
 
     def extend_post_start(self):
-        """
-        Called after the co-simulation has been started, but no services have been started yet.
-        @return:
-        """
+        """Called after the co-simulation has been started, but no services have been started yet."""
         pass
 
     def extend_on_run(self):
-        """
-        Called after the co-simulation has been started and is running.
-        @return:
-        """
+        """Called after the co-simulation has been started and is running."""
         pass

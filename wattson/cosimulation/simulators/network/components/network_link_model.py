@@ -16,8 +16,10 @@ class NetworkLinkModel(WattsonRemoteRepresentation, WattsonRemoteObject):
         """
         Sets a callback to be called when a value is updated.
         The callback is called with the parameter name and the new value.
-        @param callback: The callback to call
-        @return:
+
+        Args:
+            callback (Callable[[str, Any], None]):
+                The callback to call
         """
         self["on_change_callback"] = callback
 
@@ -46,7 +48,10 @@ class NetworkLinkModel(WattsonRemoteRepresentation, WattsonRemoteObject):
     def set_delay_from_timespan(self, timespan: str):
         """
         Sets the delay from a timespan textual representation. E.g., "1.5s" becomes a delay of 1500 ms
-        @param timespan: The timespan string to parse
+
+        Args:
+            timespan (str):
+                The timespan string to parse
         """
         ts = pytimeparse2.parse(timespan)
         if ts is None:
@@ -65,7 +70,10 @@ class NetworkLinkModel(WattsonRemoteRepresentation, WattsonRemoteObject):
     def set_jitter_from_timespan(self, timespan: str):
         """
         Sets the jitter from a timespan textual representation. E.g., "1.5s" becomes a jitter of 1500 ms
-        @param timespan: The timespan string to parse
+
+        Args:
+            timespan (str):
+                The timespan string to parse
         """
         ts = pytimeparse2.parse(timespan)
         if ts is None:
@@ -144,11 +152,11 @@ class NetworkLinkModel(WattsonRemoteRepresentation, WattsonRemoteObject):
     @staticmethod
     def _parse_bandwidth_string(bandwidth: str) -> int:
         """
-        Converts a bandwidth given in Bps, Kbps, Mbps or Gpbs (with unit) to
-        bps without unit
+        Converts a bandwidth given in Bps, Kbps, Mbps or Gpbs (with unit) to bps without unit
 
-        @param bandwidth:
-        @return:
+        Args:
+            bandwidth (str):
+                
         """
         # Regex for multiple digits followed by multiple letters (e.g., 123Mbps)
         match = re.match(r"([0-9]+)([a-z]+)", bandwidth, re.I)

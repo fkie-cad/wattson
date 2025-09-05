@@ -1,0 +1,2416 @@
+links:
+  '1301':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1301'
+    interfaces:
+    - 301.i0
+    - 201.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1302':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1302'
+    interfaces:
+    - 302.i0
+    - 202.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1303':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1303'
+    interfaces:
+    - 1.i0
+    - 302.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1304':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1304'
+    interfaces:
+    - 303.i0
+    - 203.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1305':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1305'
+    interfaces:
+    - 101.i0
+    - 303.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1306':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1306'
+    interfaces:
+    - 102.i0
+    - 303.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1307':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1307'
+    interfaces:
+    - 103.i0
+    - 303.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1308':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1308'
+    interfaces:
+    - 104.i0
+    - 303.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1309':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1309'
+    interfaces:
+    - 105.i0
+    - 303.i5
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1310':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1310'
+    interfaces:
+    - 106.i0
+    - 304.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1311':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1311'
+    interfaces:
+    - 107.i0
+    - 304.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1312':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1312'
+    interfaces:
+    - 108.i0
+    - 304.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1313':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1313'
+    interfaces:
+    - 109.i0
+    - 304.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1314':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1314'
+    interfaces:
+    - 110.i0
+    - 305.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1315':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1315'
+    interfaces:
+    - 111.i0
+    - 305.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1316':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1316'
+    interfaces:
+    - 112.i0
+    - 305.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1317':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1317'
+    interfaces:
+    - 113.i0
+    - 305.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1318':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1318'
+    interfaces:
+    - 114.i0
+    - 306.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1319':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1319'
+    interfaces:
+    - 115.i0
+    - 306.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1320':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1320'
+    interfaces:
+    - 116.i0
+    - 307.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1321':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1321'
+    interfaces:
+    - 117.i0
+    - 308.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1322':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1322'
+    interfaces:
+    - 118.i0
+    - 309.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1323':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1323'
+    interfaces:
+    - 119.i0
+    - 310.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1324':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1324'
+    interfaces:
+    - 120.i0
+    - 310.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1325':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1325'
+    interfaces:
+    - 121.i0
+    - 311.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1326':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1326'
+    interfaces:
+    - 122.i0
+    - 311.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1327':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1327'
+    interfaces:
+    - 123.i0
+    - 312.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1328':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1328'
+    interfaces:
+    - 124.i0
+    - 312.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1329':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1329'
+    interfaces:
+    - 125.i0
+    - 312.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1330':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1330'
+    interfaces:
+    - 126.i0
+    - 312.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1331':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1331'
+    interfaces:
+    - 127.i0
+    - 313.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1332':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1332'
+    interfaces:
+    - 128.i0
+    - 313.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1333':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1333'
+    interfaces:
+    - 129.i0
+    - 314.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1334':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1334'
+    interfaces:
+    - 130.i0
+    - 314.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1335':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1335'
+    interfaces:
+    - 131.i0
+    - 315.i0
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1336':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1336'
+    interfaces:
+    - 132.i0
+    - 315.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1337':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1337'
+    interfaces:
+    - 204.i0
+    - 201.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1338':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1338'
+    interfaces:
+    - 205.i0
+    - 202.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1339':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1339'
+    interfaces:
+    - 205.i1
+    - 204.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1340':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1340'
+    interfaces:
+    - 206.i0
+    - 203.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1341':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1341'
+    interfaces:
+    - 206.i1
+    - 204.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1342':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1342'
+    interfaces:
+    - 206.i2
+    - 205.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1343':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1343'
+    interfaces:
+    - 316.i0
+    - 304.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1344':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1344'
+    interfaces:
+    - 317.i0
+    - 305.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1345':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1345'
+    interfaces:
+    - 317.i1
+    - 316.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1346':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1346'
+    interfaces:
+    - 318.i0
+    - 306.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1347':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1347'
+    interfaces:
+    - 318.i1
+    - 317.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1348':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1348'
+    interfaces:
+    - 319.i0
+    - 307.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1349':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1349'
+    interfaces:
+    - 319.i1
+    - 206.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1350':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1350'
+    interfaces:
+    - 320.i0
+    - 308.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1351':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1351'
+    interfaces:
+    - 320.i1
+    - 319.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1352':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1352'
+    interfaces:
+    - 321.i0
+    - 309.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1353':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1353'
+    interfaces:
+    - 322.i0
+    - 310.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1354':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1354'
+    interfaces:
+    - 322.i1
+    - 321.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1355':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1355'
+    interfaces:
+    - 323.i0
+    - 311.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1356':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1356'
+    interfaces:
+    - 323.i1
+    - 322.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1357':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1357'
+    interfaces:
+    - 324.i0
+    - 312.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1358':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1358'
+    interfaces:
+    - 324.i1
+    - 323.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1359':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1359'
+    interfaces:
+    - 325.i0
+    - 313.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1360':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1360'
+    interfaces:
+    - 325.i1
+    - 324.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1361':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1361'
+    interfaces:
+    - 326.i0
+    - 314.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1362':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1362'
+    interfaces:
+    - 327.i0
+    - 315.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1363':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1363'
+    interfaces:
+    - 327.i1
+    - 316.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1364':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1364'
+    interfaces:
+    - 327.i2
+    - 320.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1365':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1365'
+    interfaces:
+    - 327.i3
+    - 322.i3
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1366':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1366'
+    interfaces:
+    - 327.i4
+    - 326.i1
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+nodes:
+  '1':
+    configuration:
+      dns_host_name: ccx
+    facility_id: '801'
+    facility_name: Control Center
+    id: '1'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.2/24
+      mac: 02:36:a3:76:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: MTU 1
+    position2d:
+    - 1.0909887586910187
+    - 6.090988758691019
+    position3d:
+    - 1.0909887586910187
+    - 6.090988758691019
+    - 1.8
+    role: mtu
+    rtu_map:
+      101: 172.16.2.2/24
+      102: 172.16.2.3/24
+      103: 172.16.2.4/24
+      104: 172.16.2.5/24
+      105: 172.16.2.6/24
+      106: 172.16.3.1/24
+      107: 172.16.3.2/24
+      108: 172.16.3.3/24
+      109: 172.16.3.4/24
+      110: 172.16.3.5/24
+      111: 172.16.3.6/24
+      112: 172.16.3.7/24
+      113: 172.16.3.8/24
+      114: 172.16.3.9/24
+      115: 172.16.3.10/24
+      116: 172.16.3.11/24
+      117: 172.16.3.12/24
+      118: 172.16.3.13/24
+      119: 172.16.3.14/24
+      120: 172.16.3.15/24
+      121: 172.16.3.16/24
+      122: 172.16.3.17/24
+      123: 172.16.3.18/24
+      124: 172.16.3.19/24
+      125: 172.16.3.20/24
+      126: 172.16.3.21/24
+      127: 172.16.3.22/24
+      128: 172.16.3.23/24
+      129: 172.16.3.24/24
+      130: 172.16.3.25/24
+      131: 172.16.3.26/24
+      132: 172.16.3.27/24
+    type: host
+  '101':
+    coa: 101
+    configuration:
+      dns_host_name: rtu-101
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '101'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.2/24
+      mac: 02:d8:b3:e5:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 101
+    position2d:
+    - 0.0
+    - -0.0
+    position3d:
+    - 0.0
+    - -0.0
+    - 1.8
+    role: rtu
+    type: host
+  '102':
+    coa: 102
+    configuration:
+      dns_host_name: rtu-102
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '102'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.3/24
+      mac: 02:d5:4b:a9:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 102
+    position2d:
+    - -1.0
+    - -9.0
+    position3d:
+    - -1.0
+    - -9.0
+    - 1.8
+    role: rtu
+    type: host
+  '103':
+    coa: 103
+    configuration:
+      dns_host_name: rtu-103
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '103'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.4/24
+      mac: 02:50:2c:88:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 103
+    position2d:
+    - 1.0
+    - -9.0
+    position3d:
+    - 1.0
+    - -9.0
+    - 1.8
+    role: rtu
+    type: host
+  '104':
+    coa: 104
+    configuration:
+      dns_host_name: rtu-104
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '104'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.5/24
+      mac: 02:c5:bc:2c:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 104
+    position2d:
+    - -1.0
+    - -6.0
+    position3d:
+    - -1.0
+    - -6.0
+    - 1.8
+    role: rtu
+    type: host
+  '105':
+    coa: 105
+    configuration:
+      dns_host_name: rtu-105
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '105'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.6/24
+      mac: 02:12:fb:37:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 105
+    position2d:
+    - 1.0
+    - -6.0
+    position3d:
+    - 1.0
+    - -6.0
+    - 1.8
+    role: rtu
+    type: host
+  '106':
+    coa: 106
+    configuration:
+      dns_host_name: rtu-106
+    facility_id: '1001'
+    facility_name: S-DSS-0
+    id: '106'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.1/24
+      mac: 02:9c:f1:a0:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 106
+    position2d:
+    - 0.5
+    - -57.0
+    position3d:
+    - 0.5
+    - -57.0
+    - 1.8
+    role: rtu
+    type: host
+  '107':
+    coa: 107
+    configuration:
+      dns_host_name: rtu-107
+    facility_id: '1001'
+    facility_name: S-DSS-0
+    id: '107'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.2/24
+      mac: 02:57:eb:b7:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 107
+    position2d:
+    - 0.39999999999999997
+    - -58.0
+    position3d:
+    - 0.39999999999999997
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '108':
+    coa: 108
+    configuration:
+      dns_host_name: rtu-108
+    facility_id: '1001'
+    facility_name: S-DSS-0
+    id: '108'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.3/24
+      mac: 02:a7:33:35:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 108
+    position2d:
+    - 0.6
+    - -58.0
+    position3d:
+    - 0.6
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '109':
+    coa: 109
+    configuration:
+      dns_host_name: rtu-109
+    facility_id: '1001'
+    facility_name: S-DSS-0
+    id: '109'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.4/24
+      mac: 02:21:41:e0:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 109
+    position2d:
+    - 0.8
+    - -58.0
+    position3d:
+    - 0.8
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '110':
+    coa: 110
+    configuration:
+      dns_host_name: rtu-110
+    facility_id: '1002'
+    facility_name: S-DSS-1
+    id: '110'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.5/24
+      mac: 02:14:5e:a4:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 110
+    position2d:
+    - -2.5
+    - -69.0
+    position3d:
+    - -2.5
+    - -69.0
+    - 1.8
+    role: rtu
+    type: host
+  '111':
+    coa: 111
+    configuration:
+      dns_host_name: rtu-111
+    facility_id: '1002'
+    facility_name: S-DSS-1
+    id: '111'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.6/24
+      mac: 02:d9:bc:50:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 111
+    position2d:
+    - -2.5999999999999996
+    - -70.0
+    position3d:
+    - -2.5999999999999996
+    - -70.0
+    - 1.8
+    role: rtu
+    type: host
+  '112':
+    coa: 112
+    configuration:
+      dns_host_name: rtu-112
+    facility_id: '1002'
+    facility_name: S-DSS-1
+    id: '112'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.7/24
+      mac: 02:46:a9:8f:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 112
+    position2d:
+    - -2.3999999999999995
+    - -70.0
+    position3d:
+    - -2.3999999999999995
+    - -70.0
+    - 1.8
+    role: rtu
+    type: host
+  '113':
+    coa: 113
+    configuration:
+      dns_host_name: rtu-113
+    facility_id: '1002'
+    facility_name: S-DSS-1
+    id: '113'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.8/24
+      mac: 02:38:d9:9d:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 113
+    position2d:
+    - -2.1999999999999993
+    - -70.0
+    position3d:
+    - -2.1999999999999993
+    - -70.0
+    - 1.8
+    role: rtu
+    type: host
+  '114':
+    coa: 114
+    configuration:
+      dns_host_name: rtu-114
+    facility_id: '1003'
+    facility_name: S-DSS-2
+    id: '114'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.9/24
+      mac: 02:f8:e4:5d:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 114
+    position2d:
+    - -2.5
+    - -57.0
+    position3d:
+    - -2.5
+    - -57.0
+    - 1.8
+    role: rtu
+    type: host
+  '115':
+    coa: 115
+    configuration:
+      dns_host_name: rtu-115
+    facility_id: '1003'
+    facility_name: S-DSS-2
+    id: '115'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.10/24
+      mac: 02:37:d9:80:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 115
+    position2d:
+    - -2.4
+    - -58.0
+    position3d:
+    - -2.4
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '116':
+    coa: 116
+    configuration:
+      dns_host_name: rtu-116
+    facility_id: '1004'
+    facility_name: S-DSS-3
+    id: '116'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.11/24
+      mac: 02:41:4a:d6:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 116
+    position2d:
+    - 1.0
+    - -21.0
+    position3d:
+    - 1.0
+    - -21.0
+    - 1.8
+    role: rtu
+    type: host
+  '117':
+    coa: 117
+    configuration:
+      dns_host_name: rtu-117
+    facility_id: '1005'
+    facility_name: S-DSS-4
+    id: '117'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.12/24
+      mac: 02:ca:15:6d:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 117
+    position2d:
+    - 1.0
+    - -33.0
+    position3d:
+    - 1.0
+    - -33.0
+    - 1.8
+    role: rtu
+    type: host
+  '118':
+    coa: 118
+    configuration:
+      dns_host_name: rtu-118
+    facility_id: '1006'
+    facility_name: S-DSS-5
+    id: '118'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.13/24
+      mac: 02:60:d7:19:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 118
+    position2d:
+    - -1.0
+    - -21.0
+    position3d:
+    - -1.0
+    - -21.0
+    - 1.8
+    role: rtu
+    type: host
+  '119':
+    coa: 119
+    configuration:
+      dns_host_name: rtu-119
+    facility_id: '1007'
+    facility_name: S-DSS-6
+    id: '119'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.14/24
+      mac: 02:a7:15:19:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 119
+    position2d:
+    - -1.0
+    - -33.0
+    position3d:
+    - -1.0
+    - -33.0
+    - 1.8
+    role: rtu
+    type: host
+  '120':
+    coa: 120
+    configuration:
+      dns_host_name: rtu-120
+    facility_id: '1007'
+    facility_name: S-DSS-6
+    id: '120'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.15/24
+      mac: 02:39:f2:eb:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 120
+    position2d:
+    - -0.9000000000000001
+    - -34.0
+    position3d:
+    - -0.9000000000000001
+    - -34.0
+    - 1.8
+    role: rtu
+    type: host
+  '121':
+    coa: 121
+    configuration:
+      dns_host_name: rtu-121
+    facility_id: '1008'
+    facility_name: S-DSS-7
+    id: '121'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.16/24
+      mac: 02:e1:01:26:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 121
+    position2d:
+    - -2.0
+    - -45.0
+    position3d:
+    - -2.0
+    - -45.0
+    - 1.8
+    role: rtu
+    type: host
+  '122':
+    coa: 122
+    configuration:
+      dns_host_name: rtu-122
+    facility_id: '1008'
+    facility_name: S-DSS-7
+    id: '122'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.17/24
+      mac: 02:35:df:f5:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 122
+    position2d:
+    - -1.9000000000000001
+    - -46.0
+    position3d:
+    - -1.9000000000000001
+    - -46.0
+    - 1.8
+    role: rtu
+    type: host
+  '123':
+    coa: 123
+    configuration:
+      dns_host_name: rtu-123
+    facility_id: '1009'
+    facility_name: S-DSS-8
+    id: '123'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.18/24
+      mac: 02:23:26:de:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 123
+    position2d:
+    - -1.5
+    - -57.0
+    position3d:
+    - -1.5
+    - -57.0
+    - 1.8
+    role: rtu
+    type: host
+  '124':
+    coa: 124
+    configuration:
+      dns_host_name: rtu-124
+    facility_id: '1009'
+    facility_name: S-DSS-8
+    id: '124'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.19/24
+      mac: 02:25:43:d5:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 124
+    position2d:
+    - -1.6
+    - -58.0
+    position3d:
+    - -1.6
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '125':
+    coa: 125
+    configuration:
+      dns_host_name: rtu-125
+    facility_id: '1009'
+    facility_name: S-DSS-8
+    id: '125'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.20/24
+      mac: 02:ec:8f:b2:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 125
+    position2d:
+    - -1.4000000000000001
+    - -58.0
+    position3d:
+    - -1.4000000000000001
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '126':
+    coa: 126
+    configuration:
+      dns_host_name: rtu-126
+    facility_id: '1009'
+    facility_name: S-DSS-8
+    id: '126'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.21/24
+      mac: 02:be:4b:98:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 126
+    position2d:
+    - -1.2000000000000002
+    - -58.0
+    position3d:
+    - -1.2000000000000002
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '127':
+    coa: 127
+    configuration:
+      dns_host_name: rtu-127
+    facility_id: '1010'
+    facility_name: S-DSS-9
+    id: '127'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.22/24
+      mac: 02:40:d4:c8:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 127
+    position2d:
+    - -1.5
+    - -69.0
+    position3d:
+    - -1.5
+    - -69.0
+    - 1.8
+    role: rtu
+    type: host
+  '128':
+    coa: 128
+    configuration:
+      dns_host_name: rtu-128
+    facility_id: '1010'
+    facility_name: S-DSS-9
+    id: '128'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.23/24
+      mac: 02:af:50:4c:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 128
+    position2d:
+    - -1.4000000000000001
+    - -70.0
+    position3d:
+    - -1.4000000000000001
+    - -70.0
+    - 1.8
+    role: rtu
+    type: host
+  '129':
+    coa: 129
+    configuration:
+      dns_host_name: rtu-129
+    facility_id: '1011'
+    facility_name: S-DSS-10
+    id: '129'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.24/24
+      mac: 02:0d:af:23:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 129
+    position2d:
+    - -0.5
+    - -57.0
+    position3d:
+    - -0.5
+    - -57.0
+    - 1.8
+    role: rtu
+    type: host
+  '130':
+    coa: 130
+    configuration:
+      dns_host_name: rtu-130
+    facility_id: '1011'
+    facility_name: S-DSS-10
+    id: '130'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.25/24
+      mac: 02:e0:c6:96:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 130
+    position2d:
+    - -0.39999999999999997
+    - -58.0
+    position3d:
+    - -0.39999999999999997
+    - -58.0
+    - 1.8
+    role: rtu
+    type: host
+  '131':
+    coa: 131
+    configuration:
+      dns_host_name: rtu-131
+    facility_id: '1012'
+    facility_name: S-DSS-11
+    id: '131'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.26/24
+      mac: 02:b2:f0:ee:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 131
+    position2d:
+    - 0.0
+    - -45.0
+    position3d:
+    - 0.0
+    - -45.0
+    - 1.8
+    role: rtu
+    type: host
+  '132':
+    coa: 132
+    configuration:
+      dns_host_name: rtu-132
+    facility_id: '1012'
+    facility_name: S-DSS-11
+    id: '132'
+    interfaces:
+    - id: i0
+      ip: 172.16.3.27/24
+      mac: 02:ae:4a:ed:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: RTU 132
+    position2d:
+    - 0.1
+    - -46.0
+    position3d:
+    - 0.1
+    - -46.0
+    - 1.8
+    role: rtu
+    type: host
+  '201':
+    configuration:
+      dns_host_name: office-router
+    facility_id: '701'
+    facility_name: Office
+    id: '201'
+    interfaces:
+    - id: i0
+      ip: 172.16.0.1/24
+      mac: 02:aa:13:b6:00:01
+    - id: i1
+      ip: 172.16.4.1/24
+      mac: 02:aa:13:b6:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: Office-router
+    position2d:
+    - 0.0
+    - 5.0
+    position3d:
+    - 0.0
+    - 5.0
+    - 1.8
+    role: router
+    type: host
+  '202':
+    configuration:
+      dns_host_name: control-center-router
+    facility_id: '801'
+    facility_name: Control Center
+    id: '202'
+    interfaces:
+    - id: i0
+      ip: 172.16.1.1/24
+      mac: 02:81:10:65:00:01
+    - id: i1
+      ip: 172.16.5.1/24
+      mac: 02:81:10:65:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: Control Center-router
+    position2d:
+    - 1.0
+    - 6.0
+    position3d:
+    - 1.0
+    - 6.0
+    - 1.8
+    role: router
+    type: host
+  '203':
+    configuration:
+      dns_host_name: tss-0-router
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '203'
+    interfaces:
+    - id: i0
+      ip: 172.16.2.1/24
+      mac: 02:f8:06:24:00:01
+    - id: i1
+      ip: 172.16.7.1/24
+      mac: 02:f8:06:24:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: TSS-0-router
+    position2d:
+    - 1.3518697407916671e-17
+    - -6.780821917808219
+    position3d:
+    - 1.3518697407916671e-17
+    - -6.780821917808219
+    - 1.8
+    role: router
+    type: host
+  '204':
+    configuration:
+      dns_host_name: office-backbone-router
+    facility_id: '701'
+    facility_name: Office
+    id: '204'
+    interfaces:
+    - id: i0
+      ip: 172.16.4.2/24
+      mac: 02:cc:ee:85:00:01
+    - id: i1
+      ip: 172.16.6.1/24
+      mac: 02:cc:ee:85:00:02
+    - id: i2
+      ip: 172.16.8.1/24
+      mac: 02:cc:ee:85:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: Office-backbone-router
+    position2d:
+    - 0.0
+    - 5.0
+    position3d:
+    - 0.0
+    - 5.0
+    - 2.0
+    role: router
+    type: host
+  '205':
+    configuration:
+      dns_host_name: control-center-backbone-router
+    facility_id: '801'
+    facility_name: Control Center
+    id: '205'
+    interfaces:
+    - id: i0
+      ip: 172.16.5.2/24
+      mac: 02:0c:5d:54:00:01
+    - id: i1
+      ip: 172.16.6.2/24
+      mac: 02:0c:5d:54:00:02
+    - id: i2
+      ip: 172.16.9.1/24
+      mac: 02:0c:5d:54:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: Control Center-backbone-router
+    position2d:
+    - 1.0
+    - 6.0
+    position3d:
+    - 1.0
+    - 6.0
+    - 2.0
+    role: router
+    type: host
+  '206':
+    configuration:
+      dns_host_name: s-tss-0-backbone-router
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '206'
+    interfaces:
+    - id: i0
+      ip: 172.16.7.2/24
+      mac: 02:b1:49:a4:00:01
+    - id: i1
+      ip: 172.16.8.2/24
+      mac: 02:b1:49:a4:00:02
+    - id: i2
+      ip: 172.16.9.2/24
+      mac: 02:b1:49:a4:00:03
+    - id: i3
+      ip: 172.16.3.28/24
+      mac: 02:b1:49:a4:00:04
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-TSS-0-backbone-router
+    position2d:
+    - 1.3518697407916671e-17
+    - -6.780821917808219
+    position3d:
+    - 1.3518697407916671e-17
+    - -6.780821917808219
+    - 2.0
+    role: router
+    type: host
+  '301':
+    configuration: {}
+    facility_id: '701'
+    facility_name: Office
+    id: '301'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:63:ed:a5:00:01
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: Office-sw-edge
+    position2d:
+    - 0.04549437934550931
+    - 5.045494379345509
+    position3d:
+    - 0.04549437934550931
+    - 5.045494379345509
+    - 1.8
+    role: switch
+    type: switch
+  '302':
+    configuration: {}
+    facility_id: '801'
+    facility_name: Control Center
+    id: '302'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:99:8d:1b:00:01
+    - id: i1
+      ip: ''
+      mac: 02:99:8d:1b:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: Control Center-sw-edge
+    position2d:
+    - 1.0454943793455094
+    - 6.045494379345509
+    position3d:
+    - 1.0454943793455094
+    - 6.045494379345509
+    - 1.8
+    role: switch
+    type: switch
+  '303':
+    configuration: {}
+    facility_id: '901'
+    facility_name: S-TSS-0
+    id: '303'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:b1:22:07:00:01
+    - id: i1
+      ip: ''
+      mac: 02:b1:22:07:00:02
+    - id: i2
+      ip: ''
+      mac: 02:b1:22:07:00:03
+    - id: i3
+      ip: ''
+      mac: 02:b1:22:07:00:04
+    - id: i4
+      ip: ''
+      mac: 02:b1:22:07:00:05
+    - id: i5
+      ip: ''
+      mac: 02:b1:22:07:00:06
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: TSS-0-sw-edge
+    position2d:
+    - 0.045494379345509324
+    - -6.73532753846271
+    position3d:
+    - 0.045494379345509324
+    - -6.73532753846271
+    - 1.8
+    role: switch
+    type: switch
+  '304':
+    configuration: {}
+    facility_id: '1001'
+    facility_name: S-DSS-0
+    id: '304'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:9b:82:dc:00:01
+    - id: i1
+      ip: ''
+      mac: 02:9b:82:dc:00:02
+    - id: i2
+      ip: ''
+      mac: 02:9b:82:dc:00:03
+    - id: i3
+      ip: ''
+      mac: 02:9b:82:dc:00:04
+    - id: i4
+      ip: ''
+      mac: 02:9b:82:dc:00:05
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-0-sw-edge
+    position2d:
+    - 0.49999999999999994
+    - -57.33333333333333
+    position3d:
+    - 0.49999999999999994
+    - -57.33333333333333
+    - 1.8
+    role: switch
+    type: switch
+  '305':
+    configuration: {}
+    facility_id: '1002'
+    facility_name: S-DSS-1
+    id: '305'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:10:62:2a:00:01
+    - id: i1
+      ip: ''
+      mac: 02:10:62:2a:00:02
+    - id: i2
+      ip: ''
+      mac: 02:10:62:2a:00:03
+    - id: i3
+      ip: ''
+      mac: 02:10:62:2a:00:04
+    - id: i4
+      ip: ''
+      mac: 02:10:62:2a:00:05
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-1-sw-edge
+    position2d:
+    - -1.645614035087719
+    - -67.6140350877193
+    position3d:
+    - -1.645614035087719
+    - -67.6140350877193
+    - 1.8
+    role: switch
+    type: switch
+  '306':
+    configuration: {}
+    facility_id: '1003'
+    facility_name: S-DSS-2
+    id: '306'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:93:17:ea:00:01
+    - id: i1
+      ip: ''
+      mac: 02:93:17:ea:00:02
+    - id: i2
+      ip: ''
+      mac: 02:93:17:ea:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-2-sw-edge
+    position2d:
+    - -2.4999999999999996
+    - -57.33333333333333
+    position3d:
+    - -2.4999999999999996
+    - -57.33333333333333
+    - 1.8
+    role: switch
+    type: switch
+  '307':
+    configuration: {}
+    facility_id: '1004'
+    facility_name: S-DSS-3
+    id: '307'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:9d:bd:f0:00:01
+    - id: i1
+      ip: ''
+      mac: 02:9d:bd:f0:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-3-sw-edge
+    position2d:
+    - 0.9666666666666667
+    - -21.333333333333332
+    position3d:
+    - 0.9666666666666667
+    - -21.333333333333332
+    - 1.8
+    role: switch
+    type: switch
+  '308':
+    configuration: {}
+    facility_id: '1005'
+    facility_name: S-DSS-4
+    id: '308'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:59:c1:e6:00:01
+    - id: i1
+      ip: ''
+      mac: 02:59:c1:e6:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-4-sw-edge
+    position2d:
+    - 1.0
+    - -33.333333333333336
+    position3d:
+    - 1.0
+    - -33.333333333333336
+    - 1.8
+    role: switch
+    type: switch
+  '309':
+    configuration: {}
+    facility_id: '1006'
+    facility_name: S-DSS-5
+    id: '309'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:17:1c:ef:00:01
+    - id: i1
+      ip: ''
+      mac: 02:17:1c:ef:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-5-sw-edge
+    position2d:
+    - -1.0
+    - -21.0
+    position3d:
+    - -1.0
+    - -21.0
+    - 1.8
+    role: switch
+    type: switch
+  '310':
+    configuration: {}
+    facility_id: '1007'
+    facility_name: S-DSS-6
+    id: '310'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:d5:3f:4f:00:01
+    - id: i1
+      ip: ''
+      mac: 02:d5:3f:4f:00:02
+    - id: i2
+      ip: ''
+      mac: 02:d5:3f:4f:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-6-sw-edge
+    position2d:
+    - -1.0
+    - -34.0
+    position3d:
+    - -1.0
+    - -34.0
+    - 1.8
+    role: switch
+    type: switch
+  '311':
+    configuration: {}
+    facility_id: '1008'
+    facility_name: S-DSS-7
+    id: '311'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:71:1e:0d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:71:1e:0d:00:02
+    - id: i2
+      ip: ''
+      mac: 02:71:1e:0d:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-7-sw-edge
+    position2d:
+    - -2.0
+    - -46.0
+    position3d:
+    - -2.0
+    - -46.0
+    - 1.8
+    role: switch
+    type: switch
+  '312':
+    configuration: {}
+    facility_id: '1009'
+    facility_name: S-DSS-8
+    id: '312'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:f0:20:2d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:f0:20:2d:00:02
+    - id: i2
+      ip: ''
+      mac: 02:f0:20:2d:00:03
+    - id: i3
+      ip: ''
+      mac: 02:f0:20:2d:00:04
+    - id: i4
+      ip: ''
+      mac: 02:f0:20:2d:00:05
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-8-sw-edge
+    position2d:
+    - -1.5
+    - -57.33333333333333
+    position3d:
+    - -1.5
+    - -57.33333333333333
+    - 1.8
+    role: switch
+    type: switch
+  '313':
+    configuration: {}
+    facility_id: '1010'
+    facility_name: S-DSS-9
+    id: '313'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:81:5b:43:00:01
+    - id: i1
+      ip: ''
+      mac: 02:81:5b:43:00:02
+    - id: i2
+      ip: ''
+      mac: 02:81:5b:43:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-9-sw-edge
+    position2d:
+    - -1.1944444444444444
+    - -67.55555555555556
+    position3d:
+    - -1.1944444444444444
+    - -67.55555555555556
+    - 1.8
+    role: switch
+    type: switch
+  '314':
+    configuration: {}
+    facility_id: '1011'
+    facility_name: S-DSS-10
+    id: '314'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:3e:10:60:00:01
+    - id: i1
+      ip: ''
+      mac: 02:3e:10:60:00:02
+    - id: i2
+      ip: ''
+      mac: 02:3e:10:60:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-10-sw-edge
+    position2d:
+    - -0.4999999999999999
+    - -57.33333333333332
+    position3d:
+    - -0.4999999999999999
+    - -57.33333333333332
+    - 1.8
+    role: switch
+    type: switch
+  '315':
+    configuration: {}
+    facility_id: '1012'
+    facility_name: S-DSS-11
+    id: '315'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:f3:57:52:00:01
+    - id: i1
+      ip: ''
+      mac: 02:f3:57:52:00:02
+    - id: i2
+      ip: ''
+      mac: 02:f3:57:52:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_LAN
+    name: DSS-11-sw-edge
+    position2d:
+    - 0.25
+    - -45.0
+    position3d:
+    - 0.25
+    - -45.0
+    - 1.8
+    role: switch
+    type: switch
+  '316':
+    configuration: {}
+    facility_id: '1001'
+    facility_name: S-DSS-0
+    id: '316'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:3e:84:42:00:01
+    - id: i1
+      ip: ''
+      mac: 02:3e:84:42:00:02
+    - id: i2
+      ip: ''
+      mac: 02:3e:84:42:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-0-backbone-switch
+    position2d:
+    - 0.49999999999999994
+    - -57.33333333333333
+    position3d:
+    - 0.49999999999999994
+    - -57.33333333333333
+    - 2.0
+    role: switch
+    type: switch
+  '317':
+    configuration: {}
+    facility_id: '1002'
+    facility_name: S-DSS-1
+    id: '317'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:0d:38:a9:00:01
+    - id: i1
+      ip: ''
+      mac: 02:0d:38:a9:00:02
+    - id: i2
+      ip: ''
+      mac: 02:0d:38:a9:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-1-backbone-switch
+    position2d:
+    - -1.645614035087719
+    - -67.6140350877193
+    position3d:
+    - -1.645614035087719
+    - -67.6140350877193
+    - 2.0
+    role: switch
+    type: switch
+  '318':
+    configuration: {}
+    facility_id: '1003'
+    facility_name: S-DSS-2
+    id: '318'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:7c:c1:0d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:7c:c1:0d:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-2-backbone-switch
+    position2d:
+    - -2.4999999999999996
+    - -57.33333333333333
+    position3d:
+    - -2.4999999999999996
+    - -57.33333333333333
+    - 2.0
+    role: switch
+    type: switch
+  '319':
+    configuration: {}
+    facility_id: '1004'
+    facility_name: S-DSS-3
+    id: '319'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:71:37:cd:00:01
+    - id: i1
+      ip: ''
+      mac: 02:71:37:cd:00:02
+    - id: i2
+      ip: ''
+      mac: 02:71:37:cd:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-3-backbone-switch
+    position2d:
+    - 0.9666666666666667
+    - -21.333333333333332
+    position3d:
+    - 0.9666666666666667
+    - -21.333333333333332
+    - 2.0
+    role: switch
+    type: switch
+  '320':
+    configuration: {}
+    facility_id: '1005'
+    facility_name: S-DSS-4
+    id: '320'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:34:2a:88:00:01
+    - id: i1
+      ip: ''
+      mac: 02:34:2a:88:00:02
+    - id: i2
+      ip: ''
+      mac: 02:34:2a:88:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-4-backbone-switch
+    position2d:
+    - 1.0
+    - -33.333333333333336
+    position3d:
+    - 1.0
+    - -33.333333333333336
+    - 2.0
+    role: switch
+    type: switch
+  '321':
+    configuration: {}
+    facility_id: '1006'
+    facility_name: S-DSS-5
+    id: '321'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:7f:3e:85:00:01
+    - id: i1
+      ip: ''
+      mac: 02:7f:3e:85:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-5-backbone-switch
+    position2d:
+    - -1.0
+    - -21.0
+    position3d:
+    - -1.0
+    - -21.0
+    - 2.0
+    role: switch
+    type: switch
+  '322':
+    configuration: {}
+    facility_id: '1007'
+    facility_name: S-DSS-6
+    id: '322'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:d5:16:15:00:01
+    - id: i1
+      ip: ''
+      mac: 02:d5:16:15:00:02
+    - id: i2
+      ip: ''
+      mac: 02:d5:16:15:00:03
+    - id: i3
+      ip: ''
+      mac: 02:d5:16:15:00:04
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-6-backbone-switch
+    position2d:
+    - -1.0
+    - -34.0
+    position3d:
+    - -1.0
+    - -34.0
+    - 2.0
+    role: switch
+    type: switch
+  '323':
+    configuration: {}
+    facility_id: '1008'
+    facility_name: S-DSS-7
+    id: '323'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:91:ff:d2:00:01
+    - id: i1
+      ip: ''
+      mac: 02:91:ff:d2:00:02
+    - id: i2
+      ip: ''
+      mac: 02:91:ff:d2:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-7-backbone-switch
+    position2d:
+    - -2.0
+    - -46.0
+    position3d:
+    - -2.0
+    - -46.0
+    - 2.0
+    role: switch
+    type: switch
+  '324':
+    configuration: {}
+    facility_id: '1009'
+    facility_name: S-DSS-8
+    id: '324'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:b3:c2:29:00:01
+    - id: i1
+      ip: ''
+      mac: 02:b3:c2:29:00:02
+    - id: i2
+      ip: ''
+      mac: 02:b3:c2:29:00:03
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-8-backbone-switch
+    position2d:
+    - -1.5
+    - -57.33333333333333
+    position3d:
+    - -1.5
+    - -57.33333333333333
+    - 2.0
+    role: switch
+    type: switch
+  '325':
+    configuration: {}
+    facility_id: '1010'
+    facility_name: S-DSS-9
+    id: '325'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:fa:7f:ec:00:01
+    - id: i1
+      ip: ''
+      mac: 02:fa:7f:ec:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-9-backbone-switch
+    position2d:
+    - -1.1944444444444444
+    - -67.55555555555556
+    position3d:
+    - -1.1944444444444444
+    - -67.55555555555556
+    - 2.0
+    role: switch
+    type: switch
+  '326':
+    configuration: {}
+    facility_id: '1011'
+    facility_name: S-DSS-10
+    id: '326'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:5b:b9:fc:00:01
+    - id: i1
+      ip: ''
+      mac: 02:5b:b9:fc:00:02
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-10-backbone-switch
+    position2d:
+    - -0.4999999999999999
+    - -57.33333333333332
+    position3d:
+    - -0.4999999999999999
+    - -57.33333333333332
+    - 2.0
+    role: switch
+    type: switch
+  '327':
+    configuration: {}
+    facility_id: '1012'
+    facility_name: S-DSS-11
+    id: '327'
+    interfaces:
+    - id: i0
+      ip: ''
+      mac: 02:a8:1e:2d:00:01
+    - id: i1
+      ip: ''
+      mac: 02:a8:1e:2d:00:02
+    - id: i2
+      ip: ''
+      mac: 02:a8:1e:2d:00:03
+    - id: i3
+      ip: ''
+      mac: 02:a8:1e:2d:00:04
+    - id: i4
+      ip: ''
+      mac: 02:a8:1e:2d:00:05
+    layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
+    name: S-DSS-11-backbone-switch
+    position2d:
+    - 0.25
+    - -45.0
+    position3d:
+    - 0.25
+    - -45.0
+    - 2.0
+    role: switch
+    type: switch

@@ -8,22 +8,13 @@ class NetworkSwitch(NetworkNode, abc.ABC):
         pass
 
     def enable_rstp(self):
-        """
-        Enable participation in rapid spanning tree protocol
-        @return:
-        """
+        """Enable participation in rapid spanning tree protocol"""
         pass
 
     def disable_rstp(self):
-        """
-        Disable participation in rapid spanning tree protocol
-        @return:
-        """
+        """Disable participation in rapid spanning tree protocol"""
         pass
 
     def clear_mirrors(self):
-        """
-        Clear any existing mirror interfaces
-        @return:
-        """
+        """Clear any existing mirror interfaces"""
         pass

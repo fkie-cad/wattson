@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 class Simulator(WattsonQueryHandler):
     """
     A Simulator handles the simulation or emulation of one or multiple aspects of the co-simulation.
-    Wattson distinguishes between network and physical simulators, where the default option for the network
-    is an emulation.
+    Wattson distinguishes between network and physical simulators, where the default option for the network is an emulation.
+
     """
     def __init__(self):
         self._controller: Optional['CoSimulationController'] = None
@@ -44,6 +44,7 @@ class Simulator(WattsonQueryHandler):
         """
         Starts the simulator / emulator.
         :return:
+
         """
         ...
 
@@ -52,6 +53,7 @@ class Simulator(WattsonQueryHandler):
         """
         Stops the simulator / emulator.
         :return:
+
         """
         ...
 
@@ -59,26 +61,38 @@ class Simulator(WattsonQueryHandler):
     def load_scenario(self, scenario_path: Path):
         """
         Configures this simulator based on the scenario configuration in the given path.
-        :param scenario_path: The path where the scenario configuration is stored.
-        :return:
+
+        Args:
+            scenario_path (Path):
+                The path where the scenario configuration is stored.
         """
         ...
 
     def set_configuration_store(self, configuration_store: Optional[ConfigurationStore]):
-        """Sets the ConfigurationStore for this Simulator to use"""
+        """
+        Sets the ConfigurationStore for this Simulator to use
+
+        Args:
+            configuration_store (Optional[ConfigurationStore]):
+                
+        """
         self._configuration_store = configuration_store
 
     def get_configuration_store(self) -> Optional[ConfigurationStore]:
-        """If set, returns the ConfigurationStore used by this simulator"""
+        """
+        If set, returns the ConfigurationStore used by this simulator
+
+        """
         return self._configuration_store
 
     def set_working_directory(self, working_directory: Path):
         """
         Sets the working directory for this simulator.
-        This is not (necessarily) the python working directory, but a directory for the simulator to use
-        for, e.g., storing artifacts.
-        :param working_directory: The directory to use
-        :return:
+        This is not (necessarily) the python working directory, but a directory for the simulator to use for, e.g., storing artifacts.
+
+        Args:
+            working_directory (Path):
+                The directory to use
         """
         self._working_directory = working_directory
 
@@ -87,6 +101,7 @@ class Simulator(WattsonQueryHandler):
         Returns the working directory of this simulator.
         If none has been set, a FileNotFoundError is raised.
         :return: The current working directory of this simulator.
+
         """
         if self._working_directory is None:
             raise FileNotFoundError("Working directory is not set")
@@ -96,6 +111,7 @@ class Simulator(WattsonQueryHandler):
     def get_simulation_control_clients(self) -> Set[str]:
         """
         Returns a set of node identifiers that the simulation control server waits for to be connected.
+
         """
         ...
 

@@ -188,9 +188,17 @@ class RemoteNetworkEmulator:
     def find_node_by_name(self, node_name: str) -> RemoteNetworkNode:
         """
         Searches for a node with the given display name.
-        @raise NetworkNodeNotFoundException if no node with the given name is found
-        @param node_name: The name to search for
-        @return: The (first) the node with the given display name
+
+        Args:
+            node_name (str):
+                The name to search for
+
+        Returns:
+            RemoteNetworkNode: The (first) the node with the given display name
+
+        Raises:
+            NetworkNodeNotFoundException:            if no node with the given name is found
+
         """
         for node in self.get_nodes():
             if node.display_name == node_name:
@@ -200,9 +208,17 @@ class RemoteNetworkEmulator:
     def find_node_by_id(self, node_id: str) -> RemoteNetworkNode:
         """
         Searches for a node with the given (non-prefixed) ID and returns the node.
-        @raise NetworkNodeNotFoundException if no node with the given ID is found
-        @param node_id: The id of the node to search for
-        @return: The node with the given Id
+
+        Args:
+            node_id (str):
+                The id of the node to search for
+
+        Returns:
+            RemoteNetworkNode: The node with the given Id
+
+        Raises:
+            NetworkNodeNotFoundException:            if no node with the given ID is found
+
         """
         for node in self.get_nodes():
             if node.id == node_id:
@@ -219,8 +235,13 @@ class RemoteNetworkEmulator:
     def find_nodes_by_ip_address(self, ip_address: Union[str, ipaddress.IPv4Address]) -> List[RemoteNetworkNode]:
         """
         Searches for all nodes with the given IP address and returns the nodes.
-        @param ip_address: The IP address to search for
-        @return: A list of nodes with the given IP address
+
+        Args:
+            ip_address (Union[str, ipaddress.IPv4Address]):
+                The IP address to search for
+
+        Returns:
+            List[RemoteNetworkNode]: A list of nodes with the given IP address
         """
         nodes = []
         for node in self.get_nodes():
@@ -235,11 +256,22 @@ class RemoteNetworkEmulator:
                     arguments: Optional[dict] = None, config: Optional[dict] = None) -> RemoteNetworkNode:
         """
         Creates a new NetworkNode in the running network emulation.
-        @param entity_id: The entity_id of the new node
-        @param node_class: The node type class, i.e., NetworkNode or a respective subclass
-        @param arguments: Arguments to pass to the node constructor
-        @param config: The config to pass to the node constructor
-        @return: A remote representation of the newly created node.
+
+        Args:
+            entity_id (str):
+                The entity_id of the new node
+            node_class (Type[NetworkNode], optional):
+                The node type class, i.e., NetworkNode or a respective subclass
+                (Default value = RemoteNetworkNode)
+            arguments (Optional[dict], optional):
+                Arguments to pass to the node constructor
+                (Default value = None)
+            config (Optional[dict], optional):
+                The config to pass to the node constructor
+                (Default value = None)
+
+        Returns:
+            RemoteNetworkNode: A remote representation of the newly created node.
         """
         query = WattsonNetworkQuery(
             query_type=WattsonNetworkQueryType.ADD_NODE,
@@ -285,11 +317,21 @@ class RemoteNetworkEmulator:
     def create_interface(self, node: Union[str, RemoteNetworkNode], interface_id: str, arguments: Optional[dict] = None, config: Optional[dict] = None) -> Optional[RemoteNetworkInterface]:
         """
         Creates a network interface at a given node and returns its remote representation.
-        @param node: The node to create the network interface for.
-        @param interface_id: The entity_id of the interface to create
-        @param arguments: Arguments to pass to the constructor
-        @param config: Config options to pass to the constructor
-        @return: The RemoteNetworkInterface instance
+
+        Args:
+            node (Union[str, RemoteNetworkNode]):
+                The node to create the network interface for.
+            interface_id (str):
+                The entity_id of the interface to create
+            arguments (Optional[dict], optional):
+                Arguments to pass to the constructor
+                (Default value = None)
+            config (Optional[dict], optional):
+                Config options to pass to the constructor
+                (Default value = None)
+
+        Returns:
+            Optional[RemoteNetworkInterface]: The RemoteNetworkInterface instance
         """
         node = self.get_node(node)
         query = WattsonNetworkQuery(
@@ -367,13 +409,27 @@ class RemoteNetworkEmulator:
                       update_default_routes: bool = False) -> Tuple[RemoteNetworkInterface, RemoteNetworkLink, RemoteNetworkInterface]:
         """
         Connects two nodes with a new link connecting two new interfaces.
-        @param node_a: entity_id or RemoteNetworkNode instance of the first node.
-        @param node_b: entity_id or RemoteNetworkNode instance of the second node.
-        @param interface_a_options: Options for the newly created interface of node a.
-        @param interface_b_options: Options for the newly created interface of node b.
-        @param link_options: Options for the newly created lincd Doc    k.
-        @param update_default_routes: Whether to update the default routes of the freshly connected nodes.
-        @return: The newly created RemoteNetworkInterface at node a, the newly created RemoteNetworkLink and the newly created RemoteNetworkInterface at node b.
+
+        Args:
+            node_a (Union[str, RemoteNetworkNode]):
+                entity_id or RemoteNetworkNode instance of the first node.
+            node_b (Union[str, RemoteNetworkNode]):
+                entity_id or RemoteNetworkNode instance of the second node.
+            interface_a_options (Optional[dict], optional):
+                Options for the newly created interface of node a.
+                (Default value = None)
+            interface_b_options (Optional[dict], optional):
+                Options for the newly created interface of node b.
+                (Default value = None)
+            link_options (Optional[dict], optional):
+                Options for the newly created lincd Doc    k.
+                (Default value = None)
+            update_default_routes (bool, optional):
+                Whether to update the default routes of the freshly connected nodes.
+
+        Returns:
+            Tuple[RemoteNetworkInterface,RemoteNetworkLink,RemoteNetworkInterface]: The newly created RemoteNetworkInterface at node a, the
+                newly created RemoteNetworkLink and the newly created RemoteNetworkInterface at node b.
         """
         node_a = self.get_node(node_a)
         node_b = self.get_node(node_b)

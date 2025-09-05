@@ -27,6 +27,7 @@ def get_syslog_socket():
     # TODO: Detect if this is correct
     return "/dev/log"
 
+
 def get_logger(host_name: str,
                logger_name: Optional[str] = None,
                level: int = logging.INFO,
@@ -39,18 +40,29 @@ def get_logger(host_name: str,
     Overwrites logging.get_logger to make it compatible with the ContextLogger
 
     Args:
-        host_name: Host the logger is attaching to
-        logger_name: more specific log name
-        level: logging-level (INFO)
-        active_contexts: contexts enabled by default (for context-logger)
-        use_basic_logger: True to use BasicLogger as the wrapper
-        use_context_logger: True to use a ContextLogger
-        use_fake_logger: True to disable actual logging
-        syslog_config: A dictionary defining the syslog behavior
-            - address: Tuple[string, int] (Address & Port) (localhost, SYSLOG_UDP_PORT) or socket file ("/dev/log")
-            - facility: syslog facility (LOG_DAEMON)
-            - socket_type: socket type (socket.SOCK_DGRAM)
-            If set to True, syslog is enabled with default parameters.
+        host_name (str):
+            Host the logger is attaching to
+        logger_name (Optional[str], optional):
+            more specific log name
+            (Default value = None)
+        level (int, optional):
+            logging-level (INFO)
+            (Default value = logging.INFO)
+        active_contexts (Optional[Iterable[str]], optional):
+            contexts enabled by default (for context-logger)
+        use_context_logger (bool, optional):
+            True to use a ContextLogger
+            (Default value = False)
+        use_basic_logger (bool, optional):
+            True to use BasicLogger as the wrapper
+            (Default value = True)
+        use_fake_logger (bool, optional):
+            True to disable actual logging
+            (Default value = False)
+        syslog_config (Union[bool, Dict], optional):
+            A dictionary defining the syslog behavior - address: Tuple[string, int] (Address & Port) (localhost, SYSLOG_UDP_PORT) or socket file
+            ("/dev/log") - facility: syslog facility (LOG_DAEMON) - socket_type: socket type (socket.SOCK_DGRAM) If set to True, syslog is enabled
+            with default parameters.
             If set to False, syslog is disabled
 
     Returns:
@@ -61,9 +73,11 @@ def get_logger(host_name: str,
 
     if use_basic_logger:
         logging.setLoggerClass(BasicLogger)
+
     logger = logging.getLogger(logger_name)
-    logger.setLevel(level)
+    logger.level = level
     logger.propagate = False
+
     if not logger.hasHandlers():
         formatter = logging.Formatter(log_format)
         h = logging.StreamHandler(sys.stdout)

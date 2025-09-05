@@ -10,9 +10,7 @@ from wattson.iec104.interface.types import COT
 
 
 class SpontaneousLogic(RTULogic):
-    """
-    RTU Logic that issues spontaneous transmissions for changes of spontaneous data points
-    """
+    """RTU Logic that issues spontaneous transmissions for changes of spontaneous data points"""
     def __init__(self, rtu: 'RTU', **kwargs):
         super().__init__(rtu, **kwargs)
         self._monitor_interval = kwargs.get("monitor_interval", 10)
@@ -48,6 +46,7 @@ class SpontaneousLogic(RTULogic):
         self.logger.info(f"Sending spontaneous: {ioa} // {identifier}")
         server: IECServerInterface = self.rtu.get_104_socket()
         point = server.get_datapoint(ioa)
+        self.logger.info(f" Spontaneous point: {type(point)} -- {repr(point.value)}")
         point.value = self.rtu.manager.get_value(
             identifier=identifier,
             disable_cache=True,

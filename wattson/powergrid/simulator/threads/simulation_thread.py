@@ -2,6 +2,7 @@ import threading
 import traceback
 from typing import Optional, Callable, Dict, Any
 
+import pyprctl
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import GridElement
 from powerowl.layers.powergrid.values.grid_value import GridValue
@@ -11,9 +12,7 @@ from wattson.util import get_logger
 
 
 class SimulationThread(threading.Thread):
-    """
-    This thread handles simulating the power grid, i.e., calculating the current grid state.
-    """
+    """This thread handles simulating the power grid, i.e., calculating the current grid state."""
     def __init__(
             self,
             power_grid_model: PowerGridModel, *,
@@ -26,6 +25,7 @@ class SimulationThread(threading.Thread):
             on_value_change_callback: Optional[Callable[[GridValue, Any, Any], None]] = None,
             on_value_state_change_callback: Optional[Callable[[GridValue], None]] = None,
             on_protection_equipment_triggered_callback: Optional[Callable[[GridElement, str], None]] = None,
+            on_protection_equipment_cleared_callback: Optional[Callable[[GridElement, str], None]] = None,
 
             **kwargs
             ):
@@ -34,11 +34,11 @@ class SimulationThread(threading.Thread):
         self.power_grid_model = power_grid_model
         self.power_grid_model.set_on_simulation_iteration_synchronization(on_iteration_sync_callback)
         self.power_grid_model.set_on_protection_equipment_triggered(on_protection_equipment_triggered_callback)
+        self.power_grid_model.set_on_protection_equipment_cleared(on_protection_equipment_cleared_callback)
         self.power_grid_model.set_option("enable_storage_processing", kwargs.get("enable_storage_processing", True))
         self.power_grid_model.set_option("enable_protection_emulation", kwargs.get("enable_protection_emulation", False))
         self.power_grid_model.set_option("protection_trigger_delay_seconds", kwargs.get("protection_trigger_delay_seconds"))
         self.power_grid_model.set_option("protection_trigger_threshold_factor", kwargs.get("protection_trigger_threshold_factor"))
-
 
         self._terminate_requested = threading.Event()
         if iteration_required_event is not None:
@@ -55,6 +55,8 @@ class SimulationThread(threading.Thread):
         self._add_on_value_change_callbacks()
         self._last_run = 0
         self.ready_event = threading.Event()
+        self._initial_configuration_applied_event: Optional[threading.Event] = None
+        self.power_grid_model.prepare_simulator()
 
     def set_iteration_required(self):
         self._iteration_required.set()
@@ -79,13 +81,20 @@ class SimulationThread(threading.Thread):
         if self._on_value_state_change_callback is None:
             return
         self._on_value_state_change_callback(grid_value)
+        
+    def start(self, wait_for_event: Optional[threading.Event] = None):
+        self._initial_configuration_applied_event = wait_for_event
+        super().start()
 
     def stop(self, timeout: Optional[float] = None):
         """
         Requests stopping the simulation thread and joins the thread for the given timeout in seconds.
         After this method, is_alive() can be used to determine whether the thread actually stopped.
-        :param timeout: The (optional) timeout for joining the thread.
-        :return:
+
+        Args:
+            timeout (Optional[float], optional):
+                The (optional) timeout for joining the thread.
+                (Default value = None)
         """
         self._terminate_requested.set()
         self._iteration_required.set()
@@ -95,8 +104,20 @@ class SimulationThread(threading.Thread):
         """
         The actual simulation calculation is done in a thread.
         :return:
+
         """
+        pyprctl.set_name("W/PG/Sim")
         ready_event_set = False
+
+        if self._initial_configuration_applied_event is not None:
+            # Wait for initial values to be set (e.g., by the profile provider)
+            while not self._terminate_requested.is_set():
+                if self._initial_configuration_applied_event.wait(2):
+                    break
+                self.logger.info(f"Still waiting for initial configuration event...")
+
+        self.logger.info(f"Simulation thread initialized")
+
         while not self._terminate_requested.is_set():
             try:
                 self._on_iteration_start()
@@ -104,7 +125,7 @@ class SimulationThread(threading.Thread):
                 self.power_grid_model.simulate()
                 self.logger.debug("Done with power grid simulation iteration")
                 self._on_iteration_complete(True)
-                if not ready_event_set:
+                if not self.ready_event.is_set():
                     self.ready_event.set()
             except Exception as e:
                 self.logger.error(e)

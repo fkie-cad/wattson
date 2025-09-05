@@ -58,7 +58,17 @@ def verify_I_FORMAT(apdu: I_FORMAT) -> Tuple[Optional[IEC104Exceptions], str]:
 
 
 def bad_COT_for_type_and_direction(msg_id: MsgID, apdu: I_FORMAT, from_server: bool) -> bool:
-    """ only checks for supported Types & COTs """
+    """
+    only checks for supported Types & COTs
+
+    Args:
+        msg_id (MsgID):
+            
+        apdu (I_FORMAT):
+            
+        from_server (bool):
+            
+    """
     if from_server:
         if msg_id == MsgID.PROCESS_INFO_CONTROL:
             return (apdu.cot.is_known_COT

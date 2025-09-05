@@ -12,6 +12,7 @@ class ServicePriority:
     Represents the priority of a service for determining the starting order.
     A higher value indicates a higher priority.
     The priority can be treated globally ("global") or relatively to the responsible network node ("local").
+
     """
     def __init__(self,
                  service: Optional['WattsonService'] = None,
@@ -27,9 +28,15 @@ class ServicePriority:
     def from_service_priority(service: 'WattsonService', priority: 'ServicePriority') -> 'ServicePriority':
         """
         Creates a ServicePriority from a template, linking the given WattsonService.
-        @param service: The WattsonService instance
-        @param priority: The original ServicePriority
-        @return: A cloned ServicePriority representing the same priority, linked to the given WattsonService.
+
+        Args:
+            service ('WattsonService'):
+                The WattsonService instance
+            priority ('ServicePriority'):
+                The original ServicePriority
+
+        Returns:
+            'ServicePriority': A cloned ServicePriority representing the same priority, linked to the given WattsonService.
         """
         clone = ServicePriority(service=service)
         clone._is_local = priority._is_local

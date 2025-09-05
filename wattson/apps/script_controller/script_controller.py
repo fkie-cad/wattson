@@ -14,11 +14,10 @@ from powerowl.simulators.pandapower import PandaPowerGridModel
 
 import wattson.util.misc
 from wattson.analysis.statistics.client.statistic_client import StatisticClient
-from wattson.apps.interface.clients import CombiClient
-from wattson.apps.interface.util import messages, ConfirmationStatus, UNSET_REFERENCE_NR
 from wattson.apps.script_controller.interface import SoloScript, Script, TimedScript
 from wattson.apps.script_controller.runner import TimedRunner
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
+from wattson.hosts.ccx.app_gateway import AppGatewayClient
 from wattson.iec104.interface.types import COT
 from wattson.powergrid.wrapper.grid_wrapper import GridWrapper
 from wattson.powergrid.remote.remote_power_grid_model import RemotePowerGridModel
@@ -31,11 +30,10 @@ CONTROLLER_WAIT_FOR_MTU_PER_RTU_S = 2
 class ScriptControllerApp:
     """
     This app interfaces with the MTU and provides various interaction possibilities for logic scripts.
-    - Measurement Export (Exports all arrived measurements per RTU as JSON-Line file (.jsonl)
-    - State Estimation (TODO)
-    - Delay monitoring (Logs and exports detected delayed measurements)
-    - TimedScripts (supplied by config) - Script queues actions that should be executed at certain points in time
-    - SoloScripts (supplied by config) - Script that is started along with the controller, but runs individually
+    - Measurement Export (Exports all arrived measurements per RTU as JSON-Line file (.jsonl) - State Estimation (TODO) - Delay monitoring (Logs
+    and exports detected delayed measurements) - TimedScripts (supplied by config) - Script queues actions that should be executed at certain
+    points in time - SoloScripts (supplied by config) - Script that is started along with the controller, but runs individually
+
     """
     def __init__(self,
                  host_ip: str,
@@ -122,14 +120,9 @@ class ScriptControllerApp:
                                             publish_server_socket_string=self.wattson_client_publish_socket,
                                             client_name="ScriptController")
 
-        self.mtu_client = CombiClient(
-            "script_controller",
-            mtu_ip=mtu_ip,
-            on_cmd_reply=self._on_cmd_reply,
-            on_cmd_update=self._on_cmd_update,
-            on_dp_update=self._on_dp_update,
-            on_update=self._on_update,
-            store_dp_update=True
+        self.ccx_client = AppGatewayClient(
+            ip_address=mtu_ip,
+            client_name="script-controller"
         )
 
         self.statistics = StatisticClient(
@@ -220,7 +213,7 @@ class ScriptControllerApp:
 
         # MTU connection
         self.logger.info(f"Connecting to MTU")
-        self.mtu_client.start()
+        self.ccx_client.start()
 
         # Worker threads
         for i in range(self._max_worker_threads):
@@ -287,16 +280,16 @@ class ScriptControllerApp:
         for t in self._threads:
             if t.is_alive():
                 t.join()
-        self.mtu_client.stop()
+        self.ccx_client.stop()
         self.grid_wrapper.stop_periodic_export()
         self.grid_wrapper.stop_measurement_export()
         self.grid_wrapper.stop_timing_monitoring()
         self.grid_wrapper.stop_estimations()
 
-    def _on_cmd_reply(self, update: messages.Confirmation, orig_msg: messages.IECMsg):
+    def _on_cmd_reply(self, update: "messages.Confirmation", orig_msg: "messages.IECMsg"):
         pass
 
-    def _on_cmd_update(self, update: messages.Confirmation, orig_msg: messages.IECMsg = None):
+    def _on_cmd_update(self, update: "messages.Confirmation", orig_msg: "messages.IECMsg" = None):
         with self._reply_lock:
             if update.reference_nr in self._reply_events:
                 if update.result["status"] in [
@@ -307,10 +300,10 @@ class ScriptControllerApp:
                     e.set()
                     del self._reply_events[update.reference_nr]
 
-    def _on_update(self, update: messages.IECMsg, orig_msg: messages.IECMsg = None):
+    def _on_update(self, update: "messages.IECMsg", orig_msg: "messages.IECMsg" = None):
         pass
 
-    def _on_dp_update(self, update: messages.ProcessInfoMonitoring, ref_arg=False):
+    def _on_dp_update(self, update: "messages.ProcessInfoMonitoring", ref_arg=False):
         return self.grid_wrapper.handle_measurement(update)
 
     def _get_dp(self, coa: int, ioa: int) -> Optional[dict]:
@@ -347,7 +340,7 @@ class ScriptControllerApp:
         else:
             self.logger.info(f"Worker Queue completed - terminating")
 
-    def send_control(self, message: messages.ProcessInfoControl, callback=None) -> Optional[str]:
+    def send_control(self, message: "messages.ProcessInfoControl", callback=None) -> Optional[str]:
         if message.reference_nr == UNSET_REFERENCE_NR:
             ref_id = self.mtu_client.next_reference_nr
             message.reference_nr = ref_id
@@ -359,12 +352,21 @@ class ScriptControllerApp:
     def set_grid_value(self, element_type: str, element_index: int, value_context: GridValueContext, value_name: str, value: Any) -> bool:
         """
         Updates the grid value of the specified element
-        @param element_type: The element type, e.g., bus
-        @param element_index: The element index
-        @param value_context: The grid value context
-        @param value_name: The grid value's name
-        @param value: The value to set
-        @return: Whether the value has been set
+
+        Args:
+            element_type (str):
+                The element type, e.g., bus
+            element_index (int):
+                The element index
+            value_context (GridValueContext):
+                The grid value context
+            value_name (str):
+                The grid value's name
+            value (Any):
+                The value to set
+
+        Returns:
+            bool: Whether the value has been set
         """
         grid_value = self.get_grid_value(element_type, element_index, value_context, value_name)
         if grid_value is None:
@@ -375,11 +377,19 @@ class ScriptControllerApp:
     def get_grid_value(self, element_type: str, element_index: int, value_context: GridValueContext, value_name: str) -> Optional[GridValue]:
         """
         Returns the GridValue object of the specified element
-        @param element_type: The element type, e.g., bus
-        @param element_index: The element index
-        @param value_context: The grid value context
-        @param value_name: The grid value's name
-        @return: The GridValue object or None, if the value cannot be found
+
+        Args:
+            element_type (str):
+                The element type, e.g., bus
+            element_index (int):
+                The element index
+            value_context (GridValueContext):
+                The grid value context
+            value_name (str):
+                The grid value's name
+
+        Returns:
+            Optional[GridValue]: The GridValue object or None, if the value cannot be found
         """
         try:
             grid_element = self.remote_grid_model.get_element(element_type=element_type, element_id=element_index)
@@ -392,11 +402,19 @@ class ScriptControllerApp:
     def get_grid_value_value(self, element_type: str, element_index: int, value_context: GridValueContext, value_name: str) -> Any:
         """
         Returns the GridValue's value of the specified element
-        @param element_type: The element type, e.g., bus
-        @param element_index: The element index
-        @param value_context: The grid value context
-        @param value_name: The grid value's name
-        @return: The GridValue's value object or None, if the value cannot be found
+
+        Args:
+            element_type (str):
+                The element type, e.g., bus
+            element_index (int):
+                The element index
+            value_context (GridValueContext):
+                The grid value context
+            value_name (str):
+                The grid value's name
+
+        Returns:
+            Any: The GridValue's value object or None, if the value cannot be found
         """
         grid_value = self.get_grid_value(element_type, element_index, value_context, value_name)
         if grid_value is None:
@@ -424,14 +442,26 @@ class ScriptControllerApp:
                        block: bool = True) -> Optional[Union[bool, str]]:
         """
         Sets the addressed data point value via IEC104
-        @param coa: The common address of the data point
-        @param ioa: The information object address of the data point
-        @param value: The value to set
-        @param type_id: The IEC104 type ID of the value
-        @param cot: The cause of transmission to use
-        @param timeout: A timeout in seconds to wait when blocking. Use None to wait indefinitely.
-        @param block: Whether to block until a response is received
-        @return:
+
+        Args:
+            coa (int):
+                The common address of the data point
+            ioa (int):
+                The information object address of the data point
+            value (Any):
+                The value to set
+            type_id (Optional[int], optional):
+                The IEC104 type ID of the value
+                (Default value = None)
+            cot (Optional[int], optional):
+                The cause of transmission to use
+                (Default value = None)
+            timeout (Optional[int], optional):
+                A timeout in seconds to wait when blocking. Use None to wait indefinitely.
+                (Default value = 0)
+            block (bool, optional):
+                Whether to block until a response is received
+                (Default value = True)
         """
         # Get TypeID and COT from data point list if set to None
         if not block:
@@ -479,11 +509,21 @@ class ScriptControllerApp:
     def get_data_point(self, coa: int, ioa: int, timeout: Optional[float] = 5, block: bool = True) -> Any:
         """
         Receive a data point's value via a dedicated IEC104 request.
-        @param coa: The common address of the data point
-        @param ioa: The information object address of the data point
-        @param timeout: A timeout when blocking for a response
-        @param block: Whether to block for the response
-        @return: If blocking and the timeout is not exceeded, the received value is returned. Otherwise, None is returned.
+
+        Args:
+            coa (int):
+                The common address of the data point
+            ioa (int):
+                The information object address of the data point
+            timeout (Optional[float], optional):
+                A timeout when blocking for a response
+                (Default value = 5)
+            block (bool, optional):
+                Whether to block for the response
+                (Default value = True)
+
+        Returns:
+            Any: If blocking and the timeout is not exceeded, the received value is returned. Otherwise, None is returned.
         """
         if not block:
             self._work_queue.put({
@@ -525,17 +565,11 @@ class ScriptControllerApp:
         return value
 
     def get_simulated_start_time(self):
-        """
-        Returns the start timestamp of the simulation in simulated time
-        @return:
-        """
+        """Returns the start timestamp of the simulation in simulated time"""
         return self.wattson_time.sim_start_time()
 
     def get_current_simulated_time(self):
-        """
-        Returns the current timestamp of the simulation in simulated time
-        @return:
-        """
+        """Returns the current timestamp of the simulation in simulated time"""
         return self.wattson_time.sim_clock_time()
 
     def set_simulated_start_time(self, start_time: Union[datetime.datetime, float], speed: float):

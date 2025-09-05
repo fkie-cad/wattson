@@ -7,6 +7,7 @@ class PrintMessage(CLIMessage):
     """
     A message that contains a printing command, mostly in server to client communication.
     Messages can be formatted in different ways, e.g. as table or plain text.
+
     """
     def __init__(self, msg_dict: Optional[dict] = None):
         super().__init__(msg_dict)
@@ -20,6 +21,11 @@ class PrintMessage(CLIMessage):
         """
         returns the message representation as string.
         If a width is given, certain formatting options will respect this as a limit for object widths.
+
+        Args:
+            width (int, optional):
+                
+                (Default value = 0)
         """
         if self.format == "plain":
             return self.data

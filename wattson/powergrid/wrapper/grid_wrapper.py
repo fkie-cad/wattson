@@ -11,13 +11,13 @@ import time
 from pathlib import Path
 from typing import Callable, Optional, List, Dict, Any
 
+from powerowl.layers.network.configuration.protocols.iec61850.mms_trigger_options import MMSTriggerOptions
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import GridElement
 from powerowl.layers.powergrid.values.grid_value import GridValue
 from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 from powerowl.simulators.pandapower import PandaPowerGridModel
 
-from wattson.apps.interface.util import messages
 from wattson.hosts.ccx.protocols import CCXProtocol
 from wattson.powergrid.wrapper.panda_power_state_estimator import PandaPowerStateEstimator
 from wattson.powergrid.wrapper.power_owl_measurement import PowerOwlMeasurement
@@ -29,9 +29,7 @@ from wattson.util.time.virtual_time import VirtualTime
 
 
 class GridWrapper:
-    """
-    This class wraps a PowerGridModel and provides additional functionalities for analysing the grid and associated measurements.
-    """
+    """This class wraps a PowerGridModel and provides additional functionalities for analysing the grid and associated measurements."""
     def __init__(self, power_grid_model: PowerGridModel, datapoints: dict, logger: Optional[logging.Logger], **kwargs):
         self.power_grid_model = power_grid_model
         # The virtual time is used to synchronize actions with arbitrary time-speeds
@@ -131,6 +129,18 @@ class GridWrapper:
                     return data_point
         return None
 
+    def get_iec61850mms_data_point(self, server_id, mms_path):
+        key = f"IEC61850MMS.{server_id}.{mms_path}"
+        if key in self._dp_cache:
+            return self._dp_cache[key]
+        for host, dps in self.data_points.items():
+            for dp in dps:
+                if dp.get("protocol") == CCXProtocol.IEC61850_MMS:
+                    if dp["protocol_data"]["server"] == server_id and dp["protocol_data"]["mms_path"] == mms_path:
+                        self._dp_cache[key] = dp
+                        return dp
+        return None
+
     def get_iec104_data_point(self, coa, ioa):
         key = f"IEC104.{coa}.{ioa}"
         if key in self._dp_cache:
@@ -166,14 +176,45 @@ class GridWrapper:
             return None
         return grid_values[0]
 
+    def update_iec61850mms_value(self, server, mms_path, value) -> bool:
+        """
+        Updates all GridValues associated with the given Server and MMS Path to the given value.
+        Returns whether any value has actually been changed.
+
+        Args:
+            server:
+                The server ID
+            mms_path:
+                The attributes MMS path
+            value:
+                The value
+
+        Returns:
+            bool: Whether any value has actually been changed.
+        """
+        changed = False
+        data_point = self.get_iec61850mms_data_point(server, mms_path)
+        if data_point is not None:
+            grid_values = self.get_grid_values_for_data_point(data_point)
+            trigger_options = [MMSTriggerOptions(trigger_option) for trigger_option in data_point["protocol_data"]["trigger_options"]]
+            timeout = MMSTriggerOptions.INTEGRITY in trigger_options
+            changed = self._update_grid_values(grid_values, value, timeout)
+        else:
+            self.logger.warning(f"No data point found for MMS attribute {mms_path}")
+        return changed
+
     def update_iec104_value(self, coa, ioa, value) -> bool:
         """
         Updates all GridValues associated with the given COA and IOA to the given value.
         Returns whether any value has actually been changed.
-        @param coa: The COA
-        @param ioa: The IOA
-        @param value: The value to apply
-        @return:
+
+        Args:
+            coa:
+                The COA
+            ioa:
+                The IOA
+            value:
+                The value to apply
         """
         changed = False
         data_point = self.get_iec104_data_point(coa, ioa)
@@ -183,20 +224,24 @@ class GridWrapper:
             if type_id == 45:
                 value = bool(value)
             grid_values = self.get_grid_values_for_data_point(data_point)
-            with self.lock:
-                for grid_value in grid_values:
-                    old_value = grid_value.get_value()
-                    # TODO: Check if "set_value" is ok here or if we (again) need raw_set_value
-                    changed |= grid_value.set_value(value)
+            timeout = cot == 1
+            changed = self._update_grid_values(grid_values, value, timeout)
 
-                    # self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
-                    # Add measurements to state estimators
-                    timeout = False
-                    if cot == 1:
-                        timeout = True
-                    measurement = PowerOwlMeasurement(grid_value, value, timeout, self.virtual_time.time())
-                    for estimator_info in self._state_estimators.values():
-                        estimator_info["estimator"].measure(measurement)
+        return changed
+
+    def _update_grid_values(self, grid_values, value, timeout: bool) -> bool:
+        changed = False
+        with self.lock:
+            for grid_value in grid_values:
+                old_value = grid_value.get_value()
+                # TODO: Check if "set_value" is ok here or if we (again) need raw_set_value
+                changed |= grid_value.set_value(value)
+
+                # self._notify_on_element_update(grid_value, old_value=old_value, new_value=value)
+                # Add measurements to state estimators
+                measurement = PowerOwlMeasurement(grid_value, value, timeout, self.virtual_time.time())
+                for estimator_info in self._state_estimators.values():
+                    estimator_info["estimator"].measure(measurement)
         return changed
 
     def handle_data_point_update(self, data_point_identifier: str, value: Any, protocol_name: str, protocol_data: Optional[Dict] = None):
@@ -226,8 +271,22 @@ class GridWrapper:
                     export_data = f"{coa}"
                 changed = self.update_iec104_value(coa, ioa, value)
             elif protocol_name == CCXProtocol.IEC61850_MMS:
-                self.logger.warning(f"IEC 61850-MMS is not yet implemented - cannot handle update")
-                return False
+                mms_info = protocol_data
+                if mms_info is None:
+                    mms_info = data_point["protocol_data"]
+
+                try:
+                    server = mms_info["server"]
+                    mms_path = mms_info["mms_path"]
+                except KeyError as e:
+                    self.logger.error(f"Invalid MMS data point - requires server and mms_path ({e=}")
+                    return False
+
+                export_data["server"] = server
+                export_data["mms_path"] = mms_path
+                if export_host == "catchAll":
+                    export_data = f"{server}"
+                changed = self.update_iec61850mms_value(server, mms_path, value)
             else:
                 self.logger.error(f"Unknown protocol {protocol_name} - cannot handle update")
                 return False
@@ -254,39 +313,6 @@ class GridWrapper:
             self.logger.error(f"{e=}")
         return changed
 
-    def handle_measurement(self, update: messages.ProcessInfoMonitoring):
-        changed = False
-        try:
-            # Update PowerGrid
-            coa = update.coa
-            for ioa, value in update.val_map.items():
-                changed |= self.update_iec104_value(coa, ioa, value)
-
-            # update dp timings
-            ioas = list(update.val_map.keys())
-            if self._dp_timing_enabled and update.cot == 3:
-                arrival = time.time()
-                with self._dp_timing_lock:
-                    for ioa in ioas:
-                        dp_id = f"{coa}.{ioa}"
-                        self._dp_timings.setdefault(dp_id, {"state": "on-time", "last-seen": 0})[
-                            "last_arrival"] = arrival
-
-            # export measurements
-            if self._export_measurements:
-                ref_time: WattsonTime = self._export_measurements_wattson_time_callback()
-                val_map = copy.deepcopy(update.val_map)
-                self._export_measurements_queue.put({
-                    "host": coa,
-                    "value_map": val_map,
-                    "sim-time": ref_time.sim_clock_time(),
-                    "clock-time": ref_time.wall_clock_time()
-                })
-        except Exception as e:
-            self.logger.error(e)
-            raise e
-        return changed
-
     def run_power_flow(self) -> bool:
         self._power_flow_required.clear()
         if self.power_grid_model.simulate():
@@ -303,10 +329,7 @@ class GridWrapper:
             return False
 
     def get_pandapower_net(self):
-        """
-        Returns a pandapower representation of the power grid
-        @return:
-        """
+        """Returns a pandapower representation of the power grid"""
         return self.power_grid_model.to_external()
 
     def start_measurement_export(self, folder: Path, ts_callback: Callable[[], WattsonTime]):
@@ -390,6 +413,7 @@ class GridWrapper:
             if self._export_se_thread is None:
                 self._export_se_thread = threading.Thread(target=self._estimation_export_loop)
                 self._export_se_thread.start()
+        return True
 
     def _timing_monitoring_loop(self):
         while not self._dp_timing_terminate.is_set():
@@ -656,17 +680,26 @@ class GridWrapper:
     def get_grid_elements(self, element_type: str) -> List[GridElement]:
         """
         Returns the pandapower elements of the specified type
-        :param element_type: The elements to return, e.g., "sgen"
-        :return: A dataframe with said elements in case the pp_type is valid. Otherwise, None
+
+        Args:
+            element_type (str):
+                The elements to return, e.g., "sgen"
+
+        Returns:
+            List[GridElement]: A dataframe with said elements in case the pp_type is valid. Otherwise, None
         """
         return self.power_grid_model.get_elements_by_type(element_type=element_type)
 
     def get_datapoints_for_element(self, grid_element: GridElement) -> list:
         """
-        Given a single power grid element, compiles a list of data points that are associated with
-        this element.
-        :param grid_element: The grid element
-        :return: A list of datapoints
+        Given a single power grid element, compiles a list of data points that are associated with this element.
+
+        Args:
+            grid_element (GridElement):
+                The grid element
+
+        Returns:
+            list: A list of datapoints
         """
         result = []
         identifiers = set()
@@ -687,8 +720,13 @@ class GridWrapper:
     def get_data_points_for_grid_value(self, grid_value: GridValue) -> List[dict]:
         """
         Given a single power grid value, compiles a list of data points that this value matches to
-        @param grid_value: The grid value to search for
-        @return: A list of data points
+
+        Args:
+            grid_value (GridValue):
+                The grid value to search for
+
+        Returns:
+            List[dict]: A list of data points
         """
         element_data_points = self.get_datapoints_for_element(grid_element=grid_value.get_grid_element())
         data_points = []
@@ -716,7 +754,7 @@ class GridWrapper:
 
     @staticmethod
     def get_104_info(data_point):
-        if data_point["protocol"] == CCXProtocol.IEC104:
+        if data_point.get("protocol") == CCXProtocol.IEC104:
             return data_point["protocol_data"]
         return None
 

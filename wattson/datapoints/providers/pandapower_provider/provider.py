@@ -65,8 +65,10 @@ class PandapowerProvider(DataPointProvider):
     def add_filter_paths(self, paths: Set):
         """
         Add a callback by specifying the element to change (e.g., res_bus.1.vm_pu)
-        :param paths: A set of paths to monitor
-        :return:
+
+        Args:
+            paths (Set):
+                A set of paths to monitor
         """
         self.filter_paths.update(paths)
         self.client.get_response(RequestResponseMessage({
@@ -179,9 +181,12 @@ class PandapowerProvider(DataPointProvider):
     def _add_identifier_to_map(self, identifier: str, data_point: dict):
         """
         Get all pandapower paths (table.index.column) for this data point and map them to the identifier
-        :param identifier:
-        :param data_point:
-        :return:
+
+        Args:
+            identifier (str):
+                
+            data_point (dict):
+                
         """
         paths = set()
         dp = data_point

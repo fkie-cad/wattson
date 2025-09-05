@@ -14,9 +14,10 @@ class IECClientInterface(ABC):
     def __init__(self, **kwargs):
         """
         TODO
+
         Args:
-            mtu:
             **kwargs:
+                
         """
         self._mtu = kwargs.get("mtu")
         self._node_id = kwargs.get("node_id", "iec-client")
@@ -34,12 +35,12 @@ class IECClientInterface(ABC):
     def init_callbacks(client, **kwargs):
         """
         TODO:
+
         Args:
             client:
+                
             **kwargs:
-
-        Returns:
-
+                
         """
         # also to be used by SingleConMaster, therefor not
         client.callbacks = {
@@ -65,13 +66,14 @@ class IECClientInterface(ABC):
     def add_server(self, ip: str, coa: int, **kwargs):
         """
         TODO
+
         Args:
-            ip:
-            coa:
+            ip (str):
+                
+            coa (int):
+                
             **kwargs:
-
-        Returns:
-
+                
         """
         ...
 
@@ -150,9 +152,11 @@ class IECClientInterface(ABC):
     @abstractmethod
     def send_C_CS(self, coa: int) -> bool:
         """
-        :param coa: either RTU-coa for single C_CS
-                    or GLOBAL-COA to send
-                        to all RTUs with GLOBAL-COA
+        
+
+        Args:
+            coa (int):
+                either RTU-coa for single C_CS or GLOBAL-COA to send to all RTUs with GLOBAL-COA
         """
         ...
 
@@ -160,19 +164,33 @@ class IECClientInterface(ABC):
     def send_P_AC(self, coa: int, ioa: int, cot: int, qpa: int = 3) -> Dict[str, str]:
         """
         For QPA values see 7.2.6.25 in 60870-5-101;
-        :param qpa: 3 is used to activate/ deactivate cyclic transmission params
-        :param cot: ACT/DEACT
-        :param ioa: 0 to activate loaded params, != 0 to load+activate/
-            change cyclic tranmissions
+
+        Args:
+            coa (int):
+                
+            ioa (int):
+                0 to activate loaded params, != 0 to load+activate/ change cyclic tranmissions
+            cot (int):
+                ACT/DEACT
+            qpa (int, optional):
+                3 is used to activate/ deactivate cyclic transmission params
+                (Default value = 3)
         """
         ...
 
     def send_P_ME(self, type_id: int, coa: int, ioa: int, val):
         """
         Always send with cot == ACT
-        :param type_id: 110 - 112
-        :param ioa:
-        :param qpm:
+
+        Args:
+            type_id (int):
+                110 - 112
+            coa (int):
+                
+            ioa (int):
+                
+            val:
+                
         """
         raise NotImplementedError()
 

@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
 
 import psutil
@@ -81,8 +82,26 @@ def clean_docker():
 
 
 def _clear_ovs_bridge(bridge):
-    subprocess.run(f"ovs-vsctl --if-exists del-br {bridge}", shell=True)
-    print(f"{bridge}", end="  ", flush=True)
+    tries = 5
+    success = False
+    while not success and tries > 0:
+        ret = subprocess.run(f"ovs-vsctl --if-exists del-br {bridge}", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        if ret.returncode == 0:
+            success = True
+            break
+        time.sleep(0.3)
+        tries -= 1
+    if not success:
+        print(f"\nCould not delete bridge {bridge}", flush=True)
+    else:
+        print(f"{bridge}", end="  ", flush=True)
+
+
+def _clear_ovs_bridges(bridges):
+    parts = ["ovs-vsctl"]
+    for bridge in bridges:
+        parts.extend(["--if-exists", "del-br", bridge])
+
 
 
 def clean_network():

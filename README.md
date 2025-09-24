@@ -57,7 +57,7 @@ wattson-venv/bin/python3 -m pip install -e ./wattson
 ## Usage
 To start a basic simulation, run
 ```bash
-sudo python3 -m wattson wattson/scenarios/powerowl_example
+sudo wattson-venv/bin/python3 -m wattson wattson/scenarios/powerowl_example
 ```
 
 ## Contributing

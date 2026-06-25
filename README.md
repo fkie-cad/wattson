@@ -48,16 +48,16 @@ wattson-venv/bin/python3 -m pip install -e ./powerowl
 
 # Install Wattson
 git clone https://github.com/fkie-cad/wattson
-## Install Wattson's Simulation Dependencies (OVS, Routing, ...)
-sudo wattson-venv/bin/python3 wattson/setup.py wattson
 # Install Wattson's Python module
 wattson-venv/bin/python3 -m pip install -e ./wattson
+# [Optional] Install Wattson's Simulation Dependencies (OVS, Routing). This is necessary for running a Co-Simulation!
+sudo wattson-venv/bin/python3 -m wattson.install
 ```
 
 ## Usage
 To start a basic simulation, run
 ```bash
-sudo wattson-venv/bin/python3 -m wattson wattson/scenarios/powerowl_example
+sudo wattson-venv/bin/python3 -m wattson wattson/scenarios/powerowl-example
 ```
 
 ## Contributing

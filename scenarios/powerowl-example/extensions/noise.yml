@@ -1,0 +1,12 @@
+config:
+  power-grid:
+    noise:
+      pre_sim:
+        sgen:
+          active_power: "0.02%"
+          reactive_power: "0.03%"
+        storage:
+          active_power: "0.02%"
+      post_sim: False
+      measurement: False
+  

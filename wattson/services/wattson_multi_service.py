@@ -14,6 +14,7 @@ class WattsonMultiService(WattsonService):
     def __init__(self, service_configuration: 'ServiceConfiguration', network_node: 'WattsonNetworkNode', services: Optional[List[WattsonService]] = None):
         super().__init__(service_configuration=service_configuration, network_node=network_node)
         self._sub_services: List[WattsonService] = services if services is not None else []
+        self.start_wait = service_configuration.get("start_wait", 0)
         self.max_wait = service_configuration.get("max_wait", 10)
 
     def is_running(self) -> bool:
@@ -31,7 +32,11 @@ class WattsonMultiService(WattsonService):
     def start(self, refresh_config: bool = False) -> bool:
         self.ensure_artifacts()
         success = True
+        first = True
         for service in self._sub_services:
+            if first and self.start_wait > 0:
+                time.sleep(self.start_wait)
+            first = False
             success &= service.start(refresh_config=refresh_config)
             timeout = time.time() + self.max_wait
             while not service.is_running() and time.time() < timeout:

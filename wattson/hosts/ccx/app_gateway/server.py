@@ -67,6 +67,9 @@ class AppGatewayServer(threading.Thread):
         if CCXProtocol.IEC61850_MMS in self.ccx.protocols:
             from wattson.hosts.ccx.app_gateway.handlers.iec61850_query_handler import Iec61850QueryHandler
             self.register_query_handler_class(Iec61850QueryHandler, 5)
+        if CCXProtocol.MODBUS in self.ccx.protocols:
+            from wattson.hosts.ccx.app_gateway.handlers.modbus_query_handler import ModbusQueryHandler
+            self.register_query_handler_class(ModbusQueryHandler, 5)
 
     def register_query_handler(self, query_handler: QueryHandler, priority: Optional[int] = None):
         self._query_handlers.append(query_handler)

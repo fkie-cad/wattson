@@ -1,14 +1,17 @@
+from pathlib import Path
 from threading import Event
 from typing import Type, Optional
 import logging
 
 from powerowl.layers.network.configuration.protocols.protocol_name import ProtocolName
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
 from wattson.analysis.statistics.client.statistic_client import StatisticClient
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.datapoints.manager import DataPointManager
 from wattson.hosts.rtu.rtu_logic import RTULogic
 
 from wattson.iec104.common import SERVER_UPDATE_PERIOD_MS
+from wattson.protocols.tls.tls_configuration import TlsConfiguration
 
 from wattson.util import apply_args_from_kwargs, get_logger
 
@@ -33,6 +36,7 @@ class RTU:
         self.ip = ""
         self.hostname = ""
         self.coa = 0
+        self.node_id = kwargs.get("node_id")
         self.entity_id = kwargs.get("entity_id")
         self.iec_server_class = iec_server_class
         self.data_point_list = server_datapoints
@@ -52,6 +56,8 @@ class RTU:
         self.periodic_updates_enable = kwargs.get("periodic_updates_enable", True)
         self.iec104_port = kwargs.get("iec104_port", 2404)
 
+        self.modbus_port = kwargs.get("modbus_port", 502)
+
         self.iec61850_port = kwargs.get("iec61850_port", 102)
 
         self._local_control = kwargs.get("local_control", False)
@@ -65,6 +71,16 @@ class RTU:
         if self._local_control:
             self.logger.warning(f"Local Control enabled: No remote control commands are allowed")
 
+        tls = kwargs.get("tls", {})
+        self._server_tls_version = TlsVersion[tls.get("server_tls_version", TlsVersion.NONE.name)]
+        self._client_tls_version = TlsVersion[tls.get("client_tls_version", TlsVersion.NONE.name)]
+        self._tls_configuration = TlsConfiguration()
+        self._tls_configuration.configure_from_tls_version(self._server_tls_version)
+        self._tls_configuration.apply_overrides(tls.get("overrides", {}), is_server=True)
+
+        self.working_directory = kwargs.get("working_directory", Path("."))
+
+        """
         self.statistics_config = kwargs.get("statistics", {})
 
         self.statistics = StatisticClient(
@@ -74,6 +90,7 @@ class RTU:
         )
         self.statistics.start()
         self.statistics.log("start")
+        """
 
         self.wattson_client: Optional[WattsonClient] = None
         self.wattson_client_config = kwargs.get("wattson_client_config")
@@ -108,21 +125,22 @@ class RTU:
                     "field_devices": self.fields,
                     "host": str(self.hostname),
                     "cache_decay": 5,
-                    "statistics": self.statistics,
-                    "statistics_config": self.statistics_config,
+                    #"statistics": self.statistics,
+                    #"statistics_config": self.statistics_config,
+                    "tls_version": self._client_tls_version
                 },
                 "pandapower": {
                     "host": str(self.hostname),
                     "wattson_client": self.wattson_client,
                     "cache_decay": 5,
-                    "statistics": self.statistics,
+                    #"statistics": self.statistics,
                     # "statistics_config": self.statistics_config,
                 },
                 "power_grid": {
                     "host": str(self.hostname),
                     "wattson_client": self.wattson_client,
                     "cache_decay": 5,
-                    "statistics": self.statistics,
+                    #"statistics": self.statistics,
                 },
                 "protection": {
                     "wattson_client": self.wattson_client,
@@ -178,8 +196,8 @@ class RTU:
         self.manager.stop()
         self.logger.info(f"  Sockets...")
         self.stop_sockets()
-        self.logger.info(f"  Statistics...")
-        self.statistics.stop()
+        #self.logger.info(f"  Statistics...")
+        #self.statistics.stop()
         self.logger.info(f"  Done")
 
     def stop_sockets(self):
@@ -202,13 +220,9 @@ class RTU:
             if protocol not in self.protocol_sockets:
                 if protocol == "60870-5-104":
                     self._init_iec104_socket()
-                    # SHOULD BE MOVED
-                    # self._init_modbus_backend()
                 elif protocol == "MODBUS/TCP":
-                    # self._init_modbus_backend()
-                    raise NotImplementedError("No MODBUS/TCP Handler implemented")
+                    self._init_modbus_socket()
                 elif protocol == ProtocolName.IEC61850_MMS.value:
-                    #raise NotImplementedError("No 61850 Handler implemented")
                     self._init_iec61850_socket()
                 elif protocol == "61850-rcb":
                     # These "points" (report control blocks) will be handled in the 61850.
@@ -226,16 +240,30 @@ class RTU:
             periodic_updates_enable=self.periodic_updates_enable,
             port=self.iec104_port,
             allowed_mtu_ips=self._allowed_mtu_ips,
-            block_control_commands=self._local_control
+            block_control_commands=self._local_control,
+            tls_configuration=self._tls_configuration
         )
         rtu_iec104.setup_socket()
         self.protocol_sockets["60870-5-104"] = rtu_iec104
 
+    def _init_modbus_socket(self):
+        from wattson.hosts.rtu.rtu_modbus import RtuModbus
+        rtu_modbus = RtuModbus(
+            self,
+            port=self.modbus_port,
+            allowed_mtu_ips=self._allowed_mtu_ips,
+            block_control_commands=self._local_control,
+            tls_configuration=self._tls_configuration
+        )
+        rtu_modbus.setup_socket()
+        self.protocol_sockets["MODBUS/TCP"] = rtu_modbus
+
     def _init_iec61850_socket(self):
         from wattson.hosts.rtu.rtu_iec61850 import RtuIec61850
         rtu_iec61850 = RtuIec61850(
-                rtu=self,
-                port=self.iec61850_port
+            rtu=self,
+            port=self.iec61850_port,
+            tls_configuration=self._tls_configuration
         )
         if rtu_iec61850 is None:
             raise Exception("Could not initialize rtu_iec61850.")
@@ -244,11 +272,6 @@ class RTU:
         self.logger.debug("Set up rtu_iec61850 socket.")
 
         self.protocol_sockets[ProtocolName.IEC61850_MMS.value] = rtu_iec61850
-
-    # def _init_modbus_backend(self):
-    #     self.protocol_sockets["MODBUS/TCP"] = MODBUS_Client_Maintainer(
-    #         self.fields, statistics=self.statistics
-    #     )
 
     def wait(self):
         self._stop_event.wait()

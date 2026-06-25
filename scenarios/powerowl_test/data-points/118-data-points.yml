@@ -1,339 +1,685 @@
 '118':
 - identifier: '118.10010'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10010
-    type_id: 13
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: voltage
-        context: MEASUREMENT
-        grid_element: bus.2
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: bus.2
+        context: MEASUREMENT
+        attribute: voltage
+        type: float
   scale: NONE
   unit: PER_UNIT
-  value: null
-- identifier: '118.10020'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 118
+    ioa: 10010
     cot: 1
-    direction: monitoring
-    ioa: 10020
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: bus.2
+    context: MEASUREMENT
+    attribute: voltage
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10020'
+  type: datapoint
+  value: 0
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: voltage_angle
-        context: MEASUREMENT
-        grid_element: bus.2
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: bus.2
+        context: MEASUREMENT
+        attribute: voltage_angle
+        type: float
   scale: BASE
   unit: DEGREE
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10020
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: bus.2
+    context: MEASUREMENT
+    attribute: voltage_angle
+    type: float
+    direct: false
+    via: false
 - identifier: '118.10030'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10030
-    type_id: 13
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
+      provider_type: POWER_GRID
       provider_data:
+        grid_element: bus.2
+        context: MEASUREMENT
         attribute: active_power
-        context: MEASUREMENT
-        grid_element: bus.2
         type: float
-      provider_type: POWER_GRID
-  related: []
   scale: BASE
   unit: WATT
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10030
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: bus.2
+    context: MEASUREMENT
+    attribute: active_power
+    type: float
+    direct: false
+    via: false
 - identifier: '118.10040'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10040
-    type_id: 13
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
+      provider_type: POWER_GRID
       provider_data:
-        attribute: reactive_power
-        context: MEASUREMENT
         grid_element: bus.2
+        context: MEASUREMENT
+        attribute: reactive_power
         type: float
-      provider_type: POWER_GRID
-  related: []
   scale: BASE
   unit: VAR
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10040
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: bus.2
+    context: MEASUREMENT
+    attribute: reactive_power
+    type: float
+    direct: false
+    via: false
 - identifier: '118.10050'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10050
-    type_id: 13
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
+      provider_type: POWER_GRID
       provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
         attribute: active_power_to
-        context: MEASUREMENT
-        grid_element: line.0
         type: float
-      provider_type: POWER_GRID
-  related: []
   scale: BASE
   unit: WATT
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10050
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: active_power_to
+    type: float
+    direct: false
+    via: false
 - identifier: '118.10060'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10060
-    type_id: 13
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: reactive_power_to
-        context: MEASUREMENT
-        grid_element: line.0
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: reactive_power_to
+        type: float
   scale: BASE
   unit: VAR
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10060
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: reactive_power_to
+    type: float
+    direct: false
+    via: false
 - identifier: '118.10070'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10070
-    type_id: 13
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
+      provider_type: POWER_GRID
       provider_data:
-        attribute: current_to
-        context: MEASUREMENT
         grid_element: line.0
-        type: float
-      provider_type: POWER_GRID
-  related: []
-  scale: BASE
-  unit: AMPERE
-  value: null
-- identifier: '118.10080'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10080
-    type_id: 13
-  providers:
-    sources:
-    - domain: source
-      provider_data:
-        attribute: voltage_to
         context: MEASUREMENT
-        grid_element: line.0
+        attribute: active_power_loss
         type: float
-      provider_type: POWER_GRID
-  related: []
-  scale: NONE
-  unit: PER_UNIT
-  value: null
-- identifier: '118.10090'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 1
-    direction: monitoring
-    ioa: 10090
-    type_id: 13
-  providers:
-    sources:
-    - domain: source
-      provider_data:
-        attribute: active_power_from
-        context: MEASUREMENT
-        grid_element: line.1
-        type: float
-      provider_type: POWER_GRID
-  related: []
   scale: BASE
   unit: WATT
-  value: null
-- identifier: '118.10100'
+  related:
+  - '102.10070'
   protocol: 60870-5-104
   protocol_data:
     coa: 118
+    ioa: 10070
     cot: 1
-    direction: monitoring
-    ioa: 10100
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: active_power_loss
+    type: float
+    direct: false
+    via:
+      device: DataPoint.1813
+      protocol: 60870-5-104
+- identifier: '118.10080'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: reactive_power_from
-        context: MEASUREMENT
-        grid_element: line.1
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: reactive_power_loss
+        type: float
   scale: BASE
   unit: VAR
-  value: null
-- identifier: '118.10110'
+  related:
+  - '102.10080'
   protocol: 60870-5-104
   protocol_data:
     coa: 118
+    ioa: 10080
     cot: 1
-    direction: monitoring
-    ioa: 10110
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: reactive_power_loss
+    type: float
+    direct: false
+    via:
+      device: DataPoint.1814
+      protocol: 60870-5-104
+- identifier: '118.10090'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: current_from
-        context: MEASUREMENT
-        grid_element: line.1
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: current_to
+        type: float
   scale: BASE
   unit: AMPERE
-  value: null
-- identifier: '118.10120'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 118
+    ioa: 10090
     cot: 1
-    direction: monitoring
-    ioa: 10120
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: current_to
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10100'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: voltage_from
-        context: MEASUREMENT
-        grid_element: line.1
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: current
+        type: float
+  scale: BASE
+  unit: AMPERE
+  related:
+  - '102.10100'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10100
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: current
+    type: float
+    direct: false
+    via:
+      device: DataPoint.1816
+      protocol: 60870-5-104
+- identifier: '118.10110'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: voltage_to
+        type: float
   scale: NONE
   unit: PER_UNIT
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10110
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: voltage_to
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10120'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: voltage_angle_to
+        type: float
+  scale: NONE
+  unit: DEGREE
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10120
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: voltage_angle_to
+    type: float
+    direct: false
+    via: false
 - identifier: '118.10130'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.0
+        context: MEASUREMENT
+        attribute: loading
+        type: float
+  scale: NONE
+  unit: PERCENT
+  related:
+  - '102.10130'
   protocol: 60870-5-104
   protocol_data:
     coa: 118
-    cot: 6
-    direction: control
     ioa: 10130
-    type_id: 45
-  providers:
-    targets:
-    - domain: target
-      provider_data:
-        attribute: closed
-        context: CONFIGURATION
-        grid_element: switch.9
-        type: bool
-      provider_type: POWER_GRID
-  related:
-  - '118.10140'
-  scale: NONE
-  unit: NONE
-  value: null
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.0
+    context: MEASUREMENT
+    attribute: loading
+    type: float
+    direct: false
+    via:
+      device: DataPoint.1819
+      protocol: 60870-5-104
 - identifier: '118.10140'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: active_power_from
+        type: float
+  scale: BASE
+  unit: WATT
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 118
-    cot: 3
-    direction: monitoring
     ioa: 10140
-    type_id: 1
-  providers:
-    sources:
-    - domain: source
-      provider_data:
-        attribute: is_closed
-        context: MEASUREMENT
-        grid_element: switch.9
-        type: bool
-      provider_type: POWER_GRID
-  related: []
-  scale: NONE
-  unit: NONE
-  value: null
-- identifier: '118.10150'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 6
-    direction: control
-    ioa: 10150
-    type_id: 45
-  providers:
-    targets:
-    - domain: target
-      provider_data:
-        attribute: closed
-        context: CONFIGURATION
-        grid_element: switch.10
-        type: bool
-      provider_type: POWER_GRID
-  related:
-  - '118.10160'
-  scale: NONE
-  unit: NONE
-  value: null
-- identifier: '118.10160'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 118
-    cot: 3
+    cot: 1
+    type_id: 13
     direction: monitoring
-    ioa: 10160
-    type_id: 1
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: active_power_from
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10150'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: is_closed
-        context: MEASUREMENT
-        grid_element: switch.10
-        type: bool
       provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: reactive_power_from
+        type: float
+  scale: BASE
+  unit: VAR
   related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10150
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: reactive_power_from
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10160'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: active_power_loss
+        type: float
+  scale: BASE
+  unit: WATT
+  related:
+  - '119.10070'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10160
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: active_power_loss
+    type: float
+    direct: false
+    via:
+      device: DataPoint.2098
+      protocol: 60870-5-104
+- identifier: '118.10170'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: reactive_power_loss
+        type: float
+  scale: BASE
+  unit: VAR
+  related:
+  - '119.10080'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10170
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: reactive_power_loss
+    type: float
+    direct: false
+    via:
+      device: DataPoint.2099
+      protocol: 60870-5-104
+- identifier: '118.10180'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: current_from
+        type: float
+  scale: BASE
+  unit: AMPERE
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10180
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: current_from
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10190'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: current
+        type: float
+  scale: BASE
+  unit: AMPERE
+  related:
+  - '119.10100'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10190
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: current
+    type: float
+    direct: false
+    via:
+      device: DataPoint.2101
+      protocol: 60870-5-104
+- identifier: '118.10200'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: voltage_from
+        type: float
   scale: NONE
-  unit: NONE
-  value: null
+  unit: PER_UNIT
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10200
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: voltage_from
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10210'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: voltage_angle_from
+        type: float
+  scale: NONE
+  unit: DEGREE
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10210
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: voltage_angle_from
+    type: float
+    direct: false
+    via: false
+- identifier: '118.10220'
+  type: datapoint
+  value: .nan
+  providers:
+    sources:
+    - domain: source
+      provider_type: POWER_GRID
+      provider_data:
+        grid_element: line.1
+        context: MEASUREMENT
+        attribute: loading
+        type: float
+  scale: NONE
+  unit: PERCENT
+  related:
+  - '119.10130'
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 118
+    ioa: 10220
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '118'
+  grid_value:
+    grid_element: line.1
+    context: MEASUREMENT
+    attribute: loading
+    type: float
+    direct: false
+    via:
+      device: DataPoint.2104
+      protocol: 60870-5-104

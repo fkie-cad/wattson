@@ -1,6 +1,7 @@
 import ipaddress
 from typing import Optional, List, TYPE_CHECKING, Dict
 
+from wattson.cosimulation.exceptions import NetworkNodeNotFoundException
 from wattson.cosimulation.exceptions import NetworkException
 from wattson.cosimulation.exceptions.node_creation_failed_exception import NodeCreationFailedException
 from wattson.cosimulation.simulators.network.components.remote.remote_network_host import RemoteNetworkHost
@@ -140,11 +141,11 @@ class NodeCliCommand(CliCommandHandler):
         return self.remote_network_emulator.get_nodes()
 
     def get_node(self, entity_id) -> Optional[RemoteNetworkNode]:
-        node = None
         try:
             node = self.remote_network_emulator.get_node(node=entity_id)
-        finally:
-            return node
+        except NetworkNodeNotFoundException:
+            node = None
+        return node
 
     def handle_command(self, command: List[str], prefix: List[str]) -> bool:
         if len(command) == 1:

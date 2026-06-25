@@ -1,20 +1,28 @@
 import logging
+import time
 import traceback
 from functools import cmp_to_key
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Tuple, Any, List
 
 import iec61850_python
+from iec61850_python import TlsConfiguration, TlsConfigVersion, TlsEventLevel, TlsConnection
 
 from powerowl.layers.network.configuration.protocols.iec61850.mms_functional_constraints import MMSFunctionalConstraints
 from powerowl.layers.network.configuration.protocols.iec61850.mms_report_inclusion_options import MMSReportInclusionOptions
 from powerowl.layers.network.configuration.protocols.iec61850.mms_trigger_options import MMSTriggerOptions
 from powerowl.layers.network.configuration.protocols.protocol_name import ProtocolName
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
+from wattson.analysis.statistics.common.static import StaticStatisticClient
+from wattson.analysis.statistics.common.statistic_message import StatisticMessage
 from wattson.datapoints.interface import DataPointValue
 
 from wattson.iec61850.common.iec61850_python_mappings import iec61850_python_mappings
 from wattson.iec61850.iec61850_data_attribute import IEC61850DataAttribute
 from wattson.iec61850.iec61850_mms_value import IEC61850MMSValue
 from wattson.iec61850.iec61850_model import IEC61850Model
+from wattson.protocols.tls.tls_configuration import TlsConfiguration as WattsonTlsConfiguration
+from wattson.protocols.tls.tls_validation_mode import TlsValidationMode
 
 if TYPE_CHECKING:
     from wattson.hosts.rtu import RTU
@@ -38,6 +46,14 @@ class RtuIec61850:
         self._data_point_subscriptions = []
         self._data_point_callbacks = []
         self._initial_attribute_values: List[Tuple[IEC61850DataAttribute, Any]] = []
+        self._tls_configuration: WattsonTlsConfiguration = kwargs.get("tls_configuration", WattsonTlsConfiguration())
+        if self._tls_configuration.is_tls_enabled():
+            #self.port = kwargs.get("port", 3782)
+            # TODO: Use correct port
+            self.port = 3782
+        # List of accepted client certificates. If None, all CA certificates are accepted.
+        self._tls_client_certificates: Optional[List[Path]] = kwargs.get("tls_client_certificates", None)
+        self._working_directory = self.rtu.working_directory
 
     def setup_socket(self):
         self.logger.debug("Enter setup_socket")
@@ -160,7 +176,7 @@ class RtuIec61850:
 
             self.logger.debug(f"Added report control block {rcb_id}: {report_control_block}, {report_control_block.name}")
 
-        self.logger.info(f"Adding Server Socket: {self.rtu.ip}:{self.port}")
+        tls_configuration = self._configure_tls()
 
         self.server: iec61850_python.Server = iec61850_python.Server(
             self.rtu.ip,
@@ -168,7 +184,7 @@ class RtuIec61850:
             self.tick_rate_ms,
             self.max_open_connections,
             self.model.lib_object,
-            None
+            tls_configuration
         )
 
         if self.server is None:
@@ -192,6 +208,87 @@ class RtuIec61850:
             self.server.set_control_handler(data_object.lib_object, self.on_control)
             data_object.set_control_model(iec61850_python.ControlModel.DIRECT_NORMAL)
         self.logger.debug("Done with setup_socket.")
+
+    def _configure_tls(self) -> Optional[TlsConfiguration]:
+        if not self._tls_configuration.is_tls_enabled():
+            return None
+        self.logger.info(f"[TLS] Enabling TLS socket")
+
+        cert_folder = self._working_directory.joinpath("certificates")
+        server_private_key_file = cert_folder.joinpath("private_key.pem")
+        server_certificate_file = cert_folder.joinpath("certificate.pem")
+        root_ca_certificate_file = cert_folder.joinpath("root-ca.pem")
+        tls_configuration = TlsConfiguration()
+
+        if self._tls_configuration.tls_validation_mode.has(TlsValidationMode.CERTIFICATE_AUTHORITY):
+            tls_configuration.set_chain_validation(True)
+            if not root_ca_certificate_file.exists():
+                self.logger.error(f"[TLS] Root CA missing - cannot enable chain verification")
+                tls_configuration.set_chain_validation(False)
+            elif not tls_configuration.add_CA_certificate_from_file(str(root_ca_certificate_file.absolute())):
+                self.logger.error(f"[TLS] Could not load Root CA certificate - cannot enable chain verification")
+                tls_configuration.set_chain_validation(False)
+            else:
+                self.logger.debug(f"[TLS] Root CA set from {str(root_ca_certificate_file)}")
+
+        if self._tls_configuration.tls_validation_mode.has(TlsValidationMode.WHITELIST):
+            tls_configuration.set_allow_only_known_certificates(True)
+            tls_client_certificates = self._tls_client_certificates
+            if tls_client_certificates is None:
+                tls_client_certificates = []
+                # TODO: Remove this!
+                tls_client_certificates.append(cert_folder.joinpath("1-certificate.pem"))
+                for mtu_id in self._tls_configuration.tls_expected_client_ids:
+                    tls_client_certificates.append(cert_folder.joinpath(f"{mtu_id}-certificate.pem"))
+
+            added_certificates = []
+            for client_certificate in tls_client_certificates:
+                if not client_certificate.exists():
+                    self.logger.error(f"[TLS] Client certificate {str(client_certificate)} was not found")
+                elif not tls_configuration.add_allowed_certificate_from_file(str(client_certificate.absolute())):
+                    self.logger.error(f"[TLS] Client certificate {str(client_certificate)} was not added")
+                else:
+                    added_certificates.append(client_certificate)
+                    self.logger.debug(f"[TLS] Added client whitelist certificate from {str(client_certificate)}")
+
+            if len(added_certificates) == 0:
+                self.logger.warning("[TLS] Client authentication whitelist enabled but no whitelisted certificates added - all connections are blocked")
+            else:
+                self.logger.debug(f"[TLS] Client whitelist enabled - {len(added_certificates)} whitelisted certificates added")
+
+        if not server_private_key_file.exists():
+            self.logger.error(f"[TLS] TLS Private Key missing - cannot init TLS")
+            return None
+        elif not tls_configuration.set_own_key_from_file(str(server_private_key_file.absolute()), ""):
+            self.logger.error(f"[TLS] Could not load private key - cannot init TLS")
+            return None
+
+        if not server_certificate_file.exists():
+            self.logger.error(f"[TLS] TLS Certificate missing - cannot init TLS")
+            return None
+        elif not tls_configuration.set_own_certificate_from_file(str(server_certificate_file.absolute())):
+            self.logger.error(f"[TLS] Could not load server certificate - cannot init TLS")
+            return None
+
+        # Ciphers
+        tls_configuration.clear_cipher_suite_list()
+        cipher_suites = self._tls_configuration.derive_cipher_suites()
+        if self._tls_configuration.is_encryption_enabled():
+            self.logger.info(f"[TLS] Encryption requested")
+        else:
+            self.logger.info(f"[TLS] Encryption DISABLED")
+
+        for suite in cipher_suites:
+            # self.logger.debug(f"[TLS] Enabling cipher suite {suite.name}")
+            tls_configuration.add_cipher_suite(suite.value)
+
+        # Versions
+        tls_configuration.set_minimum_tls_version(TlsConfigVersion(self._tls_configuration.tls_version.get_number()))
+        tls_configuration.set_maximum_tls_version(TlsConfigVersion(self._tls_configuration.tls_version.get_number()))
+        tls_configuration.set_event_handler(self._on_tls_event)
+        self.logger.info(f"[TLS] TLS {self._tls_configuration.tls_version.value} enabled")
+        # self.logger.info(f"[TLS] Cipher suites: {', '.join([cs.name for cs in cipher_suites])}")
+        return tls_configuration
 
     def _update_data_points(self):
         data_points = []
@@ -370,7 +467,7 @@ class RtuIec61850:
                        local_address: str,
                        peer_address: str) -> iec61850_python.MmsDataAccessError:
         self.logger.info(f"Handling read access from {peer_address} on object {data_object.get_name()} with functional constraint {functional_constraint}")
-
+        StaticStatisticClient.emit(StatisticMessage(event_class="61850-mms-read", event_name=f"read-access-{data_object.get_mms_path()}", value=time.time()))
         # TODO: Update value?
         return iec61850_python.MmsDataAccessError_e.DATA_ACCESS_ERROR_SUCCESS
 
@@ -400,3 +497,9 @@ class RtuIec61850:
             self.logger.warning(f"Failed to update {data_point['identifier']} to {value.get()}")
 
         return iec61850_python.MmsDataAccessError_e.DATA_ACCESS_ERROR_SUCCESS
+
+    ###
+    ### TLS
+    ###
+    def _on_tls_event(self, configuration: TlsConfiguration, event_level: TlsEventLevel, event_code: int, message: str, connection: TlsConnection) -> None:
+        self.logger.info(f"[TLS][{event_level.name}] ({event_code}) - {message}")

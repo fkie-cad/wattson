@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Optional, Dict
 from wattson.hosts.ccx.clients.ccx_client import CCXProtocolClient
 from wattson.hosts.ccx.connection_status import CCXConnectionStatus
 from wattson.hosts.ccx.protocols import CCXProtocol
+from wattson.protocols.tls.tls_configuration import TlsConfiguration
 from wattson.iec104.common.datapoint import IEC104Point
 from wattson.iec104.common.iec104message import IEC104Message
 
@@ -16,8 +17,8 @@ if TYPE_CHECKING:
 
 
 class Iec104CCXProtocolClient(CCXProtocolClient):
-    def __init__(self, ccx: 'ControlCenterExchangeGateway'):
-        super().__init__(ccx)
+    def __init__(self, ccx: 'ControlCenterExchangeGateway', tls_configurations: Optional[Dict[str, TlsConfiguration]] = None):
+        super().__init__(ccx, tls_configurations=tls_configurations)
         self.data_points: dict = self.ccx.protocol_info[CCXProtocol.IEC104]
         self.client = IEC104Client(
             datapoints=list(self.data_points.values()),
@@ -38,7 +39,7 @@ class Iec104CCXProtocolClient(CCXProtocolClient):
         self.data_point_identifier_by_coa_ioa = {}
         self.known_servers = set()
         for dp_id, dp in self.data_points.items():
-            server_id = dp["server_key"]
+            server_id = dp["protocol_server_id"]
             protocol_data = dp["protocol_data"]
             coa = protocol_data["coa"]
             ioa = protocol_data["ioa"]
@@ -60,6 +61,9 @@ class Iec104CCXProtocolClient(CCXProtocolClient):
             self.server_key_by_coa[int(coa)] = server_id
 
     def get_default_port(self):
+        return IEC104_SERVER_DEFAULT_PORT
+
+    def get_default_tls_port(self):
         return IEC104_SERVER_DEFAULT_PORT
 
     def get_protocol(self) -> CCXProtocol:

@@ -39,7 +39,6 @@ class StatisticClient(Thread):
             self._logger = get_logger("Wattson", "StatisticClient")
         else:
             self._logger = self._logger.getChild("StatisticClient")
-        #self._logger.setLevel(kwargs.get("log_level", logging.DEBUG))
 
         random_name = ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
         self.host_name = kwargs.get("host", f"C_{random_name}")

@@ -1,5 +1,8 @@
 import datetime
 import importlib
+import json
+import logging
+import queue
 import threading
 import time
 from pathlib import Path
@@ -44,6 +47,8 @@ class CoSimulationController(WattsonQueryHandler):
         self._config.update(kwargs)
         self._configuration_store = ConfigurationStore()
 
+        self._post_start_messages = []
+
         clock_configuration = kwargs.get("clock", {})
         self._wattson_time = WattsonTime(
             wall_clock_reference=clock_configuration.get("wall_clock_reference", None),
@@ -82,6 +87,11 @@ class CoSimulationController(WattsonQueryHandler):
         self._sim_control_host: Optional[WattsonNetworkHost] = None
         self._required_sim_control_clients = set()
 
+        self._enable_statistics = kwargs.get("enable_statistics", False)
+        self._statistics_queue: queue.Queue = queue.Queue()
+        self._statistics_thread: Optional[threading.Thread] = None
+        self._statistics_file = self.working_directory.joinpath("statistics.jsonl")
+
         default_notification_export = [
             PowerGridNotificationTopic.SIMULATION_STEP_DONE,
             WattsonNetworkNotificationTopic.NODE_CUSTOM_EVENT
@@ -101,6 +111,14 @@ class CoSimulationController(WattsonQueryHandler):
 
     def get_data(self, key, default=None):
         return self._data.get(key, default)
+
+    def queue_post_start_message(self, message: str):
+        """
+        Appends a message to be displayed after the co-simulation started.
+        Args:
+            message: The message to be displayed.
+        """
+        self._post_start_messages.append(message)
 
     @property
     def is_waiting_for_clients(self):
@@ -167,6 +185,7 @@ class CoSimulationController(WattsonQueryHandler):
         if not self.working_directory.exists():
             self.logger.info(f"Creating working directory")
             self.working_directory.mkdir(parents=True)
+        self._statistics_file = self.working_directory.joinpath("statistics.jsonl")
         self._working_directory_is_set_up = True
 
     def start(self):
@@ -196,6 +215,10 @@ class CoSimulationController(WattsonQueryHandler):
         self.sim_control_publish_socket_string = sim_control_publish_socket_string
 
         self._configuration_store.register_configuration(
+            "sim-control-ip",
+            str(sim_control_ip)
+        )
+        self._configuration_store.register_configuration(
             "sim-control-query-socket",
             sim_control_query_socket_string
         )
@@ -206,6 +229,11 @@ class CoSimulationController(WattsonQueryHandler):
         self._configuration_store.register_configuration(
             "working-directory",
             str(self.working_directory.absolute())
+        )
+
+        self._configuration_store.register_configuration(
+            "statistics",
+            self._enable_statistics
         )
 
         self._configuration_store.register_configuration("scenario_path", str(self.scenario_path.absolute()))
@@ -233,6 +261,10 @@ class CoSimulationController(WattsonQueryHandler):
         )
         self._simulation_control_server.start()
         self._simulation_control_server.wait_until_ready()
+
+        if self._enable_statistics:
+            self._statistics_thread = threading.Thread(target=self._statistic_thread_run)
+            self._statistics_thread.start()
 
         # Start Physical Simulator
         self.logger.info("Starting Physical Simulation")
@@ -271,6 +303,15 @@ class CoSimulationController(WattsonQueryHandler):
                 break
             self.logger.info("Waiting for physical simulator to be ready before starting services")
 
+        # Start PCAPs if requested
+        for node_id in self._config.get("auto_pcap", []):
+            try:
+                node = self.network_emulator.get_node(node_id)
+                node.start_pcap()
+                self.logger.info(f"Starting PCAP on {node.entity_id} ({node.display_name})")
+            except Exception as e:
+                self.logger.warning(f"Could not start PCAP for {node_id} - {e}")
+
         # Deploy host processes
         self.network_emulator.deploy_services()
         stop_time = time.perf_counter()
@@ -286,6 +327,9 @@ class CoSimulationController(WattsonQueryHandler):
             for extension in on_run_extensions:
                 self.logger.info(f" Applying {extension.__class__.__name__}")
                 extension.extend_on_run()
+
+        for message in self._post_start_messages:
+            self.logger.info(f"{message}")
 
     def stop(self, attempt_wait_cancel: bool = False):
         if self._stopped.is_set():
@@ -317,6 +361,9 @@ class CoSimulationController(WattsonQueryHandler):
                 continue
             self.logger.info(f" Stopping simulator of type {simulator.get_simulator_type()}")
             simulator.stop()
+        if self._statistics_thread is not None and self._statistics_thread.is_alive():
+            self.logger.info("Stopping statistics export")
+            self._statistics_thread.join()
         self.logger.info("Goodbye")
         self._stopped.set()
 
@@ -376,6 +423,8 @@ class CoSimulationController(WattsonQueryHandler):
         if extension_list_file.exists():
             with extension_list_file.open("r") as f:
                 extension_list = yaml.load(f, Loader=yaml.SafeLoader)
+            if extension_list is None:
+                extension_list = []
             for extension_entry in extension_list:
                 if isinstance(extension_entry, str):
                     from wattson.cosimulation.control.yaml_scenario_extension import YamlScenarioExtension
@@ -503,7 +552,10 @@ class CoSimulationController(WattsonQueryHandler):
 
     def handles_simulation_query_type(self, query: Union[WattsonQuery, Type[WattsonQuery]]) -> bool:
         if isinstance(query, WattsonQuery):
-            return query.query_type in [WattsonQueryType.HAS_SIMULATOR, WattsonQueryType.GET_SIMULATORS]
+            return query.query_type in [WattsonQueryType.HAS_SIMULATOR,
+                                        WattsonQueryType.GET_SIMULATORS,
+                                        WattsonQueryType.SUBMIT_STATISTIC,
+                                        WattsonQueryType.GLOBAL_LOG]
         return False
 
     def handle_simulation_control_query(self, query: WattsonQuery) -> Optional[WattsonResponse]:
@@ -516,6 +568,18 @@ class CoSimulationController(WattsonQueryHandler):
 
         if query.query_type == WattsonQueryType.GET_SIMULATORS:
             return WattsonResponse(successful=True, data={"simulators": self.get_simulator_types()})
+
+        if query.query_type == WattsonQueryType.SUBMIT_STATISTIC:
+            if self._enable_statistics:
+                self._statistics_queue.put(query.query_data)
+            return WattsonResponse(successful=True)
+
+        if query.query_type == WattsonQueryType.GLOBAL_LOG:
+            message = query.query_data.get("message")
+            level = query.query_data.get("level", logging.INFO)
+            if message is not None:
+                self.logger.log(level, message)
+            return WattsonResponse(successful=True)
 
         return None
 
@@ -592,3 +656,14 @@ class CoSimulationController(WattsonQueryHandler):
             log_missing_clients(as_warning=True)
         else:
             self.logger.info("All clients connected")
+
+    def _statistic_thread_run(self):
+        with self._statistics_file.open("w") as f:
+            while not self._stop_requested.is_set():
+                try:
+                    entry = self._statistics_queue.get(True, timeout=5)
+                    json.dump(entry, f)
+                    f.write("\n")
+                    f.flush()
+                except queue.Empty:
+                    continue

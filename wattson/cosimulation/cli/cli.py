@@ -17,6 +17,7 @@ from wattson.cosimulation.cli.commands.link_cli_command import LinkCliCommand
 from wattson.cosimulation.cli.commands.node_cli_command import NodeCliCommand
 from wattson.cosimulation.cli.commands.shutdown_cli_command import ShutdownCliCommand
 from wattson.cosimulation.cli.commands.firewall_cli_command import FirewallCliCommand
+from wattson.cosimulation.cli.commands.util_cli_command import UtilCliCommand
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.cosimulation.simulators.network.messages.wattson_network_notificaction_topics import WattsonNetworkNotificationTopic
 
@@ -173,6 +174,8 @@ class CLI:
         CLI.add_handler_class(LinkCliCommand)
         # Power Grid
         CLI.add_handler_class(GridValueCliCommand)
+        # Util
+        CLI.add_handler_class(UtilCliCommand)
 
     """
     Command handling

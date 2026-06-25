@@ -248,18 +248,22 @@ class AppGatewayClient(threading.Thread):
                 return
             if server_key is not None:
                 if server_key in global_connection_status:
-                    global_connection_status[server_key]["connection_status"] = connection_status
+                    if protocol not in global_connection_status[server_key]:
+                        self.logger.warning(f"Unknown protocol {protocol} in {server_ip}:{server_port} added")
+                        global_connection_status[server_key][protocol] = {}
+                    global_connection_status[server_key][protocol]["connection_status"] = connection_status
                 else:
                     self.logger.warning(f"Unknown server added to connection: {server_key} ({server_ip}:{server_port})")
-            for key, status_dict in global_connection_status.items():
-                status = status_dict["connection_status"]
-                if status not in [CCXConnectionStatus.CONNECTED, CCXConnectionStatus.ESTABLISHED]:
-                    if server_ids is not None and key not in server_ids:
-                        # Server ID is not of interest
-                        continue
-                    # Not connected, don't trigger event
-                    self.logger.info(f"Server {key} not yet connected ({status})")
-                    return
+            for key, protocol_status in global_connection_status.items():
+                for protocol, status_dict in protocol_status.items():
+                    status = status_dict["connection_status"]
+                    if status not in [CCXConnectionStatus.CONNECTED, CCXConnectionStatus.ESTABLISHED]:
+                        if server_ids is not None and key not in server_ids:
+                            # Server ID is not of interest
+                            continue
+                        # Not connected, don't trigger event
+                        self.logger.info(f"Server {key} not yet connected ({status})")
+                        return
             # Everything of interest is connected, trigger event
             trigger_event.set()
 

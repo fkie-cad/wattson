@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict
 
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
 from wattson.services.deployment import PythonDeployment
 from wattson.hosts.rtu.rtu import RTU
 from wattson.util.misc import dynamic_load_class_from_file, dynamic_load_class
@@ -72,6 +73,7 @@ class RtuDeployment(PythonDeployment):
             self.datapoints,
             coa=int(self.coa),
             entity_id=self.entity_id,
+            node_id=self.nodeid,
             ip=self.ip_address,
             wattson_client_config=self.wattson_client_config,
             hostname=self.nodeid,
@@ -84,7 +86,9 @@ class RtuDeployment(PythonDeployment):
             power_grid=self.net,
             allowed_mtu_ips=self.allowed_mtu_ips,
             use_syslog=self.use_syslog,
-            local_control=self.local_control
+            local_control=self.local_control,
+            tls=self.config.get("tls", {}),
+            working_directory=Path(self.config.get("node-directory", ".")),
         )
         self.rtu.start()
         self.rtu.wait()

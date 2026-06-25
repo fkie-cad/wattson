@@ -62,6 +62,7 @@ class RtuIec104:
                 if apdu.type == 100:
                     self.logger.info("Received C_IC_NA_1 (General Interrogation)")
 
+                """
                 if apdu.type == 102:    # READ
                     self.rtu.statistics.log(str(self.rtu.coa), event_class="apdu.monitoring.request", value="receive",
                                             data={"type": apdu.type, "cot": apdu.cot}
@@ -70,8 +71,10 @@ class RtuIec104:
                     self.rtu.statistics.log(str(self.rtu.coa), event_class="apdu.control.request", value="receive",
                                             data={"type": apdu.type, "cot": apdu.cot}
                                             )
+                """
 
         def on_send_apdu(apdu: APDU):
+            return
             if isinstance(apdu, I_FORMAT):
                 if apdu.type < 45:    # READ
                     self.rtu.statistics.log(str(self.rtu.coa), event_class="apdu.monitoring.response", value="send",

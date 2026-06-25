@@ -17,7 +17,13 @@ class RegisterProvider(DataPointProvider):
                   state_id: Optional[str] = None) -> DataPointValue:
         provider_info = self._get_provider_info(identifier, provider_id, "sources")
         register_name = provider_info["name"]
-        default_value = provider_info["default"]
+        if "default" in provider_info:
+            default_value = provider_info["default"]
+        elif "value" in provider_info:
+            default_value = provider_info["value"]
+        else:
+            default_value = None
+
         if register_name in self.registers:
             return self.registers[register_name]
         return default_value

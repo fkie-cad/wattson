@@ -2,31 +2,31 @@ import logging
 import threading
 import time
 import traceback
-from typing import TYPE_CHECKING, Any, Optional, Dict
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Optional, Dict, List
 
 import iec61850_python
+from iec61850_python import TlsConfiguration, TlsEventLevel, TlsConnection, TlsConfigVersion, TlsKeyExportType, TlsPrfType
 
 from powerowl.layers.network.configuration.data_point_type import DataPointType
-from powerowl.layers.network.configuration.protocols.iec61850.mms_functional_constraints import MMSFunctionalConstraints
-from powerowl.layers.network.configuration.protocols.iec61850.mms_report_inclusion_options import MMSReportInclusionOptions
-from powerowl.layers.network.configuration.protocols.iec61850.mms_trigger_options import MMSTriggerOptions
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
 from wattson.hosts.ccx.app_gateway.data_objects.ccx_mms_report import CCXMmsReport
 from wattson.hosts.ccx.clients.ccx_client import CCXProtocolClient
 from wattson.hosts.ccx.connection_status import CCXConnectionStatus
 from wattson.hosts.ccx.protocols import CCXProtocol
 from wattson.iec61850.common.iec61850_python_mappings import iec61850_python_mappings
-from wattson.iec61850.iec61850_mms_array import IEC61850MMSArray
 from wattson.iec61850.iec61850_mms_report import IEC61850MMSReport
 from wattson.iec61850.iec61850_model import IEC61850Model
 from wattson.iec61850.iec61850_remote_data_attribute import IEC61850RemoteDataAttribute
+from wattson.protocols.tls.tls_validation_mode import TlsValidationMode
 
 if TYPE_CHECKING:
     from wattson.hosts.ccx import ControlCenterExchangeGateway
 
 
 class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
-    def __init__(self, ccx: 'ControlCenterExchangeGateway', **kwargs):
-        super().__init__(ccx)
+    def __init__(self, ccx: 'ControlCenterExchangeGateway', tls_configurations: Optional[Dict[str, TlsConfiguration]] = None, **kwargs):
+        super().__init__(ccx, tls_configurations=tls_configurations)
 
         self.logger = self.ccx.logger.getChild("IEC61850")
         self.logger.setLevel(logging.DEBUG)
@@ -57,12 +57,25 @@ class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
         self._data_attributes_by_data_point_identifier: Dict[str, IEC61850RemoteDataAttribute] = {}
         self._data_point_identifier_by_data_attribute: Dict[int, str] = {}
 
+        # TLS
+        ## List of (public) certificates of servers to accept.
+        ## If given, only these certificates will be accepted (if configured appropriately)
+        self._server_tls_certificates: Optional[List[Path]] = kwargs.get("server_tls_certificates", None)
+        # kwargs["enable_single_server"] = True
+
+        # TODO: Change back default to False
+        self._export_tls_keys = kwargs.get("tls_export_keys", True)
+        self._export_tls_keys_folder = self.ccx.get_node_working_directory().joinpath("tls_keys")
+        if self._export_tls_keys:
+            self._export_tls_keys_folder.mkdir(parents=True, exist_ok=True)
+
         for dp_id, dp in self.data_points.items():
-            server_id = dp["server_key"]
+            server_id = dp["protocol_server_id"]
             protocol_data = dp["protocol_data"]
-            if server_id != 102 and kwargs.get("enable_single_server", False):
-                continue
             model_name = protocol_data["model"]
+
+            if kwargs.get("enable_single_server", False) and server_id != "101":
+                continue
 
             if server_id not in self.model_names:
                 self.model_names[server_id] = model_name
@@ -73,10 +86,10 @@ class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
                 continue
 
             self.data_points_by_server_id[server_id] = [dp]
-            self.logger.debug(f"Getting server with id {server_id}.")
+            # self.logger.debug(f"Getting server with id {server_id} ({type(server_id)}).")
             server = self.get_server(server_id)
-            self.logger.debug(f"Got server: {server}")
-            self.logger.debug(f"Servers: {self.ccx.servers}")
+            # self.logger.debug(f"Got server: {server}")
+            # self.logger.debug(f"Servers: {self.ccx.servers}")
             if server is None:
                 # self.logger.warning(f"No server with ID/Key {server_id} found - cannot create client for {dp_id} ({repr(dp)})")
                 # raise KeyError(f"No server with ID/Key {server_id} found")
@@ -84,9 +97,14 @@ class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
 
             server_ip_address = server.get("ip")
             server_port = server.get("port", self.get_default_port())
+
+            mms_tls_configuration = self._configure_tls(server_id)
+            if mms_tls_configuration is not None:
+                server_port = self.get_default_tls_port()
+
             self.server_key_by_ip_port[(server_ip_address, server_port)] = server_id
-            self.logger.info(f"Adding server {server_id} ({server_ip_address}:{server_port})")
-            connection: iec61850_python.Connection = self.client.add_connection(server_ip_address, server_port, None)
+
+            connection: iec61850_python.Connection = self.client.add_connection(server_ip_address, server_port, mms_tls_configuration)
             connection.set_state_changed_handler(self._on_connection_indication)
             connection.set_report_callback(self.on_report_callback)
             self.connection_by_server_id[server_id] = connection
@@ -97,9 +115,128 @@ class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
             if server_id not in self.data_points_by_rcb_by_server:
                 self.data_points_by_rcb_by_server[server_id] = {}
 
-    def get_server_by_connection(self, connection: iec61850_python.Connection) -> Optional:
-        connection_ip = connection.get_remote_hostname()
-        connection_port = connection.get_remote_port()
+    def _configure_tls(self, server_id) -> Optional[TlsConfiguration]:
+        wattson_tls_configuration = self.get_tls_configuration(server_id)
+        server = self.get_server(server_id)
+        server_ip_address = server.get("ip")
+        directory = self.ccx.get_node_working_directory()
+        self.logger.debug(repr(wattson_tls_configuration))
+
+        if wattson_tls_configuration.is_tls_enabled():
+            if wattson_tls_configuration.is_secure_tls_enabled():
+                self.logger.info(f"[TLS] Enabling TLS for server {server_id}")
+            else:
+                self.logger.critical(f"[TLS] Cannot enable TLS - {wattson_tls_configuration.tls_version.name} is not supported (insecure)")
+                wattson_tls_configuration.tls_version = TlsVersion.NONE
+                return None
+            if directory is None:
+                self.logger.critical(f"[TLS] No working directory for certificates found - cannot enable TLS")
+                wattson_tls_configuration.tls_version = TlsVersion.NONE
+                return None
+            else:
+                certificate_folder = directory.joinpath("certificates")
+        else:
+            self.logger.info(f"[TLS] Skipping TLS for server {server_id}")
+            return None
+
+        mms_tls_configuration = TlsConfiguration()
+        # Set Event handlers
+        mms_tls_configuration.set_event_handler(self._on_tls_event)
+        mms_tls_configuration.set_on_key_callback(self._on_tls_key)
+
+        # Files
+        root_cert = certificate_folder.joinpath("root-ca.pem")
+        client_cert = certificate_folder.joinpath("certificate.pem")
+        client_key = certificate_folder.joinpath("private_key.pem")
+        # TODO: Verify that server ID = node ID
+        server_cert = certificate_folder.joinpath(f"{server_id}-certificate.pem")
+
+        # Client Key and Certificate
+        if not client_cert.exists():
+            self.logger.critical("[TLS] Certificate for client missing - aborting TLS")
+            mms_tls_configuration.tls_version = TlsVersion.NONE
+            return None
+        elif not mms_tls_configuration.set_own_certificate_from_file(str(client_cert.absolute())):
+            self.logger.critical(f"[TLS] Could not set client certificate - aborting TLS")
+            mms_tls_configuration.tls_version = TlsVersion.NONE
+            return None
+        self.logger.debug(f"[TLS] Setting client certificate for server {server_id} from {client_cert}")
+
+        if not client_key.exists():
+            self.logger.critical("[TLS] Private key for client missing - aborting TLS")
+            mms_tls_configuration.tls_version = TlsVersion.NONE
+            return None
+        elif not mms_tls_configuration.set_own_key_from_file(str(client_key.absolute()), ""):
+            self.logger.critical(f"[TLS] Could not set client private key - aborting TLS")
+            mms_tls_configuration.tls_version = TlsVersion.NONE
+            return None
+        self.logger.debug(f"[TLS] Setting client key for server {server_id} from {client_key}")
+
+        # Validation
+        ## CA
+        mms_tls_configuration.set_chain_validation(False)
+        if wattson_tls_configuration.tls_validation_mode.has(TlsValidationMode.CERTIFICATE_AUTHORITY):
+            # Require CA certificate
+            if not root_cert.exists():
+                self.logger.warning(f"[TLS] Certificate of root CA missing - cannot enable chain verification")
+                mms_tls_configuration.set_chain_validation(False)
+            elif not mms_tls_configuration.add_CA_certificate_from_file(str(root_cert.absolute())):
+                self.logger.warning(f"[TLS] Could not add CA certificate - cannot enable chain verification")
+                mms_tls_configuration.set_chain_validation(False)
+            else:
+                mms_tls_configuration.set_chain_validation(True)
+                self.logger.debug(f"[TLS] Chain verification enabled for server {server_id} with {str(root_cert)} CA")
+        ## Whitelist
+        mms_tls_configuration.set_allow_only_known_certificates(False)
+        if wattson_tls_configuration.tls_validation_mode.has(TlsValidationMode.WHITELIST):
+            mms_tls_configuration.set_allow_only_known_certificates(True)
+            server_tls_certificates = self._server_tls_certificates
+            if self._server_tls_certificates is None:
+                # Attempt to auto extract server certificate
+                server_tls_certificates = [server_cert]
+
+            for server_tls_certificate in server_tls_certificates:
+                if not server_tls_certificate.exists():
+                    self.logger.critical(f"[TLS] Certificate Whitelist requested, but server certificate does not exist found - connections will fail")
+                elif not mms_tls_configuration.add_allowed_certificate_from_file(str(server_tls_certificate.absolute())):
+                    self.logger.critical(f"[TLS] Cannot add Server certificate from {server_tls_certificate.absolute()} - connections will fail")
+                else:
+                    self.logger.debug(f"[TLS] Adding server certificate {str(server_tls_certificate)} to whitelist")
+
+        # Authentication
+        ## Should be done with validation? Can we remove this?
+        pass
+
+        # Encryption
+        mms_tls_configuration.clear_cipher_suite_list()
+        cipher_suites = wattson_tls_configuration.derive_cipher_suites()
+        if wattson_tls_configuration.is_encryption_enabled():
+            self.logger.info(f"[TLS] Encryption requested for Server {server_id} ({server_ip_address})")
+        else:
+            self.logger.info(f"[TLS] Encryption DISABLED for Server {server_id} ({server_ip_address})")
+
+        for suite in cipher_suites:
+            # self.logger.debug(f"[TLS] Enabling cipher suite {suite.name}")
+            mms_tls_configuration.add_cipher_suite(suite.value)
+        self.logger.debug(f"[TLS] Cipher Suites: {', '.join([suite.name for suite in cipher_suites])}")
+        # self.logger.debug(f"[TLS] Cipher Suites: {', '.join([hex(suite.value) for suite in cipher_suites])}")
+
+        # Set TLS version
+        minimum_tls_version = TlsConfigVersion(wattson_tls_configuration.tls_version.get_number())
+        maximum_tls_version = TlsConfigVersion(wattson_tls_configuration.tls_version.get_number())
+        mms_tls_configuration.set_minimum_tls_version(minimum_tls_version)
+        mms_tls_configuration.set_maximum_tls_version(maximum_tls_version)
+        # self.logger.info(f"[TLS] Valid {mms_tls_configuration.tls_version.value} configuration created for {server_id} ({server_ip_address})")
+        return mms_tls_configuration
+
+    def get_server_by_connection(self, connection: iec61850_python.Connection | iec61850_python.TlsConnection) -> Optional:
+        if isinstance(connection, iec61850_python.TlsConnection):
+            connection_data = connection.get_peer_address().split(":")
+            connection_ip = connection_data[0]
+            connection_port = int(connection_data[1])
+        else:
+            connection_ip = connection.get_remote_hostname()
+            connection_port = connection.get_remote_port()
         server_id = self.server_key_by_ip_port.get((connection_ip, connection_port))
         return server_id
 
@@ -204,6 +341,9 @@ class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
     def get_default_port(self):
         return 102
 
+    def get_default_tls_port(self):
+        return 3782
+
     def send_data_point_command(self, data_point_identifier: str, value: Any, protocol_options: Optional[Dict] = None):
         pass
 
@@ -298,3 +438,37 @@ class Iec61850MMSCCXProtocolClient(CCXProtocolClient):
             return
         self.logger.info(f"Trigger on_receive_data_point: {data_point_identifier} = {new_value} ({data_attribute.get_mms_path()})")
         self.trigger_on_receive_data_point(data_point_identifier, new_value, protocol_data=data_attribute.get_protocol_data())
+
+    def _on_tls_event(self, configuration: TlsConfiguration, event_level: TlsEventLevel, event_code: int, message: str, connection: TlsConnection) -> None:
+        self.logger.info(f"[TLS][{event_level.name}] ({event_code}) - {message}")
+
+    def _on_tls_key(self, configuration: TlsConfiguration, connection: TlsConnection,
+                    key_type: TlsKeyExportType, prf_type: TlsPrfType, secret: bytes, client_random: bytes, server_random: bytes) -> None:
+        #self.logger.info(f"[TLS][{connection.get_peer_address()}] KEY EVENT :) - {secret.decode()} - {client_random.decode()} - {server_random.decode()} - {key_type=} {prf_type=}")
+        server_id = self.get_server_by_connection(connection)
+        self._export_tls_key(server_id, key_type, prf_type, secret.hex(), client_random.hex(), server_random.hex())
+
+    def _export_tls_key(self, server_id: str, key_type: TlsKeyExportType, prf_type: TlsPrfType, secret_hex: str, client_random_hex: str, server_random_hex: str):
+        if not self._export_tls_keys:
+            return
+        tls_key_to_label = {
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS12_MASTER_SECRET: "CLIENT_RANDOM",
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS13_CLIENT_EARLY_SECRET: "CLIENT_EARLY_SECRET",
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS13_EARLY_EXPORTER_SECRET: "EARLY_EXPORTER_SECRET",
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS13_CLIENT_HANDSHAKE_TRAFFIC_SECRET: "CLIENT_HANDSHAKE_TRAFFIC_SECRET",
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS13_SERVER_HANDSHAKE_TRAFFIC_SECRET: "SERVER_HANDSHAKE_TRAFFIC_SECRET",
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS13_CLIENT_APPLICATION_TRAFFIC_SECRET: "CLIENT_TRAFFIC_SECRET_0",
+            TlsKeyExportType.TLS_KEY_EXPORT_TLS13_SERVER_APPLICATION_TRAFFIC_SECRET: "SERVER_TRAFFIC_SECRET_0"
+        }
+        label = tls_key_to_label.get(key_type, None)
+        if label is None:
+            self.logger.error(f"Unknown TLS key export type: {key_type} - cannot export key to file")
+            return
+        self.logger.debug(f"Exporting TLS keys for {server_id} ({key_type.name})")
+
+        single_key_file = self._export_tls_keys_folder.joinpath(f"SERVER-{server_id}_tls_keys.log")
+        with single_key_file.open(mode="a") as f:
+            f.write(f"{label} {client_random_hex} {secret_hex}\n")
+        multi_key_file = self._export_tls_keys_folder.joinpath(f"0-ALL-tls_keys.log")
+        with multi_key_file.open(mode="a") as f:
+            f.write(f"{label} {client_random_hex} {secret_hex}\n")

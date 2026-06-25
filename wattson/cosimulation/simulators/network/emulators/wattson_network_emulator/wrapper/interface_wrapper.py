@@ -1,4 +1,6 @@
+import json
 import math
+import platform
 import time
 import typing
 from typing import Optional
@@ -34,11 +36,20 @@ class InterfaceWrapper(EntityWrapper):
         return typing.cast(WattsonNetworkInterface, self.entity)
 
     def exists(self):
+        return self.get_namespace().if_exists(self.interface.get_system_name())
         interfaces = self.interface.node.interfaces_list_existing()
+        #self.logger.info(repr(interfaces))
         for interface in interfaces:
-            if interface["name"] == self.interface.interface_name:
+            if interface["name"] == self.interface.get_system_name():
                 return True
         return False
+
+    def get_system_info(self) -> Optional[dict]:
+        return self.get_namespace().if_info(self.interface.get_system_name())
+        for interface in self.interface.node.interfaces_list_existing():
+            if interface["name"] == self.interface.get_system_name():
+                return interface
+        return None
 
     def wait_exists(self, timeout: float = 5) -> bool:
         """
@@ -78,11 +89,14 @@ class InterfaceWrapper(EntityWrapper):
             # Create virtual interface
             if self.interface.link is None:
                 # Create placeholder interface
-                self.logger.info(f"Manually creating interface")
-                self.logger.warning(f"Not implemented for Windows!")
-                success, lines = self.get_namespace().exec(["ip", "link", "add", self.interface.interface_name, "type", "dummy"])
-                for line in lines:
+                self.logger.debug(f"Manually creating interface {self.interface.get_system_name()}")
+                if platform.system() == "Windows":
+                    self.logger.warning(f"Not implemented for Windows!")
+                success = self.get_namespace().if_add(self.interface.get_system_name(), interface_type="dummy")
+                # success, lines = self.get_namespace().exec(["ip", "link", "add", self.interface.interface_name, "type", "dummy"])
+                """for line in lines:
                     print(line)
+                """
                 self.push_to_namespace()
                 self.configure(wait_timeout=2)
                 return True
@@ -105,7 +119,8 @@ class InterfaceWrapper(EntityWrapper):
         if interface.is_virtual():
             node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
             node_wrapper.remove_interface(interface)
-            self.get_namespace().exec(["ip", "link", "delete", interface.interface_name])
+            self.get_namespace().if_delete(interface.get_system_name())
+            # self.get_namespace().exec(["ip", "link", "delete", interface.interface_name])
             return
         self.logger.error("Unknown interface type - cannot be handled")
 
@@ -135,7 +150,7 @@ class InterfaceWrapper(EntityWrapper):
             bool: Whether the command was successful
         """
         if self.has_additional_namespace():
-            self.get_additional_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "down"])
+            self.get_additional_namespace().if_down(self.interface.get_system_name())
         return self.interface.down()
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "down"])
         return code0
@@ -149,7 +164,7 @@ class InterfaceWrapper(EntityWrapper):
             bool: Whether the command was successful
         """
         if self.has_additional_namespace():
-            self.get_additional_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
+            self.get_additional_namespace().if_up(self.interface.get_system_name())
 
         return self.interface.up()
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
@@ -160,10 +175,10 @@ class InterfaceWrapper(EntityWrapper):
         interface = self.interface
 
         if (wait_timeout is None and not self.exists()) or (wait_timeout is not None and not self.wait_exists(wait_timeout)):
-            self.logger.warning(f"Cannot configure interface {interface.interface_name}")
+            self.logger.warning(f"Cannot configure interface {interface.get_system_name()}")
             # self.logger.warning(repr(self.interface.node.interfaces_list_existing()))
             return False
-        # self.down()
+        self.down()
         # Set mac if given
         self.update_mac_address()
         # Set IP
@@ -173,10 +188,34 @@ class InterfaceWrapper(EntityWrapper):
     def update_mac_address(self):
         interface = self.interface
         if interface.mac_address is not None:
-            code0, lines = self.get_additional_namespace().exec(["ip", "link", "set", "dev", interface.interface_name, "address", interface.mac_address])
-            if not code0:
+            info_before = self.get_system_info()
+            if not self.get_namespace().if_set_mac(interface.get_system_name(), interface.mac_address):
+                #code0, lines = self.get_additional_namespace().exec(["ip", "link", "set", "dev", interface.interface_name, "address", interface.mac_address])
+                #if not code0:
                 self.logger.warning(f"Cannot set MAC for interface {interface.interface_name}")
-                self.logger.debug("\n".join(lines))
+                # self.logger.debug("\n".join(lines))
+                return False
+            """
+            if len(lines) > 0:
+                self.logger.warning(f"Got output while setting MAC {interface.mac_address} for {interface.interface_name}")
+                self.logger.warning("\n".join(lines))
+            """
+            info_after = self.get_system_info()
+            if info_before is None:
+                self.logger.warning(f"Cannot get system info before setting MAC for {interface.interface_name}")
+            if info_after is None:
+                self.logger.error(f"Could not get system info for interface {interface.interface_name}")
+                return False
+            if info_after.get("hardware-address") != interface.mac_address:
+                self.logger.error(f"Invalid MAC address for interface {interface.interface_name}: {info_after['hardware-address']}, expected {interface.mac_address}")
+                self.logger.warning(json.dumps(info_before, indent=4))
+                self.logger.warning(json.dumps(info_after, indent=4))
+                return False
+            """
+            if "Switch" in interface.node.__class__.__name__:
+                self.logger.info(f"Set MAC for {interface.interface_name} to {interface.mac_address} ({info_after['hardware-address']})")
+            """
+        return True
 
     def update_ip_address(self):
         interface = self.interface
@@ -209,10 +248,13 @@ class InterfaceWrapper(EntityWrapper):
         node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
         node_wrapper.remove_interface(interface)
         if self.get_namespace().is_network_namespace:
+            if not self.get_namespace().if_set_namespace(interface.interface_name, self.emulator.get_main_namespace().name):
+                """
             code0, lines = self.get_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", self.emulator.get_main_namespace().name])
             if not code0:
+                """
                 self.logger.warning(f"Cannot move interface {interface.interface_name}")
-                self.logger.debug("\n".join(lines))
+                # self.logger.debug("\n".join(lines))
                 return False
         return True
 
@@ -229,10 +271,8 @@ class InterfaceWrapper(EntityWrapper):
         if namespace is None:
             namespace = self.get_namespace()
         if namespace.is_network_namespace:
-            code0, lines = self.emulator.get_main_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", namespace.name])
-            if not code0:
+            if not self.emulator.get_main_namespace().if_set_namespace(interface.interface_name, namespace.name):
                 self.logger.warning(f"Cannot move interface {interface.interface_name}")
-                self.logger.warning("\n".join(lines))
                 return False
         node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
         node_wrapper.add_interface(interface)

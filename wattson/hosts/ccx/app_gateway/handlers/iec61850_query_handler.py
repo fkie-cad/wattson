@@ -21,7 +21,7 @@ class Iec61850QueryHandler(QueryHandler):
     def __init__(self, app_gateway: 'AppGatewayServer'):
         super().__init__(app_gateway)
 
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
 
         self.client: Optional[Iec61850MMSCCXProtocolClient] = self.app_gateway.ccx.get_client(CCXProtocol.IEC61850_MMS)
         self.logger.debug("This is 61850 query handler.")
@@ -57,6 +57,7 @@ class Iec61850QueryHandler(QueryHandler):
                     data={
                         "data_point_identifier": data_point_identifier,
                         "value": value,
+                        "protocol": client.get_protocol_name(),
                         "protocol_data": protocol_data
                     }
                 )
@@ -79,7 +80,8 @@ class Iec61850QueryHandler(QueryHandler):
                 successful=True,
                 data={
                     "report_identifier": report_identifier,
-                    "report": report.to_dict()
+                    "report": report.to_dict(),
+                    "protocol": client.get_protocol_name(),
                 }
             ))
 
@@ -112,6 +114,7 @@ class Iec61850QueryHandler(QueryHandler):
                 data={
                     "data_point_identifier": self.client.get_data_point_identifier(data_attribute),
                     "value": value,
+                    "protocol": self.client.get_protocol_name(),
                     "protocol_data": {
                         "data_attribute": data_attribute.get_attribute_reference(),
                         "protocol": CCXProtocol.IEC61850_MMS.value
@@ -179,6 +182,7 @@ class Iec61850QueryHandler(QueryHandler):
             data = {
                 "data_point_identifier": data_point_identifier,
                 "value": value,
+                "protocol": self.client.get_protocol_name(),
                 "protocol_data": {
                     "data_attribute": data_attribute.get_attribute_reference(),
                     "protocol": CCXProtocol.IEC61850_MMS.value

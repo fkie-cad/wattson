@@ -46,7 +46,7 @@ class C104Point(IEC104Point):
         p.quality = C104Point._translate_c104_quality(previous_info.quality)
         return p
 
-    def read(self) -> bool:
+    def read(self, block: bool = True) -> bool:
         res = self.c104_point.read()
         self._value = TypeID.convert_val_by_type(self.type, self.c104_point.value)
         self.reported_at_ms = self.c104_point.processed_at
@@ -54,6 +54,9 @@ class C104Point(IEC104Point):
         self.report_ms = self.c104_point.report_ms
         self.quality = self._translate_c104_quality(self.c104_point.quality)
         return res
+
+    def async_read(self) -> bool:
+        return self.read(True)
 
     @property
     def value(self):
@@ -72,9 +75,10 @@ class C104Point(IEC104Point):
         self._value = v
         self.c104_point.value = v
 
-    def transmit(self, cause: int) -> bool:
+    def transmit(self, cause: int, wait_for_response: bool = True) -> bool:
         # c104-cast is necessary due to the C++ signature
         cot = c104.Cot(cause)
+        #res = self.c104_point.transmit(cot, wait_for_response=wait_for_response)
         res = self.c104_point.transmit(cot)
 
         # not entirely sure if these values change in control-direction

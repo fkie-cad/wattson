@@ -178,7 +178,7 @@ class PowerGridProvider(DataPointProvider):
         info = self._get_provider_info(identifier, provider_id, "sources")
         try:
             grid_value = self._get_grid_value(info)
-            value = grid_value.get_value()
+            value = grid_value.get_native_value()
         except Exception as e:
             self.logger.error(f"Failed to read power grid data for {identifier}: {e=}")
             return None

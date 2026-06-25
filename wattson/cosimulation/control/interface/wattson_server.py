@@ -7,8 +7,8 @@ import traceback
 from typing import Optional, TYPE_CHECKING, List, Union, Type, Any, Set, Callable, Dict
 
 import zmq
-import pyprctl
 
+from wattson.util.threading import set_thread_name
 from wattson.cosimulation.control.interface.publish_server import PublishServer
 from wattson.cosimulation.control.interface.time_limit import TimeLimit
 from wattson.cosimulation.control.interface.wattson_query_handler import WattsonQueryHandler
@@ -210,7 +210,8 @@ class WattsonServer(threading.Thread, WattsonQueryHandler):
             pass
 
     def run(self) -> None:
-        pyprctl.set_name("W/Srv")
+
+        set_thread_name("W/Srv")
         main_namespace = None
         if self._namespace is not None:
             main_namespace = Namespace("w_main")

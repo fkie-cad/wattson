@@ -9,6 +9,9 @@ from pathlib import Path
 
 import psutil
 import os
+
+from psutil import ZombieProcess
+
 from wattson.util.compat import fix_iptc
 from wattson.networking.namespaces.namespace import Namespace
 
@@ -27,9 +30,16 @@ def clean_processes():
             python_processes.append(proc)
         if "wattson " in proc.name() or "wattson." in proc.name():
             wattson_processes.append(proc)
+        try:
+            cmd_line = proc.cmdline()
+            if "wattson" in cmd_line:
+                python_processes.append(proc)
+        except ZombieProcess:
+            print(f"Found zombie process: {proc.name()} ({proc.pid})")
+            pass
         if "arpspoof" in proc.name():
             arpspoof_processes.append(proc)
-        if "zebra" in proc.name() or "ospfd" in proc.name():
+        if "zebra" in proc.name() or "ospfd" in proc.name() or "mgmtd" in proc.name():
             routing_processes.append(proc)
 
     def kill(process):
@@ -42,11 +52,25 @@ def clean_processes():
             continue
         kill(p)
     print(f"  Wattson-related Python3 processes...")
-    for p in python_processes:
-        if p.pid == os.getpid():
+    p: psutil.Popen
+    i = 0
+    current_process = psutil.Process()
+    protected_pids = []
+    while current_process is not None:
+        protected_pids.append(current_process.pid)
+        current_process = current_process.parent()
+
+    while i < len(python_processes):
+        p = python_processes[i]
+        i += 1
+        if p.pid in protected_pids:
+            continue
+        if p.status() == psutil.STATUS_ZOMBIE:
+            parent = p.parent()
+            python_processes.append(parent)
             continue
         for c in p.cmdline():
-            if "wattson." in c or "wattson " in c:
+            if "wattson." in c or "wattson " in c or c == "wattson":
                 kill(p)
                 break
     print(f"  ArpSpoof...")

@@ -151,3 +151,15 @@ class WattsonNetworkEntity(NetworkEntity):
 
     def __hash__(self):
         return hash(self.entity_id)
+
+    """
+    Event Callbacks
+    """
+    def on_add_to_emulator(self, network_emulator: 'NetworkEmulator') -> None:
+        pass
+
+    def on_remove_from_emulator(self, network_emulator: 'NetworkEmulator') -> None:
+        pass
+
+    def on_scenario_loaded(self, network_emulator: 'NetworkEmulator') -> None:
+        pass

@@ -179,7 +179,7 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
         """
         return self.config.get("command", "/bin/bash")
 
-    def get_host_folder(self) -> Path:
+    def get_host_folder(self, **kwargs) -> Path:
         return super().get_host_folder()
 
     def get_guest_folder(self) -> Path:
@@ -344,14 +344,19 @@ class WattsonNetworkDockerHost(WattsonNetworkHost, NetworkDockerHost):
         divider = "-e"
         use_shell = False
         pre_cmd = ""
+        print_command = False
         if "gnome-terminal" in terminal:
             divider = "--"
             dbus = shutil.which("dbus-launch")
             pre_cmd = f"{dbus} "
             use_shell = False
+            print_command = False
 
         cmd = f"{pre_cmd}{terminal} {divider} {command}"
         cmd = shlex.split(cmd)
+
+        if print_command:
+            print(cmd)
 
         def pre_exec_function():
             # Detach from process group to ignore signals sent to main process

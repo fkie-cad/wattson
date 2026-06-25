@@ -342,3 +342,12 @@ class RemoteNetworkNode(RemoteNetworkEntity, NetworkNode):
             return False
         self.synchronize(force=True)
         return True
+
+    def get_level(self) -> int:
+        return self.state.get("level", 0)
+
+    def get_parent_entity_id(self) -> Optional[str]:
+        return self.state.get("parent_node", None)
+
+    def get_children_entity_ids(self) -> List[str]:
+        return self.state.get("child_nodes", [])

@@ -5,6 +5,7 @@ from powerowl.performance.timing import Timing
 from wattson.cosimulation.simulators.network.components.wattson_network_host import WattsonNetworkHost
 from wattson.cosimulation.simulators.network.components.wattson_network_node import WattsonNetworkNode
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.node_wrapper import NodeWrapper
+from wattson.networking.namespaces.linux_namespace import LinuxNamespace
 from wattson.networking.namespaces.namespace import Namespace
 
 
@@ -41,8 +42,6 @@ class NativeWrapper(NodeWrapper):
             self.logger.warning("Namespace not found")
             return False
 
-        with Timing("Entity stop").as_sum_timing():
-            self.entity.stop()
+        self.entity.stop()
         if not self.node.is_outside_namespace():
-            with Timing("Namespace clean").as_sum_timing():
-                namespace.clean()
+            namespace.clean()

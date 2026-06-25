@@ -1,17 +1,20 @@
 import abc
 from typing import TYPE_CHECKING, Optional, Callable, Any, Dict
 
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
 from wattson.hosts.ccx.app_gateway.data_objects.ccx_report import CCXReport
 from wattson.hosts.ccx.connection_status import CCXConnectionStatus
 from wattson.hosts.ccx.protocols import CCXProtocol
+from wattson.protocols.tls.tls_configuration import TlsConfiguration
 
 if TYPE_CHECKING:
     from wattson.hosts.ccx import ControlCenterExchangeGateway
 
 
 class CCXProtocolClient(abc.ABC):
-    def __init__(self, ccx: 'ControlCenterExchangeGateway'):
+    def __init__(self, ccx: 'ControlCenterExchangeGateway', tls_configurations: Optional[Dict[str, TlsConfiguration]] = None):
         self.ccx = ccx
+        self._tls_configurations: Dict[str, TlsConfiguration] = tls_configurations or {}
         self._callbacks = {}
 
     @abc.abstractmethod
@@ -27,16 +30,31 @@ class CCXProtocolClient(abc.ABC):
         ...
 
     @abc.abstractmethod
+    def get_default_tls_port(self):
+        ...
+
+    @abc.abstractmethod
     def get_protocol(self) -> CCXProtocol:
         ...
 
     def get_protocol_name(self) -> str:
         return str(self.get_protocol().value)
 
+    def get_tls_configuration(self, server_key: str) -> TlsConfiguration:
+        tls_configuration = self._tls_configurations.get(server_key)
+        if tls_configuration is None:
+            tls_configuration = TlsConfiguration()
+            self._tls_configurations[server_key] = tls_configuration
+        return tls_configuration
+
+    def set_tls_configuration(self, server_key: str, tls_configuration: TlsConfiguration):
+        self._tls_configurations[server_key] = tls_configuration
+
     def get_server(self, server_key: str):
         server = self.ccx.servers.get(server_key)
         if server is None:
             return None
+        server = server.copy()
         server["port"] = server.get("port", self.get_default_port())
         server["server_key"] = server_key
         return server

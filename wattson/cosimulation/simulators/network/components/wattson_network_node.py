@@ -41,6 +41,9 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
 
     _is_outside_namespace: bool = False
 
+    _child_nodes: List['WattsonNetworkNode'] = dataclasses.field(default_factory=list)
+    _parent: Optional['WattsonNetworkNode'] = None
+
     class_id: typing.ClassVar[int] = 0
 
     def __post_init__(self):
@@ -51,12 +54,21 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def os(self) -> str:
         return "linux"
 
+    def get_level(self):
+        if self._parent is None:
+            return 0
+        return self._parent.get_level() + 1
+
     def start(self):
         super().start()
         for key, value in self.config.get("sysctl", {}).items():
             self.set_sysctl(key, value)
+        for child in self._child_nodes:
+            child.start()
         
     def stop(self):
+        for child in self._child_nodes:
+            child.stop()
         self.shutdown_processes()
         super().stop()
 
@@ -166,6 +178,42 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def get_service(self, service_id: int) -> WattsonService:
         return typing.cast(WattsonService, super().get_service(service_id=service_id))
 
+    """
+    Child nodes
+    """
+    def has_child_nodes(self) -> bool:
+        return len(self._child_nodes) > 0
+
+    def get_child_nodes(self) -> List['WattsonNetworkNode']:
+        return self._child_nodes
+
+    def add_child_node(self, child_node: 'WattsonNetworkNode'):
+        child_node._parent = self
+        self._child_nodes.append(child_node)
+        if self.network_emulator is not None:
+            self.network_emulator.add_node(child_node)
+
+    def remove_child_node(self, child_node: 'WattsonNetworkNode'):
+        if child_node in self._child_nodes:
+            self._child_nodes.remove(child_node)
+            child_node._parent = None
+        if self.network_emulator is not None:
+            self.network_emulator.remove_node(child_node)
+
+    def get_primary_child_node(self) -> Optional['WattsonNetworkNode']:
+        if len(self._child_nodes) > 0:
+            return self._child_nodes[0]
+        return None
+
+    def has_child_node_role(self, role: str) -> bool:
+        for child_node in self.get_child_nodes():
+            if child_node.has_role(role):
+                return True
+        return False
+
+    """
+    Utility
+    """
     def start_pcap(self, interface: Optional['WattsonNetworkInterface'] = None) -> List['WattsonService']:
         if interface is None:
             services = []
@@ -326,7 +374,10 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
             "roles": self.get_roles(),
             "config": self.get_config(),
             "interfaces": [interface.to_remote_representation() for interface in self.interfaces],
-            "services": {service_id: service.to_remote_representation() for service_id, service in self._services.items()}
+            "services": {service_id: service.to_remote_representation() for service_id, service in self._services.items()},
+            "level": self.get_level(),
+            "parent_node": self._parent.entity_id if self._parent else None,
+            "child_nodes": [child_node.entity_id for child_node in self._child_nodes],
         })
         return d
 
@@ -487,6 +538,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         return False
 
     def interface_up(self, interface: 'WattsonNetworkInterface') -> bool:
+        return self.get_namespace().if_up(interface.get_system_name())
         code, lines = self.exec(["ip", "link", "set", "dev", interface.get_system_name(), "up"])
         if not code == 0:
             self.logger.error(f"Could not set interface {interface.get_system_name()} up")
@@ -494,6 +546,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         return code == 0
 
     def interface_down(self, interface: 'WattsonNetworkInterface') -> bool:
+        return self.get_namespace().if_down(interface.get_system_name())
         code, lines = self.exec(["ip", "link", "set", "dev", interface.get_system_name(), "down"])
         if not code == 0:
             self.logger.error(f"Could not set interface {interface.get_system_name()} down")
@@ -501,6 +554,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         return code == 0
 
     def interface_flush_ip(self, interface: 'WattsonNetworkInterface') -> bool:
+        return self.get_namespace().if_flush_ip(interface.get_system_name())
         code, lines = self.exec(["ip", "addr", "flush", "dev", interface.get_system_name()])
         if not code == 0:
             self.logger.error(f"Could not flush IP of {interface.get_system_name()}")
@@ -510,6 +564,8 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
     def interface_set_ip(self, interface: 'WattsonNetworkInterface') -> bool:
         if interface.ip_address_string is None:
             return True
+        return self.get_namespace().if_set_ip(interface.get_system_name(), interface.ip_address_string)
+
         code, lines = self.exec(["ip", "addr", "add", interface.ip_address_string, "dev", interface.get_system_name()])
         if not code == 0:
             self.logger.error(f"Could not set IP of {interface.get_system_name()} to {interface.ip_address_string}")
@@ -529,6 +585,7 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         Returns:
             bool: Whether the action was successful
         """
+        return self.get_namespace().if_rename(old_name, new_name)
         code, lines = self.exec(["ip", "link", "set", "dev", old_name, "name", new_name])
         if not code == 0:
             self.logger.error(f"Could not rename interface {old_name} to {new_name}")
@@ -537,45 +594,5 @@ class WattsonNetworkNode(WattsonNetworkEntity, NetworkNode):
         return True
 
     def interfaces_list_existing(self, try_num: int = 0, max_tries: int = 10, retry_error_message: str = "") -> List[Dict]:
-        if try_num >= max_tries:
-            self.logger.error(f"Could not load interface information - maximum number of tries exceeded ({retry_error_message})")
-            return []
+        return self.get_namespace().if_list_existing(try_num, max_tries, retry_error_message, context=f"{self.entity_id}//{self.system_id}")
 
-        code, lines = self.exec(["ip", "--json", "a"], stderr=subprocess.PIPE)
-        if code != 0:
-            self.logger.error(f"Could not load interface information: {code} \n {'\n'.join(lines)}")
-            return []
-
-        # Check for interrupted dump
-        if "Dump was interrupted and may be inconsistent" in "\n".join(lines):
-            return self.interfaces_list_existing(try_num=try_num + 1, retry_error_message="Inconsistent dump")
-
-        try:
-            data = json.loads("\n".join(lines))
-        except json.JSONDecodeError:
-            self.logger.error(f"Could not load interface information ({self.entity_id} // {self.display_name})")
-            self.logger.error("\n".join(lines))
-            return []
-        # Sanitize - follow QEMU Agent format
-        interfaces = []
-        for interface_data in data:
-            ip_addresses = []
-            for address_info in interface_data.get("addr_info", []):
-                addr_type = "inet"
-                if address_info.get("family") == "inet":
-                    addr_type = "ipv4"
-                elif address_info.get("family") == "inet6":
-                    addr_type = "ipv6"
-                ip_addresses.append({
-                    "ip-address-type": addr_type,
-                    "ip-address": address_info.get("local"),
-                    "prefix": address_info.get("prefixlen")
-                })
-            interface = {
-                "name": interface_data["ifname"],
-                "ip-addresses": ip_addresses,
-                "statistics": {},
-                "hardware-address": interface_data.get("address")
-            }
-            interfaces.append(interface)
-        return interfaces

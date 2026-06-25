@@ -21,6 +21,10 @@ class CCXDefaultConfiguration(ServiceConfiguration):
                 "do_clock_sync": "!do_clock_sync",
             },
             "scenario_path": "!scenario_path",
-            "logics": "!ccx_logic"
+            "logics": "!ccx_logic",
+            "tls": {
+                "servers": "!ccx_tls.!entityid",
+                "overrides": {}
+            }
         })
         self.priority.set_local(2)

@@ -1,8 +1,9 @@
 import json
+
+import pyroute2
 import logging
 import multiprocessing.pool
 import pwd
-import queue
 import shlex
 import shutil
 import subprocess
@@ -13,7 +14,7 @@ import threading
 import traceback
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import Optional, Tuple, List, Union, Callable, Any
+from typing import Optional, Tuple, List, Union, Callable, Any, Dict
 
 import wattson.util
 from wattson.networking.namespaces.nested_argument import NestedArgument
@@ -302,3 +303,143 @@ class Namespace:
         namespace_names = ns._exec(f"ip netns list")[1]
         namespaces = [Namespace(n) for n in namespace_names]
         return namespaces
+
+    """
+    Interface handling
+    """
+    def if_add(self, interface_name: str, interface_type: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "add", interface_name, "type", interface_type])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to create {interface_name} of type {interface_type}\n" + "\n".join(lines))
+        return code0
+
+    def if_delete(self, interface_name: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "del", interface_name])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to delete {interface_name}\n" + "\n".join(lines))
+        return code0
+
+    def if_set_namespace(self, interface_name: str, namespace: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "set", interface_name, "netns", namespace])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to set namespace for {interface_name}\n" + "\n".join(lines))
+        return code0
+
+    def if_up(self, interface_name: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "set", "dev", interface_name, "up"])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to set link {interface_name} up\n" + "\n".join(lines))
+        return code0
+
+    def if_down(self, interface_name: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "set", "dev", interface_name, "down"])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to set link {interface_name} down\n" + "\n".join(lines))
+        return code0
+
+    def if_flush_ip(self, interface_name: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "addr", "flush", "dev", interface_name])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to flush {interface_name}\n" + "\n".join(lines))
+        return code0
+
+    def if_set_ip(self, interface_name: str, ip_address: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "addr", "add", ip_address, "dev", interface_name])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed set IP for {interface_name} to {ip_address}\n" + "\n".join(lines))
+        return code0
+
+    def if_set_mac(self, interface_name: str, mac_address: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "set", "dev", interface_name, "address", mac_address])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to set MAC for {interface_name} to {mac_address}\n" + "\n".join(lines))
+        return code0
+
+    def if_rename(self, interface_name_old: str, interface_name_new: str, enable_logging: bool = False) -> bool:
+        code0, lines = self.exec(["ip", "link", "set", interface_name_old, "name", interface_name_new])
+        if not code0 and enable_logging:
+            self.logger.warning(f"Failed to rename {interface_name_old} to {interface_name_new}\n" + "\n".join(lines))
+        return code0
+
+    def _if_parse_info(self, info: dict) -> dict:
+        ip_addresses = []
+        for address_info in info.get("addr_info", []):
+            addr_type = "inet"
+            if address_info.get("family") == "inet":
+                addr_type = "ipv4"
+            elif address_info.get("family") == "inet6":
+                addr_type = "ipv6"
+            ip_addresses.append({
+                "ip-address-type": addr_type,
+                "ip-address": address_info.get("local"),
+                "prefix": address_info.get("prefixlen")
+            })
+        return {
+            "name": info["ifname"],
+            "ip-addresses": ip_addresses,
+            "statistics": {},
+            "hardware-address": info.get("address"),
+            "index": info.get("ifindex"),
+        }
+
+    def if_exists(self, interface_name: str) -> bool:
+        return self.if_info(interface_name) is not None
+        for interface in self.if_list_existing():
+            if interface["name"] == interface_name:
+                return True
+        return False
+
+
+    def if_info(self, interface_name: str, try_num = 0, max_tries: int = 10, enable_logging: bool = False) -> Optional[dict]:
+        if try_num >= max_tries:
+            return None
+        code0, lines = self.exec(["ip", "--json", "link", "show", interface_name])
+        if not code0:
+            if "does not exist" in lines[0]:
+                return None
+            if enable_logging:
+                self.logger.error(f"Could not load interface information for {interface_name}\n" + "\n".join(lines))
+            return None
+
+        if "Dump was interrupted and may be inconsistent" in "\n".join(lines):
+            return self.if_info(interface_name, try_num + 1, max_tries, enable_logging)
+        try:
+            data = json.loads("\n".join(lines))
+            if not isinstance(data, list) or len(data) != 1:
+                if enable_logging:
+                    self.logger.error(f"Unexpected info result for {interface_name}\n" + "\n".join(lines))
+                return None
+            data = data[0]
+        except json.JSONDecodeError:
+            if enable_logging:
+                self.logger.error(f"Could not parse interface information for {interface_name}\n" + "\n".join(lines))
+            return None
+        return self._if_parse_info(data)
+
+    def if_list_existing(self, try_num: int = 0, max_tries: int = 10, retry_error_message: str = "", context: str = "") -> List[Dict]:
+        if try_num >= max_tries:
+            self.logger.error(f"[{context}] Could not load interface information - maximum number of tries ({try_num} / {max_tries}) exceeded ({retry_error_message})")
+            return []
+
+        code0, lines = self.exec(["ip", "--json", "a"], stderr=subprocess.PIPE)
+        if not code0:
+            self.logger.error(f"[{context}] Could not load interface information\n {'\n'.join(lines)}")
+            return []
+
+        # Check for interrupted dump
+        if "Dump was interrupted and may be inconsistent" in "\n".join(lines):
+            #err = f"[{context}] Dump was interrupted and may be inconsistent: \n" + "\n".join(lines)
+            return self.if_list_existing(try_num=try_num + 1, retry_error_message="Inconsistent dump", context=context)
+            return self.if_list_existing(try_num=try_num + 1, retry_error_message=err, context=context)
+
+        try:
+            data = json.loads("\n".join(lines))
+        except json.JSONDecodeError:
+            self.logger.error(f"[{context}] Could not load interface information ({self.name})")
+            self.logger.error("\n".join(lines))
+            return []
+        # Sanitize - follow QEMU Agent format
+        interfaces = []
+        for interface_data in data:
+            interfaces.append(self._if_parse_info(interface_data))
+        return interfaces

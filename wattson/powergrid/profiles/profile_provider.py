@@ -18,7 +18,7 @@ import time
 from pathlib import Path
 from typing import Union, Optional, Dict, List, Callable
 
-import pyprctl
+from wattson.util.threading import set_thread_name
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import StaticGenerator, Load, Storage
 from powerowl.layers.powergrid.elements.enums.static_generator_type import StaticGeneratorType
@@ -158,7 +158,7 @@ class ProfileLoader(threading.Thread):
             self._wattson_client.stop()
 
     def run(self):
-        pyprctl.set_name("W/PG/Prof")
+        set_thread_name("W/PG/Prof")
         first_run = True
         while not self._terminate.is_set():
             self._step += 1

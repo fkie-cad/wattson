@@ -1,0 +1,2 @@
+class MmsError(Exception):
+    pass

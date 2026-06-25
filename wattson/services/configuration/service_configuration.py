@@ -7,6 +7,17 @@ from wattson.util.performance.performance_decorator import performance_assert
 
 
 class ServiceConfiguration(dict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.update({
+            "wattson_client_config": {
+                "query_socket": "!sim-control-query-socket",
+                "publish_socket": "!sim-control-publish-socket",
+            },
+            "sim-control-ip": "!sim-control-ip",
+            "statistics": "!statistics"
+        })
+
     @property
     def service_type(self) -> str:
         return self.get("service-type", "empty")

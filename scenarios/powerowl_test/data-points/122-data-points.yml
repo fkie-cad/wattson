@@ -1,216 +1,181 @@
 '122':
 - identifier: '122.10010'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 122
-    cot: 6
-    direction: control
-    ioa: 10010
-    type_id: 45
+  type: datapoint
+  value: true
   providers:
     targets:
     - domain: target
-      provider_data:
-        attribute: explicit_control
-        context: CONFIGURATION
-        grid_element: sgen.1
-        type: bool
       provider_type: POWER_GRID
-  related: []
-  scale: NONE
-  unit: NONE
-  value: null
-- identifier: '122.10020'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 122
-    cot: 6
-    direction: control
-    ioa: 10020
-    type_id: 45
-  providers:
-    targets:
-    - domain: target
       provider_data:
+        grid_element: sgen.1
+        context: CONFIGURATION
         attribute: connected
-        context: CONFIGURATION
-        grid_element: sgen.1
         type: bool
-      provider_type: POWER_GRID
-  related: []
   scale: NONE
   unit: NONE
-  value: null
-- identifier: '122.10030'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 122
-    cot: 6
-    direction: control
-    ioa: 10030
-    type_id: 50
-  providers:
-    targets:
-    - domain: target
-      provider_data:
-        attribute: target_cos_phi
-        context: CONFIGURATION
-        grid_element: sgen.1
-        type: float
-      provider_type: POWER_GRID
   related: []
-  scale: NONE
-  unit: NONE
-  value: null
-- identifier: '122.10040'
   protocol: 60870-5-104
   protocol_data:
     coa: 122
+    ioa: 10010
     cot: 6
+    type_id: 45
     direction: control
-    ioa: 10040
-    type_id: 50
-  providers:
-    targets:
-    - domain: target
-      provider_data:
-        attribute: target_active_power
-        context: CONFIGURATION
-        grid_element: sgen.1
-        type: float
-      provider_type: POWER_GRID
-  related:
-  - '122.10080'
-  scale: BASE
-  unit: WATT
-  value: null
-- identifier: '122.10050'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 122
-    cot: 6
-    direction: control
-    ioa: 10050
-    type_id: 50
-  providers:
-    targets:
-    - domain: target
-      provider_data:
-        attribute: target_reactive_power
-        context: CONFIGURATION
-        grid_element: sgen.1
-        type: float
-      provider_type: POWER_GRID
-  related:
-  - '122.10090'
-  scale: BASE
-  unit: VAR
-  value: null
-- identifier: '122.10060'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 122
-    cot: 3
-    direction: monitoring
-    ioa: 10060
-    type_id: 1
+  protocol_server_id: '122'
+  grid_value:
+    grid_element: sgen.1
+    context: CONFIGURATION
+    attribute: connected
+    type: bool
+    direct: false
+    via: false
+- identifier: '122.10020'
+  type: datapoint
+  value: true
   providers:
     sources:
     - domain: source
+      provider_type: POWER_GRID
       provider_data:
+        grid_element: sgen.1
+        context: MEASUREMENT
         attribute: is_connected
-        context: MEASUREMENT
-        grid_element: sgen.1
         type: bool
-      provider_type: POWER_GRID
-  related: []
   scale: NONE
   unit: NONE
-  value: null
-- identifier: '122.10070'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 122
-    cot: 1
+    ioa: 10020
+    cot: 3
+    type_id: 1
     direction: monitoring
-    ioa: 10070
-    type_id: 13
+  protocol_server_id: '122'
+  grid_value:
+    grid_element: sgen.1
+    context: MEASUREMENT
+    attribute: is_connected
+    type: bool
+    direct: false
+    via: false
+- identifier: '122.10030'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: cos_phi
-        context: MEASUREMENT
-        grid_element: sgen.1
-        type: float
       provider_type: POWER_GRID
-  related:
-  - '122.10030'
+      provider_data:
+        grid_element: sgen.1
+        context: MEASUREMENT
+        attribute: cos_phi
+        type: float
   scale: BASE
   unit: NONE
-  value: null
-- identifier: '122.10080'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 122
+    ioa: 10030
     cot: 1
-    direction: monitoring
-    ioa: 10080
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '122'
+  grid_value:
+    grid_element: sgen.1
+    context: MEASUREMENT
+    attribute: cos_phi
+    type: float
+    direct: false
+    via: false
+- identifier: '122.10040'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: active_power
-        context: MEASUREMENT
-        grid_element: sgen.1
-        type: float
       provider_type: POWER_GRID
-  related:
-  - '122.10040'
+      provider_data:
+        grid_element: sgen.1
+        context: MEASUREMENT
+        attribute: active_power
+        type: float
   scale: BASE
   unit: WATT
-  value: null
-- identifier: '122.10090'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 122
+    ioa: 10040
     cot: 1
-    direction: monitoring
-    ioa: 10090
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '122'
+  grid_value:
+    grid_element: sgen.1
+    context: MEASUREMENT
+    attribute: active_power
+    type: float
+    direct: false
+    via: false
+- identifier: '122.10050'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: reactive_power
-        context: MEASUREMENT
-        grid_element: sgen.1
-        type: float
       provider_type: POWER_GRID
-  related:
-  - '122.10050'
+      provider_data:
+        grid_element: sgen.1
+        context: MEASUREMENT
+        attribute: reactive_power
+        type: float
   scale: BASE
   unit: VAR
-  value: null
-- identifier: '122.10100'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 122
+    ioa: 10050
     cot: 1
-    direction: monitoring
-    ioa: 10100
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '122'
+  grid_value:
+    grid_element: sgen.1
+    context: MEASUREMENT
+    attribute: reactive_power
+    type: float
+    direct: false
+    via: false
+- identifier: '122.10060'
+  type: datapoint
+  value: null
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: profile_percentage
-        context: MEASUREMENT
-        grid_element: sgen.1
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: sgen.1
+        context: MEASUREMENT
+        attribute: profile_percentage
+        type: float
   scale: BASE
   unit: PERCENT
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 122
+    ioa: 10060
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '122'
+  grid_value:
+    grid_element: sgen.1
+    context: MEASUREMENT
+    attribute: profile_percentage
+    type: float
+    direct: false
+    via: false

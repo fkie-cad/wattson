@@ -125,8 +125,7 @@ class ProfileCalculator:
             pass
             #self.logger.error(f"{e=}")
             #self.logger.error(traceback.print_exception(*sys.exc_info()))
-        finally:
-            return value
+        return value
 
     def _scale_value(self, element: GridElement, value, dimension: str = "active_power"):
         # Scale the value according to the element's specification (i.e., max power)

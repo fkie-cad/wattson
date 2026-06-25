@@ -6,7 +6,7 @@ from queue import Empty, Queue
 from typing import Union, TYPE_CHECKING, Optional, List
 
 import c104
-import pyprctl
+from wattson.util.threading import set_thread_name
 
 from wattson.iec104.common import ConnectionState, GLOBAL_COA
 from wattson.iec104.common.config import *
@@ -79,6 +79,7 @@ class IEC104Client(IECClientInterface, th.Thread):
             tick_rate_ms=CLIENT_TICKRATE_MS,
             command_timeout_ms=CLIENT_COMMAND_TIMEOUT_MS
         )
+        self._client.originator_address = 1
         self._client.on_new_point(callable=self._on_new_point)
         self._client.on_new_station(callable=self._on_new_station)
 
@@ -351,7 +352,9 @@ class IEC104Client(IECClientInterface, th.Thread):
             last_state = server["last_connection_state"]
 
         if last_state != state:
-            self.logger.info(f"RTU {coa}: {state.name} (Connected: {connection.is_connected})")
+            was_connected = last_state == c104.ConnectionState.OPEN
+            if was_connected != connection.is_connected:
+                self.logger.info(f"RTU {coa}: {state.name} (Connected: {connection.is_connected})")
             self._on_connection_change_wrapper(coa, server)
         server["connection_event"].set()
 
@@ -390,7 +393,7 @@ class IEC104Client(IECClientInterface, th.Thread):
 
     def server_watchdog(self, server):
         coa = server["coa"]
-        pyprctl.set_name(f"watchdog-{coa}")
+        set_thread_name(f"watchdog-{coa}")
         while not self._terminate.is_set():
             try:
                 server["connection_event"].clear()
@@ -455,6 +458,7 @@ class IEC104Client(IECClientInterface, th.Thread):
                     self.logger.info(f"Sending Point {point} ({point.value=})")
                     with self._cb_lock:
                         success = point.transmit(cause=cot)
+                        #success = point.transmit(cause=cot, wait_for_response=False)
                         self.logger.info(f"Point Sent: {point=} {success=}")
                         self.on_explicit_control_exit(coa, point, success, cot)
             except RuntimeError as e:

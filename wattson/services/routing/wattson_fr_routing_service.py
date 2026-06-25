@@ -26,11 +26,16 @@ class WattsonFrRoutingService(WattsonService):
             # "cwd": str(self.dir.absolute())
         }
 
+    def get_frr_path(self) -> Path:
+        return Path(f"/run/frr/{self.network_node.system_name}")
+
     def _clear_symlinks(self):
         if self.tmp_root.exists() and self.tmp_root.is_dir():
             self.network_node.unmount(self.tmp_root, force=True)
 
-    def get_tmp_path(self, artifact: ArtifactRotate) -> Path:
+    def get_tmp_path(self, artifact: ArtifactRotate | Path) -> Path:
+        if isinstance(artifact, Path):
+            return artifact
         self.ensure_artifacts()
         return self.tmp_root.joinpath(artifact.get_current().name)
 

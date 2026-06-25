@@ -5,10 +5,13 @@ from wattson.cosimulation.exceptions import InvalidInterfaceException
 from wattson.cosimulation.simulators.network.components.interface.network_switch import NetworkSwitch
 from wattson.cosimulation.simulators.network.components.remote.remote_network_entity_representation import RemoteNetworkEntityRepresentation
 from wattson.cosimulation.simulators.network.components.wattson_network_node import WattsonNetworkNode
+from wattson.services.configuration import ServiceConfiguration
+from wattson.services.wattson_python_service import WattsonPythonService
 from wattson.services.wattson_service import WattsonService
 
 if TYPE_CHECKING:
     from wattson.cosimulation.simulators.network.components.wattson_network_interface import WattsonNetworkInterface
+    from wattson.cosimulation.simulators.network.network_emulator import NetworkEmulator
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -46,6 +49,58 @@ class WattsonNetworkSwitch(WattsonNetworkNode, NetworkSwitch):
 
         self._handle_special_interfaces([interface])
         # self.reset_flows()
+
+    def find_admin_interface(self) -> Optional['WattsonNetworkInterface']:
+        for interface in self.get_interfaces():
+            if interface.config.get("use_for_management", False):
+                return interface
+        return None
+
+    def get_spare_interface(self) -> Optional['WattsonNetworkInterface']:
+        for interface in self.get_interfaces():
+            if interface.config.get("spare", False):
+                if interface.get_link() is None:
+                    return interface
+        return None
+
+    def on_scenario_loaded(self, network_emulator: 'NetworkEmulator') -> None:
+        self.ensure_management_host()
+
+    def ensure_management_host(self):
+        if self.network_emulator is None:
+            raise RuntimeError("Cannot add management host without network emulator reference")
+        if self.should_be_manageable() and self.is_ovs():
+            if not self.has_child_node_role("switch-management"):
+                # Add management node
+                from wattson.cosimulation.simulators.network.components.wattson_network_host import WattsonNetworkHost
+                management_host = WattsonNetworkHost(id=f"{self.id}-mgm", display_name=f"{self.display_name} (MGM)")
+                management_host.add_role("switch-management")
+                self.add_child_node(management_host)
+                interface_switch = self.find_admin_interface()
+
+                self.network_emulator.connect_nodes(management_host, self, interface_a_options={
+                    "ip": self.get_switch_management_ip_address_str(False),
+                    "prefix_length": self.get_switch_management_prefix_length()
+                }, interface_b=interface_switch)
+
+                service_configuration = ServiceConfiguration()
+                service_configuration.update({
+                    "name": "WattsonOvsManager",
+                    "wattson_client_config": {
+                        "query_socket": "!sim-control-query-socket",
+                        "publish_socket": "!sim-control-publish-socket",
+                    },
+                    "nodeid": "!nodeid",
+                    "entityid": "!entityid",
+                    "ip": "!ip",
+                    "scenario_path": "!scenario_path",
+                    "ovs_socket_string": "!ovs-socket-string",
+                    "ovs_socket_path": "!ovs-socket-absolute",
+                    "ovs_switch_entities": [self.entity_id],
+                    "ovs_switch_bridges": []
+                })
+                from wattson.apps.ovscc.deployment import OvsCCDeployment
+                management_host.add_service(WattsonPythonService(OvsCCDeployment, service_configuration, management_host))
 
     def start(self):
         super().start()
@@ -91,6 +146,31 @@ class WattsonNetworkSwitch(WattsonNetworkNode, NetworkSwitch):
 
     def is_ovs(self) -> bool:
         return True
+
+    def should_be_manageable(self) -> bool:
+        return self.config.get("configuration", {}).get("is_manageable", False)
+
+    def is_manageable(self) -> bool:
+        return self.has_child_node_role("switch-management")
+
+    def get_switch_management_ip_address_str(self, with_subnet_length: bool = True) -> Optional[str]:
+        if not self.should_be_manageable():
+            return None
+        ip_address_string: Optional[str] = self.config.get("configuration", {}).get("management_ip_address")
+        if ip_address_string is None:
+            return None
+        if with_subnet_length:
+            return ip_address_string
+        return ip_address_string.split("/")[0]
+
+    def get_switch_management_prefix_length(self) -> Optional[int]:
+        ip_address_string = self.get_switch_management_ip_address_str(with_subnet_length=True)
+        if ip_address_string is None:
+            return None
+        parts = ip_address_string.split("/")
+        if len(parts) == 2:
+            return int(parts[1])
+        return None
 
     def get_emulation_entity_config(self) -> dict:
         return {

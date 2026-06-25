@@ -130,7 +130,7 @@ class GridWrapper:
         return None
 
     def get_iec61850mms_data_point(self, server_id, mms_path):
-        key = f"IEC61850MMS.{server_id}.{mms_path}"
+        key = f"{CCXProtocol.IEC61850_MMS.name}-{server_id}-{mms_path}"
         if key in self._dp_cache:
             return self._dp_cache[key]
         for host, dps in self.data_points.items():
@@ -152,6 +152,21 @@ class GridWrapper:
                     if info["coa"] == coa and info["ioa"] == ioa:
                         self._dp_cache[key] = dp
                         return dp
+        return None
+
+    def get_modbus_data_point(self, device: str, unit_id: int, table: str, address: int):
+        key = f"Modbus.{device}.{unit_id}.{table}.{address}"
+        if key in self._dp_cache:
+            return self._dp_cache[key]
+        for host, dps in self.data_points.items():
+            for dp in dps:
+                if dp.get("protocol") != "MODBUS/TCP":
+                    continue
+                server_id = dp.get("protocol_server_id")
+                pd = dp.get("protocol_data")
+                if server_id == device and pd["unit_id"] == unit_id and pd["table"] == table and pd["address"] == address:
+                    self._dp_cache[key] = dp
+                    return dp
         return None
 
     def get_grid_values_for_data_point(self, data_point) -> List[GridValue]:
@@ -229,6 +244,16 @@ class GridWrapper:
 
         return changed
 
+    def update_modbus_value(self, server, unit_id, table, address, value) -> bool:
+        changed = False
+        data_point = self.get_modbus_data_point(server, unit_id, table, address)
+        if data_point is not None:
+            if data_point.get("protocol_data", {}).get("type_id") in ["bool", "step"]:
+                value = bool(value)
+            grid_values = self.get_grid_values_for_data_point(data_point)
+            changed = self._update_grid_values(grid_values, value, False)
+        return changed
+
     def _update_grid_values(self, grid_values, value, timeout: bool) -> bool:
         changed = False
         with self.lock:
@@ -287,6 +312,28 @@ class GridWrapper:
                 if export_host == "catchAll":
                     export_data = f"{server}"
                 changed = self.update_iec61850mms_value(server, mms_path, value)
+            elif protocol_name == CCXProtocol.MODBUS:
+                modbus_data = protocol_data
+                if modbus_data is None:
+                    modbus_data = {}
+                modbus_data.update(data_point["protocol_data"])
+                try:
+                    server = data_point["protocol_server_id"]
+                    unit = protocol_data["unit_id"]
+                    address = protocol_data["address"]
+                    table = protocol_data["table"]
+                except KeyError as e:
+                    self.logger.error(f"Invalid Modbus data point - requires server, unit_id, table and address ({e=})")
+                    return False
+
+                export_data["server"] = server
+                export_data["unit_id"] = unit
+                export_data["address"] = address
+                export_data["table"] = table
+                if export_host == "catchAll":
+                    export_data = f"{server}"
+
+                changed = self.update_modbus_value(server, unit, table, address, value)
             else:
                 self.logger.error(f"Unknown protocol {protocol_name} - cannot handle update")
                 return False

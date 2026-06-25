@@ -79,7 +79,7 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
             elif self.is_physical():
                 return self.node.get_free_interface_name("phy")
             else:
-                return self.node.get_free_interface_name()
+                return self.node.get_free_interface_name(self.config.get("suggested_prefix", "eth"))
         return self.system_name
 
     def get_ip_address(self) -> Optional[ipaddress.IPv4Address]:
@@ -156,7 +156,7 @@ class WattsonNetworkInterface(WattsonNetworkEntity, NetworkInterface):
             code, _ = self.node.exec(["ip", "link", "set", "dev", self.get_system_name(), "down"])
             return code == 0
 
-    def get_system_name(self) -> Optional[str]:
+    def get_system_name(self) -> str:
         if self.is_physical():
             return self.get_physical_name()
         if self.is_tap_port():

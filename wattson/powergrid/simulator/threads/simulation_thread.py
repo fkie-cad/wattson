@@ -2,7 +2,7 @@ import threading
 import traceback
 from typing import Optional, Callable, Dict, Any
 
-import pyprctl
+from wattson.util.threading import set_thread_name
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import GridElement
 from powerowl.layers.powergrid.values.grid_value import GridValue
@@ -106,7 +106,7 @@ class SimulationThread(threading.Thread):
         :return:
 
         """
-        pyprctl.set_name("W/PG/Sim")
+        set_thread_name("W/PG/Sim")
         ready_event_set = False
 
         if self._initial_configuration_applied_event is not None:

@@ -4,7 +4,7 @@ import threading
 import traceback
 from typing import TYPE_CHECKING, Optional, List
 
-import pyprctl
+from wattson.util.threading import set_thread_name
 import zmq
 from wattson.cosimulation.control.constants import WATTSON_BROADCAST_TOPIC
 from wattson.cosimulation.control.interface.notification_export_thread import NotificationExportThread
@@ -80,7 +80,7 @@ class PublishServer(threading.Thread):
         return [notification for notification in self._publishing_history if notification.notification_topic == topic]
 
     def run(self) -> None:
-        pyprctl.set_name("W/Pub")
+        set_thread_name("W/Pub")
         if self._namespace is not None:
             self._namespace.thread_attach()
         with zmq.Context() as context:

@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Set
 
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
 from wattson.cosimulation.control.interface.wattson_client import WattsonClient
 from wattson.cosimulation.control.messages.wattson_event import WattsonEvent
 from wattson.hosts.ccx.app_gateway import AppGatewayServer
@@ -11,6 +12,10 @@ from wattson.hosts.ccx.connection_status import CCXConnectionStatus
 from wattson.hosts.ccx.logics.logic_return_action import LogicReturnAction
 from wattson.hosts.ccx.protocols import CCXProtocol
 from wattson.iec104.common import MTU_READY_EVENT
+from wattson.protocols.tls.tls_authentication_mode import TlsAuthenticationMode
+from wattson.protocols.tls.tls_configuration import TlsConfiguration
+from wattson.protocols.tls.tls_encryption_mode import TlsEncryptionMode
+from wattson.protocols.tls.tls_validation_mode import TlsValidationMode
 from wattson.util import get_logger, dynamic_load_class
 from wattson.util.misc import deep_update
 
@@ -28,6 +33,7 @@ class ControlCenterExchangeGateway:
             "ip": None,
             "data_points": {},
             "servers": {},
+            "tls": {},
             "allow_apps": True,
             "connect_delay": 0,
             "iec104": {
@@ -42,7 +48,9 @@ class ControlCenterExchangeGateway:
             "export": {
                 "enabled": False,
                 "file": Path("ccx_notifications.jsonl")
-            }
+            },
+            "node-directory": None,
+            "node-directory-host": None
         }
 
         self._notification_socket_string: Optional[str] = None
@@ -55,12 +63,6 @@ class ControlCenterExchangeGateway:
         self.data_points = self.options.get("data_points", {})
 
         self.protocols: Set[CCXProtocol] = set()
-
-        if self.options.get("iec61850_mms", {}).get("enable_single_server", False):
-            for data_point in self.data_points.values():
-                if data_point.get("protocol") == CCXProtocol.IEC61850_MMS:
-                    self.servers = {102: self.servers[102]}
-                    break
 
         # Maps grid value identifiers to data points
         self.grid_value_mapping: Dict[str, List[str]] = {}
@@ -80,6 +82,8 @@ class ControlCenterExchangeGateway:
                 dp["server_key"] = dp["protocol_data"]["coa"]
             elif protocol == CCXProtocol.IEC61850_MMS:
                 dp["server_key"] = dp["protocol_data"]["server"]
+            elif protocol == CCXProtocol.MODBUS:
+                dp["server_key"] = dp["protocol_server_id"]
             else:
                 self.logger.error(f"Unknown CCXProtocol: {protocol}")
             self.protocol_info.setdefault(protocol, {})[dp_id] = dp
@@ -137,19 +141,48 @@ class ControlCenterExchangeGateway:
                 client_name=f"{self.options.get('entity_id', 'WattsonCCX')}_CCX"
             )
 
+    def get_node_working_directory(self) -> Optional[Path]:
+        directory = self.options.get("node-directory")
+        if directory is None:
+            return None
+        return Path(directory)
+
+    def get_tls_configuration(self, server_key: str, protocol: CCXProtocol) -> TlsConfiguration:
+        tls_version = self.options.get("tls", {}).get("servers", {}).get(server_key)
+        if tls_version is not None:
+            tls_version = TlsVersion[tls_version]
+        else:
+            tls_version = TlsVersion.NONE
+
+        tls_configuration = TlsConfiguration()
+        tls_configuration.configure_from_tls_version(tls_version)
+
+        # Override if applicable
+        overrides = self.options.get("tls", {}).get("overrides", {})
+        tls_configuration.apply_overrides(overrides, is_client=True)
+        return tls_configuration
+
+    def get_tls_configurations(self, protocol: CCXProtocol) -> Dict[str, TlsConfiguration]:
+        versions = self.options.get("tls", {}).get("servers", {})
+        return {k: self.get_tls_configuration(k, protocol) for k in versions.keys()}
+
     def init_protocol_clients(self):
         # Initializes the clients for all required protocols
         self.logger.info("Initialize protocol clients")
         for protocol in self.protocol_info.keys():
             if protocol == CCXProtocol.IEC104:
                 from wattson.hosts.ccx.clients.iec104 import Iec104CCXProtocolClient
-                self.clients[CCXProtocol.IEC104] = Iec104CCXProtocolClient(self)
+                self.clients[CCXProtocol.IEC104] = Iec104CCXProtocolClient(self, tls_configurations=self.get_tls_configurations(CCXProtocol.IEC104))
             elif protocol == CCXProtocol.IEC61850_MMS:
                 from wattson.hosts.ccx.clients.iec61850mms import Iec61850MMSCCXProtocolClient
                 self.clients[CCXProtocol.IEC61850_MMS] = Iec61850MMSCCXProtocolClient(
                     self,
+                    tls_configurations=self.get_tls_configurations(CCXProtocol.IEC61850_MMS),
                     enable_single_server=self.options.get("iec61850_mms", {}).get("enable_single_server", False)
                 )
+            elif protocol == CCXProtocol.MODBUS:
+                from wattson.hosts.ccx.clients.modbus import ModbusCCXProtocolClient
+                self.clients[CCXProtocol.MODBUS] = ModbusCCXProtocolClient(self, tls_configurations=self.get_tls_configurations(CCXProtocol.MODBUS))
             else:
                 raise NotImplementedError(f"No CCX implementation for protocol {protocol}")
 
@@ -157,7 +190,7 @@ class ControlCenterExchangeGateway:
         return self.clients.get(protocol)
 
     def start(self):
-        self.logger.setLevel(logging.WARNING)
+        self.logger.setLevel(logging.INFO)
         # Start Wattson client
         if self.wattson_client is not None:
             self.wattson_client.start()
@@ -214,12 +247,10 @@ class ControlCenterExchangeGateway:
 
     def on_connection_change(self, client: CCXProtocolClient, server_key: str, server_ip: str, server_port: int,
                              connection_status: CCXConnectionStatus):
-        self.logger.info(
-            f"[{client.get_protocol_name()}] Connection changed: {server_key} ({server_ip}:{server_port}) now {connection_status}")
+        previous_status = self._connection_status.setdefault(server_key, {}).get(
+            client.get_protocol_name(), {}).get("connection_status", CCXConnectionStatus.UNINITIALIZED)
 
-        previous_status = self._connection_status.get(server_key, {}).get("connection_status",
-                                                                          CCXConnectionStatus.UNINITIALIZED)
-        self._connection_status[server_key] = {
+        self._connection_status[server_key][client.get_protocol_name()] = {
             "protocol": client.get_protocol_name(),
             "connection_status": connection_status,
             "server_key": server_key,
@@ -234,8 +265,10 @@ class ControlCenterExchangeGateway:
 
         if previous_status == connection_status:
             return
-        action = self.apply_logics("on_connection_change", client, server_key, server_ip, server_port,
-                                   connection_status)
+        self.logger.info(
+            f"[{client.get_protocol_name()}] Connection changed: {server_key} ({server_ip}:{server_port}) now {connection_status}"
+        )
+        action = self.apply_logics("on_connection_change", client, server_key, server_ip, server_port, connection_status)
         if self.app_gateway is not None and action in [LogicReturnAction.NONE, LogicReturnAction.CONTINUE]:
             self.app_gateway.notify_on_connection_change(client, server_key, server_ip, server_port, connection_status)
 
@@ -264,7 +297,7 @@ class ControlCenterExchangeGateway:
 
     def on_receive_packet(self, client: CCXProtocolClient, server_key: str, server_ip: str, server_port: int,
                           raw_packet_data: Any, raw_packet_data_info: Any):
-        self.logger.info(f"[{client.get_protocol_name()}] Received packet: {server_key} ({server_ip}:{server_port})")
+        self.logger.debug(f"[{client.get_protocol_name()}] Received packet: {server_key} ({server_ip}:{server_port})")
         action = self.apply_logics("on_receive_packet", client, server_key, server_ip, server_port, raw_packet_data,
                                    raw_packet_data_info)
         if self.app_gateway is not None and action in [LogicReturnAction.NONE, LogicReturnAction.CONTINUE]:
@@ -273,7 +306,7 @@ class ControlCenterExchangeGateway:
 
     def on_send_packet(self, client: CCXProtocolClient, server_key: str, server_ip: str, server_port: int,
                        raw_packet_data: Any, raw_packet_data_info: Any):
-        self.logger.info(f"[{client.get_protocol_name()}] Sent packet: {server_key} ({server_ip}:{server_port})")
+        self.logger.debug(f"[{client.get_protocol_name()}] Sent packet: {server_key} ({server_ip}:{server_port})")
         action = self.apply_logics("on_send_packet", client, server_key, server_ip, server_port, raw_packet_data,
                                    raw_packet_data_info)
         if self.app_gateway is not None and action in [LogicReturnAction.NONE, LogicReturnAction.CONTINUE]:

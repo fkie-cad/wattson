@@ -144,8 +144,8 @@ class WattsonNetworkLink(WattsonNetworkEntity, NetworkLink):
         except Exception as e:
             self.logger.debug(f"{''.join(output)}")
             self.logger.debug(f"{e=}")
-        finally:
-            return {
-                "result": "\n".join(output),
-                "state": state
-            }
+
+        return {
+            "result": "\n".join(output),
+            "state": state
+        }

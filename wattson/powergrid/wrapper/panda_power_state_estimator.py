@@ -57,7 +57,7 @@ class PandaPowerStateEstimator(Thread):
         self.estimation_started_callback: Callable = estimation_started_callback
         self.terminate: Event = Event()
         self.interval = kwargs.get("interval", 0.5)
-        self.logger = get_logger("StateEstimator", level=logging.INFO)
+        self.logger = get_logger("StateEstimator", level=logging.WARNING)
         self.counter = 0
         self.max_delay = kwargs.get("max_delay", 10)
         self.mode = kwargs.get("estimation_mode", "default")

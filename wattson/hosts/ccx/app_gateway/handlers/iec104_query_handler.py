@@ -47,6 +47,7 @@ class Iec104QueryHandler(QueryHandler):
                 data={
                     "data_point_identifier": data_point_identifier,
                     "value": value,
+                    "protocol": client.get_protocol_name(),
                     "protocol_data": protocol_data
                 })
             )
@@ -62,6 +63,7 @@ class Iec104QueryHandler(QueryHandler):
                 data={
                     "data_point_identifier": data_point_identifier,
                     "value": value,
+                    "protocol": client.get_protocol_name(),
                     "protocol_data": protocol_data
                 })
             )
@@ -110,7 +112,7 @@ class Iec104QueryHandler(QueryHandler):
             iec104point = self.client.client.get_datapoint(coa, ioa, as_dict=False)
             async_response = AppGatewayAsyncResponse()
             self._register_async_response(action_id, async_response)
-            if iec104point.read():
+            if iec104point.read(block=False):
                 return async_response
             else:
                 self._cancel_async_response(action_id, async_response)

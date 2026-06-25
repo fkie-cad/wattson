@@ -25,6 +25,7 @@ class WattsonNetworkQueryType(str, enum.Enum):
     GET_SERVICE = "get-service"
     SERVICE_ACTION = "service-action"
     ADD_SERVICE = "add-service"
+    RESTART_ROUTING = "restart-routing"
 
     NODE_ACTION = "node-action"
     GET_ENTITY = "get-entity"

@@ -19,7 +19,8 @@ class PowerGridObserver(EventObserver):
                  auto_observe: bool = True,
                  logger: Optional[logging.Logger] = None,
                  preferred_value_context: GridValueContext = GridValueContext.MEASUREMENT,
-                 allow_value_context_fallback: bool = True
+                 allow_value_context_fallback: bool = True,
+                 enable_switch_logging: bool = True
                  ):
         super().__init__()
         self._power_grid_model = power_grid_model
@@ -44,6 +45,8 @@ class PowerGridObserver(EventObserver):
             "transformer_high_load_percentage": 90,
             "transformer_over_load_percentage": 100,
             "transformer_severe_over_load_percentage": 120,
+
+            "notify_switch_changes": enable_switch_logging
         }
 
         self._last_group_state = {}
@@ -102,7 +105,7 @@ class PowerGridObserver(EventObserver):
     def observe(self):
         for grid_value in self._observed_grid_values:
             grid_value.add_on_set_callback(self._check_thresholds)
-            self._check_thresholds(grid_value, None, grid_value.get_value())
+            self._check_thresholds(grid_value, grid_value.get_value(), grid_value.get_value())
 
     def _check_all_thresholds(self):
         for grid_value in self._observed_grid_values:
@@ -110,14 +113,19 @@ class PowerGridObserver(EventObserver):
 
     def _check_thresholds(self, grid_value: GridValue, old_value: Any, new_value: Any):
         with self._lock:
+            changed = old_value != new_value
             grid_element = grid_value.get_grid_element()
             group_defaults = {}
             if grid_element.get_identifier() in self._thresholds:
                 for threshold_definition in self._thresholds[grid_element.get_identifier()]:
+                    only_on_change = threshold_definition.get("on_change", False)
+                    if only_on_change and not changed:
+                        continue
+
                     context_data = {
-                        "grid_element": grid_element,
-                        "grid_value": grid_value,
-                        "value": new_value
+                        "grid_element": grid_element.get_identifier(),
+                        "grid_value": grid_value.get_identifier(),
+                        # "value": new_value
                     }
 
                     threshold_group = threshold_definition.get("group", "default")
@@ -136,6 +144,7 @@ class PowerGridObserver(EventObserver):
                     # Threshold matches
                     if threshold_definition["threshold"](grid_element):
                         group_defaults[threshold_group] = {
+                            "action": threshold_definition.get("action", "event"),
                             "scope": "power-grid",
                             "context": grid_element.get_identifier(),
                             "data": context_data,
@@ -145,6 +154,10 @@ class PowerGridObserver(EventObserver):
                             "description": f"{threshold_definition['name']} at {grid_element.get_identifier()}",
                             "level": threshold_definition["event_level"]
                         }
+
+                        if threshold_definition.get("action", "event") == "log":
+                            self.trigger("log", **group_defaults.pop(threshold_group))
+                            continue
 
             for group, event in group_defaults.items():
                 last_group_key = self._last_group_state.get(grid_element.get_identifier(), {}).get(group)
@@ -278,3 +291,28 @@ class PowerGridObserver(EventObserver):
                     "threshold": lambda _trafo: t.get("transformer_severe_over_load_percentage") < self.get_element_value_with_fallback(_trafo, "loading")
                 }
             ]
+
+        ### Switches
+        if t.get("notify_switch_changes", False):
+            for switch in self._power_grid_model.get_elements_by_type("switch"):
+                self._observed_grid_values.add(switch.get_measurement("is_closed"))
+                self._thresholds[switch.get_identifier()] = [
+                    {
+                        "action": "log",
+                        "on_change": True,
+                        "key": "closed",
+                        "group": "is_closed",
+                        "name": "Switch state changed to closed",
+                        "event_level": EventLevel.INFO,
+                        "threshold": lambda _switch: _switch.get_measurement_value("is_closed")
+                    },
+                    {
+                        "action": "log",
+                        "on_change": True,
+                        "key": "opened",
+                        "group": "is_closed",
+                        "name": "Switch state changed to opened",
+                        "event_level": EventLevel.INFO,
+                        "threshold": lambda _switch: not _switch.get_measurement_value("is_closed")
+                    }
+                ]

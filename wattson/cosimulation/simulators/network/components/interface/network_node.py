@@ -9,6 +9,7 @@ from wattson.services.wattson_service_interface import WattsonServiceInterface
 
 if TYPE_CHECKING:
     from wattson.cosimulation.simulators.network.components.interface.network_interface import NetworkInterface
+    from wattson.cosimulation.simulators.network.network_emulator import NetworkEmulator
 
 
 class NetworkNode(NetworkEntity, abc.ABC):
@@ -30,9 +31,12 @@ class NetworkNode(NetworkEntity, abc.ABC):
 
     @staticmethod
     def prefix_id(node_id) -> str:
-        if node_id[0] in "0123456789":
+        if str(node_id)[0] in "0123456789":
             return f"n{node_id}"
         return node_id
+
+    def get_level(self) -> int:
+        return 0
 
     @abc.abstractmethod
     def add_role(self, role: str):

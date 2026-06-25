@@ -4,6 +4,7 @@ import signal
 from typing import Dict, Type
 
 from powerowl.layers.powergrid import PowerGridModel
+from wattson.analysis.statistics.common.static import StaticStatisticClient
 
 from wattson.util.random import Random
 from wattson.util.log import get_logger
@@ -17,6 +18,10 @@ class PythonDeployment(abc.ABC):
         self.artifacts_dir = Path(self.config.get("artifacts_dir", ""))
         random_seed = configuration.get("random_seed", 0)
         self._deployment_logger = get_logger("Wattson", "Deployment")
+
+        StaticStatisticClient.enabled = configuration.get("statistics", False)
+        StaticStatisticClient.server_ip = configuration.get("sim-control-ip")
+
         if random_seed == 0:
             self._deployment_logger.warning("Wattson.Random: Random seed is 0")
         self._deployment_logger.info(f"Setting random base seed to {random_seed}")

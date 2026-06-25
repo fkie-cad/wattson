@@ -4,6 +4,16 @@ from pathlib import Path
 from wattson.cosimulation.simulators.network.constants import DEFAULT_SEGMENT
 
 
+def str2bool(v):
+    if v is None:
+        return None
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def get_argument_parser() -> argparse.ArgumentParser:
     """
     Builds an argparse.ArgumentParser with arguments to be used by the co-simulation controller :return: The configured ArgumentParser
@@ -16,12 +26,15 @@ def get_argument_parser() -> argparse.ArgumentParser:
                         help="[Optional] Co-Simulation segment to start on this host")
     parser.add_argument("--extensions", "-e", type=str, default="extensions.yml",
                         help="The file to look into for extensions. Defaults to extensions.yml")
+    parser.add_argument("--script", "-s", action="append", default=[],
+                        help="Script files to start along with the simulation. Each file is run in a separate process.")
 
     # Artifact Directory
     parser.add_argument("--artifact-directory", "--working-directory", "-d", type=str, default=None,
                         help="The folder to use for artifacts for the simulation run. If not given, an automatic hierarchy is created")
     parser.add_argument("--physical-export", action="store_true", help="Set to enable exports for the physical simulator")
     parser.add_argument("--ccx-export", type=str, default=None, help="Provide a file name (jsonl) to enable notification export in the CCX")
+    parser.add_argument("--statistics", "--stats", action="store_true", help="Enable statistics export")
 
     # Time
     parser.add_argument("--wall-clock-reference", type=float, default=None,
@@ -72,6 +85,19 @@ def get_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--vcc-proxy", "--vcc", "--ccx", action="store_true", help="Set to enable VCC proxy mode if applicable")
     parser.add_argument("--vcc-export", nargs="*", type=str, choices=["measurement", "estimation", "e", "m"],
                         help="Instruct the VCC (not the CCX!) to export measurements and/or estimation values")
+
+    # TLS Configuration
+    ## These options are written to the configuration options and can be set by the --option flag and extensions (i.e., they are just shortcuts)
+    parser.add_argument("--tls.version", type=str, choices=["TLSv1.3", "TLSv1.2", "None"], default=None, help="Overwrite the used TLS version")
+    parser.add_argument("--tls.encryption", type=str2bool, default=None, help="Overwrite whether to enable TLS encryption")
+
+    parser.add_argument("--tls.server.authentication", type=str2bool, default=None, help="Overwrite whether to enable TLS authentication (server verifies client)")
+    parser.add_argument("--tls.server.chain-validation", type=str2bool, default=None, help="Overwrite whether to enable TLS chain validation on server side")
+    parser.add_argument("--tls.server.whitelist", type=str2bool, default=None, help="Overwrite whether to enable TLS peer whitelist on server side")
+
+    parser.add_argument("--tls.client.authentication", type=str2bool, default=None, help="Overwrite whether to enable TLS authentication (client verifies server)")
+    parser.add_argument("--tls.client.whitelist", type=str2bool, default=None, help="Overwrite whether to enable TLS peer whitelist on client side")
+    parser.add_argument("--tls.client.chain-validation", type=str2bool, default=None, help="Overwrite whether to enable TLS chain validation on client side")
 
     # Configuration Options
     parser.add_argument("--option", "-o", action="append", default=[], nargs=2,

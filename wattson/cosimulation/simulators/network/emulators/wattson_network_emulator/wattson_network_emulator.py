@@ -5,6 +5,7 @@ import subprocess
 import threading
 import traceback
 import typing
+from pathlib import Path
 from typing import Union, Optional, Dict, Any
 
 import psutil
@@ -28,6 +29,7 @@ from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.
 from wattson.cosimulation.simulators.network.emulators.wattson_network_emulator.wrapper.virtual_machine_wrapper import VirtualMachineWrapper
 from wattson.cosimulation.simulators.network.messages.wattson_network_notificaction_topics import WattsonNetworkNotificationTopic
 from wattson.cosimulation.simulators.network.network_emulator import NetworkEmulator
+from wattson.networking.namespaces.linux_namespace import LinuxNamespace
 from wattson.networking.namespaces.namespace import Namespace
 from wattson.util.events.wait_event import WaitEvent
 from wattson.util.performance.resettable_timer import ResettableTimer
@@ -214,11 +216,20 @@ class WattsonNetworkEmulator(NetworkEmulator):
         subprocess.check_call(f"sysctl net.core.rmem_max={max_receiver_window_size}", shell=True, stdout=subprocess.DEVNULL)
         subprocess.check_call(f"sysctl net.ipv4.xfrm4_gc_thresh={route_garbage_collector}", shell=True, stdout=subprocess.DEVNULL)
 
+    def _expose_open_vswitch_database(self):
+        ovs_socket_path = self._working_directory.joinpath("ovs-database.sock")
+        ovs_socket_path_string = str(ovs_socket_path.absolute())
+        self._configuration_store.register_configuration("ovs-socket-absolute", ovs_socket_path_string)
+        self._configuration_store.register_configuration("ovs-socket-string", f"unix:{ovs_socket_path_string}")
+        self.logger.info(f"Exposing Open vSwitch database as {str(ovs_socket_path.relative_to(self._working_directory))}")
+        subprocess.check_call(f"ovs-vsctl set-manager punix:{ovs_socket_path_string}", shell=True) #, stdout=subprocess.DEVNULL)
+
     def start(self):
         if not self._main_namespace.exists():
             self._main_namespace.from_pid(os.getpid())
         super().start()
         self._adjust_resource_limits()
+        self._expose_open_vswitch_database()
 
         if self._async_start:
             self.logger.warning(f"Asynchronous start enabled - be aware of potential stability issues")

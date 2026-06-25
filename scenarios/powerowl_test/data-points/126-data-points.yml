@@ -1,237 +1,336 @@
 '126':
 - identifier: '126.10010'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 126
-    cot: 6
-    direction: control
-    ioa: 10010
-    type_id: 45
+  type: datapoint
+  value: false
   providers:
     targets:
     - domain: target
+      provider_type: POWER_GRID
       provider_data:
+        grid_element: storage.0
+        context: CONFIGURATION
         attribute: explicit_control
-        context: CONFIGURATION
-        grid_element: storage.0
         type: bool
-      provider_type: POWER_GRID
-  related: []
   scale: NONE
   unit: NONE
-  value: null
-- identifier: '126.10020'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10010
     cot: 6
-    direction: control
-    ioa: 10020
     type_id: 45
+    direction: control
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: CONFIGURATION
+    attribute: explicit_control
+    type: bool
+    direct: false
+    via: false
+- identifier: '126.10020'
+  type: datapoint
+  value: true
   providers:
     targets:
     - domain: target
+      provider_type: POWER_GRID
       provider_data:
+        grid_element: storage.0
+        context: CONFIGURATION
         attribute: connected
-        context: CONFIGURATION
-        grid_element: storage.0
         type: bool
-      provider_type: POWER_GRID
-  related: []
   scale: NONE
   unit: NONE
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 126
+    ioa: 10020
+    cot: 6
+    type_id: 45
+    direction: control
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: CONFIGURATION
+    attribute: connected
+    type: bool
+    direct: false
+    via: false
 - identifier: '126.10030'
-  protocol: 60870-5-104
-  protocol_data:
-    coa: 126
-    cot: 6
-    direction: control
-    ioa: 10030
-    type_id: 50
+  type: datapoint
+  value: null
   providers:
     targets:
     - domain: target
-      provider_data:
-        attribute: target_cos_phi
-        context: CONFIGURATION
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: storage.0
+        context: CONFIGURATION
+        attribute: target_cos_phi
+        type: float
   scale: NONE
   unit: NONE
-  value: null
-- identifier: '126.10040'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10030
     cot: 6
-    direction: control
-    ioa: 10040
     type_id: 50
+    direction: control
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: CONFIGURATION
+    attribute: target_cos_phi
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10040'
+  type: datapoint
+  value: 600000.0
   providers:
     targets:
     - domain: target
-      provider_data:
-        attribute: target_active_power
-        context: CONFIGURATION
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
+      provider_data:
+        grid_element: storage.0
+        context: CONFIGURATION
+        attribute: target_active_power
+        type: float
+  scale: BASE
+  unit: WATT
   related:
   - '126.10080'
-  scale: BASE
-  unit: WATT
-  value: null
-- identifier: '126.10050'
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10040
     cot: 6
-    direction: control
-    ioa: 10050
     type_id: 50
+    direction: control
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: CONFIGURATION
+    attribute: target_active_power
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10050'
+  type: datapoint
+  value: 0.0
   providers:
     targets:
     - domain: target
-      provider_data:
-        attribute: target_reactive_power
-        context: CONFIGURATION
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
+      provider_data:
+        grid_element: storage.0
+        context: CONFIGURATION
+        attribute: target_reactive_power
+        type: float
+  scale: BASE
+  unit: VAR
   related:
   - '126.10090'
-  scale: BASE
-  unit: VAR
-  value: null
-- identifier: '126.10060'
   protocol: 60870-5-104
   protocol_data:
     coa: 126
-    cot: 3
-    direction: monitoring
-    ioa: 10060
-    type_id: 1
+    ioa: 10050
+    cot: 6
+    type_id: 50
+    direction: control
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: CONFIGURATION
+    attribute: target_reactive_power
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10060'
+  type: datapoint
+  value: true
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: is_connected
-        context: MEASUREMENT
-        grid_element: storage.0
-        type: bool
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: storage.0
+        context: MEASUREMENT
+        attribute: is_connected
+        type: bool
   scale: NONE
   unit: NONE
-  value: null
-- identifier: '126.10070'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 126
-    cot: 1
+    ioa: 10060
+    cot: 3
+    type_id: 1
     direction: monitoring
-    ioa: 10070
-    type_id: 13
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: MEASUREMENT
+    attribute: is_connected
+    type: bool
+    direct: false
+    via: false
+- identifier: '126.10070'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: cos_phi
-        context: MEASUREMENT
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
+      provider_data:
+        grid_element: storage.0
+        context: MEASUREMENT
+        attribute: cos_phi
+        type: float
+  scale: BASE
+  unit: NONE
   related:
   - '126.10030'
-  scale: BASE
-  unit: NONE
-  value: null
-- identifier: '126.10080'
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10070
     cot: 1
-    direction: monitoring
-    ioa: 10080
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: MEASUREMENT
+    attribute: cos_phi
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10080'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: active_power
-        context: MEASUREMENT
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
-  related:
-  - '126.10040'
+      provider_data:
+        grid_element: storage.0
+        context: MEASUREMENT
+        attribute: active_power
+        type: float
   scale: BASE
   unit: WATT
-  value: null
-- identifier: '126.10090'
+  related:
+  - '126.10040'
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10080
     cot: 1
-    direction: monitoring
-    ioa: 10090
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: MEASUREMENT
+    attribute: active_power
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10090'
+  type: datapoint
+  value: .nan
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: reactive_power
-        context: MEASUREMENT
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
-  related:
-  - '126.10050'
+      provider_data:
+        grid_element: storage.0
+        context: MEASUREMENT
+        attribute: reactive_power
+        type: float
   scale: BASE
   unit: VAR
-  value: null
-- identifier: '126.10100'
+  related:
+  - '126.10050'
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10090
     cot: 1
-    direction: monitoring
-    ioa: 10100
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: MEASUREMENT
+    attribute: reactive_power
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10100'
+  type: datapoint
+  value: 0
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: state_of_charge
-        context: MEASUREMENT
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: storage.0
+        context: MEASUREMENT
+        attribute: state_of_charge
+        type: float
   scale: NONE
   unit: PERCENT
-  value: null
-- identifier: '126.10110'
+  related: []
   protocol: 60870-5-104
   protocol_data:
     coa: 126
+    ioa: 10100
     cot: 1
-    direction: monitoring
-    ioa: 10110
     type_id: 13
+    direction: monitoring
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: MEASUREMENT
+    attribute: state_of_charge
+    type: float
+    direct: false
+    via: false
+- identifier: '126.10110'
+  type: datapoint
+  value: 0
   providers:
     sources:
     - domain: source
-      provider_data:
-        attribute: current_charge
-        context: MEASUREMENT
-        grid_element: storage.0
-        type: float
       provider_type: POWER_GRID
-  related: []
+      provider_data:
+        grid_element: storage.0
+        context: MEASUREMENT
+        attribute: current_charge
+        type: float
   scale: NONE
   unit: WATT_HOUR
-  value: null
+  related: []
+  protocol: 60870-5-104
+  protocol_data:
+    coa: 126
+    ioa: 10110
+    cot: 1
+    type_id: 13
+    direction: monitoring
+  protocol_server_id: '126'
+  grid_value:
+    grid_element: storage.0
+    context: MEASUREMENT
+    attribute: current_charge
+    type: float
+    direct: false
+    via: false

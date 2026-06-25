@@ -12,12 +12,13 @@ class WattsonOSPFService(WattsonFrRoutingService):
         super().__init__(service_configuration, network_node)
         self.frr_artifacts = [
             self.get_artifact("ospf.pid"),
-            self.get_artifact("ospf.cfg"),
             self.get_artifact("zebra.api"),
-            self.get_artifact("ospf_vty", is_folder=True)
+            #self.get_artifact("ospf_vty", is_folder=True)
         ]
 
     def write_fr_config_file(self, refresh_config: bool = False):
+        # No config file as of FRRouting 9+
+        return
         if not refresh_config and not self.get_artifact("ospf.cfg").is_empty():
             return
 
@@ -131,20 +132,20 @@ class WattsonOSPFService(WattsonFrRoutingService):
         self.network_node.exec(["sysctl", "net.ipv4.igmp_max_memberships=2048"], shell=True)
 
     def get_start_command(self) -> List[str]:
-        config_file = self.get_artifact("ospf.cfg")
         pid_file = self.get_artifact("ospf.pid")
+        config_file = self.get_artifact("frr-mgmt.cfg")
         socket_file = self.get_artifact(f"zebra.api")
-        vty_folder = self.get_artifact("ospf_vty", is_folder=True)
+        #vty_folder = self.get_artifact("ospf_vty", is_folder=True)
         return [
             "ospfd",
-            "-f", str(self.get_tmp_path(config_file)),
+            "-N", str(self.network_node.system_name),
             "-i", str(self.get_tmp_path(pid_file)),
             "-z", str(self.get_tmp_path(socket_file)),
-            "--vty_socket", str(self.get_tmp_path(vty_folder)),
+            "-f", str(self.get_tmp_path(config_file)),
             "--log", "stdout",
-            "--log-level", "debug",
-            "-u", "root"
+            "--log-level", "debug"
         ]
 
     def get_pid_file(self):
+        #return self.get_frr_path().joinpath("ospf.pid")
         return self.get_artifact("ospf.pid")

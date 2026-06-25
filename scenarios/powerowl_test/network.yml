@@ -1,799 +1,813 @@
 links:
-  '1301':
+  '1501':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1301'
+    id: '1501'
     interfaces:
     - 301.i0
     - 201.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1302':
+  '1502':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1302'
+    id: '1502'
     interfaces:
     - 302.i0
     - 202.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1303':
+  '1503':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1303'
+    id: '1503'
     interfaces:
     - 1.i0
     - 302.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1304':
+  '1504':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1304'
+    id: '1504'
     interfaces:
     - 303.i0
     - 203.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1305':
+  '1505':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1305'
+    id: '1505'
     interfaces:
     - 101.i0
     - 303.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1306':
+  '1506':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1306'
+    id: '1506'
     interfaces:
     - 102.i0
     - 303.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1307':
+  '1507':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1307'
+    id: '1507'
     interfaces:
     - 103.i0
     - 303.i3
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1308':
+  '1508':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1308'
+    id: '1508'
     interfaces:
     - 104.i0
     - 303.i4
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1309':
+  '1509':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1309'
+    id: '1509'
     interfaces:
     - 105.i0
     - 303.i5
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1310':
+  '1510':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1310'
+    id: '1510'
     interfaces:
     - 106.i0
     - 304.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1311':
+  '1511':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1311'
+    id: '1511'
     interfaces:
     - 107.i0
     - 304.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1312':
+  '1512':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1312'
+    id: '1512'
     interfaces:
     - 108.i0
     - 304.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1313':
+  '1513':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1313'
+    id: '1513'
     interfaces:
     - 109.i0
     - 304.i3
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1314':
+  '1514':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1314'
+    id: '1514'
     interfaces:
     - 110.i0
     - 305.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1315':
+  '1515':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1315'
+    id: '1515'
     interfaces:
     - 111.i0
     - 305.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1316':
+  '1516':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1316'
+    id: '1516'
     interfaces:
     - 112.i0
     - 305.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1317':
+  '1517':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1317'
+    id: '1517'
     interfaces:
     - 113.i0
     - 305.i3
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1318':
+  '1518':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1318'
+    id: '1518'
     interfaces:
     - 114.i0
     - 306.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1319':
+  '1519':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1319'
+    id: '1519'
     interfaces:
     - 115.i0
     - 306.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1320':
+  '1520':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1320'
+    id: '1520'
     interfaces:
     - 116.i0
     - 307.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1321':
+  '1521':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1321'
+    id: '1521'
     interfaces:
     - 117.i0
     - 308.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1322':
+  '1522':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1322'
+    id: '1522'
     interfaces:
     - 118.i0
     - 309.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1323':
+  '1523':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1323'
+    id: '1523'
     interfaces:
     - 119.i0
     - 310.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1324':
+  '1524':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1324'
+    id: '1524'
     interfaces:
     - 120.i0
     - 310.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1325':
+  '1525':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1325'
+    id: '1525'
     interfaces:
     - 121.i0
     - 311.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1326':
+  '1526':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1326'
+    id: '1526'
     interfaces:
     - 122.i0
     - 311.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1327':
+  '1527':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1327'
+    id: '1527'
     interfaces:
     - 123.i0
     - 312.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1328':
+  '1528':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1328'
+    id: '1528'
     interfaces:
     - 124.i0
     - 312.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1329':
+  '1529':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1329'
+    id: '1529'
     interfaces:
     - 125.i0
     - 312.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1330':
+  '1530':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1330'
+    id: '1530'
     interfaces:
     - 126.i0
     - 312.i3
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1331':
+  '1531':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1331'
+    id: '1531'
     interfaces:
     - 127.i0
     - 313.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1332':
+  '1532':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1332'
+    id: '1532'
     interfaces:
     - 128.i0
     - 313.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1333':
+  '1533':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1333'
+    id: '1533'
     interfaces:
     - 129.i0
     - 314.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1334':
+  '1534':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1334'
+    id: '1534'
     interfaces:
     - 130.i0
     - 314.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1335':
+  '1535':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1335'
+    id: '1535'
     interfaces:
     - 131.i0
     - 315.i0
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1336':
+  '1536':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1336'
+    id: '1536'
     interfaces:
     - 132.i0
     - 315.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1337':
+  '1537':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1337'
+    id: '1537'
     interfaces:
     - 204.i0
     - 201.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1338':
+  '1538':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1338'
+    id: '1538'
     interfaces:
     - 205.i0
     - 202.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1339':
+  '1539':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1339'
+    id: '1539'
     interfaces:
     - 205.i1
     - 204.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1340':
+  '1540':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1340'
+    id: '1540'
     interfaces:
     - 206.i0
     - 203.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1341':
+  '1541':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1341'
+    id: '1541'
     interfaces:
     - 206.i1
     - 204.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1342':
+  '1542':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1342'
+    id: '1542'
     interfaces:
     - 206.i2
     - 205.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1343':
+  '1543':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1343'
+    id: '1543'
     interfaces:
     - 316.i0
     - 304.i4
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1344':
+  '1544':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1344'
+    id: '1544'
     interfaces:
     - 317.i0
     - 305.i4
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1345':
+  '1545':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1345'
+    id: '1545'
     interfaces:
     - 317.i1
     - 316.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1346':
+  '1546':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1346'
+    id: '1546'
     interfaces:
     - 318.i0
     - 306.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1347':
+  '1547':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1347'
+    id: '1547'
     interfaces:
     - 318.i1
     - 317.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1348':
+  '1548':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1348'
+    id: '1548'
     interfaces:
     - 319.i0
     - 307.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1349':
+  '1549':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1349'
+    id: '1549'
     interfaces:
     - 319.i1
     - 206.i3
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1350':
+  '1550':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1350'
+    id: '1550'
     interfaces:
     - 320.i0
     - 308.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1351':
+  '1551':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1351'
+    id: '1551'
     interfaces:
     - 320.i1
     - 319.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1352':
+  '1552':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1352'
+    id: '1552'
     interfaces:
     - 321.i0
     - 309.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1353':
+  '1553':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1353'
+    id: '1553'
+    interfaces:
+    - 321.i1
+    - 206.i4
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1554':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1554'
     interfaces:
     - 322.i0
     - 310.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1354':
+  '1555':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1354'
+    id: '1555'
     interfaces:
     - 322.i1
-    - 321.i1
+    - 321.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1355':
+  '1556':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1355'
+    id: '1556'
     interfaces:
     - 323.i0
     - 311.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1356':
+  '1557':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1356'
-    interfaces:
-    - 323.i1
-    - 322.i2
-    jitter: ''
-    link-type: digital
-    packet-loss: 0%
-  '1357':
-    bandwidth: 1Gbps
-    bit-error-rate: 0%
-    data-rate: 1Gbps
-    delay: 2ms
-    id: '1357'
+    id: '1557'
     interfaces:
     - 324.i0
     - 312.i4
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1358':
+  '1558':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1358'
+    id: '1558'
     interfaces:
     - 324.i1
-    - 323.i2
+    - 323.i1
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1359':
+  '1559':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1359'
+    id: '1559'
     interfaces:
     - 325.i0
     - 313.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1360':
+  '1560':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1360'
+    id: '1560'
     interfaces:
     - 325.i1
     - 324.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1361':
+  '1561':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1361'
+    id: '1561'
     interfaces:
     - 326.i0
     - 314.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1362':
+  '1562':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1362'
+    id: '1562'
+    interfaces:
+    - 326.i1
+    - 325.i2
+    jitter: ''
+    link-type: digital
+    packet-loss: 0%
+  '1563':
+    bandwidth: 1Gbps
+    bit-error-rate: 0%
+    data-rate: 1Gbps
+    delay: 2ms
+    id: '1563'
     interfaces:
     - 327.i0
     - 315.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1363':
+  '1564':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1363'
+    id: '1564'
     interfaces:
     - 327.i1
     - 316.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1364':
+  '1565':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1364'
+    id: '1565'
     interfaces:
     - 327.i2
     - 320.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1365':
+  '1566':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1365'
+    id: '1566'
     interfaces:
     - 327.i3
-    - 322.i3
+    - 322.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
-  '1366':
+  '1567':
     bandwidth: 1Gbps
     bit-error-rate: 0%
     data-rate: 1Gbps
     delay: 2ms
-    id: '1366'
+    id: '1567'
     interfaces:
     - 327.i4
-    - 326.i1
+    - 326.i2
     jitter: ''
     link-type: digital
     packet-loss: 0%
 nodes:
   '1':
     configuration:
+      client_tls_version: !!python/object/apply:powerowl.layers.network.configuration.protocols.tls_version.TlsVersion
+      - NONE
       dns_host_name: ccx
     facility_id: '801'
     facility_name: Control Center
@@ -801,70 +815,75 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.1.2/24
-      mac: 02:36:a3:76:00:01
+      mac: 02:47:48:41:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: MTU 1
     position2d:
-    - 1.0909887586910187
-    - 6.090988758691019
+    - 1.2403700850309325
+    - 6.240370085030932
     position3d:
-    - 1.0909887586910187
-    - 6.090988758691019
+    - 1.2403700850309325
+    - 6.240370085030932
     - 1.8
     role: mtu
     rtu_map:
-      101: 172.16.2.2/24
-      102: 172.16.2.3/24
-      103: 172.16.2.4/24
-      104: 172.16.2.5/24
-      105: 172.16.2.6/24
-      106: 172.16.3.1/24
-      107: 172.16.3.2/24
-      108: 172.16.3.3/24
-      109: 172.16.3.4/24
-      110: 172.16.3.5/24
-      111: 172.16.3.6/24
-      112: 172.16.3.7/24
-      113: 172.16.3.8/24
-      114: 172.16.3.9/24
-      115: 172.16.3.10/24
-      116: 172.16.3.11/24
-      117: 172.16.3.12/24
-      118: 172.16.3.13/24
-      119: 172.16.3.14/24
-      120: 172.16.3.15/24
-      121: 172.16.3.16/24
-      122: 172.16.3.17/24
-      123: 172.16.3.18/24
-      124: 172.16.3.19/24
-      125: 172.16.3.20/24
-      126: 172.16.3.21/24
-      127: 172.16.3.22/24
-      128: 172.16.3.23/24
-      129: 172.16.3.24/24
-      130: 172.16.3.25/24
-      131: 172.16.3.26/24
-      132: 172.16.3.27/24
+      '101': 172.16.2.2/24
+      '102': 172.16.2.3/24
+      '103': 172.16.2.4/24
+      '104': 172.16.2.5/24
+      '105': 172.16.2.6/24
+      '106': 172.16.3.3/24
+      '107': 172.16.3.4/24
+      '108': 172.16.3.5/24
+      '109': 172.16.3.6/24
+      '110': 172.16.3.7/24
+      '111': 172.16.3.8/24
+      '112': 172.16.3.9/24
+      '113': 172.16.3.10/24
+      '114': 172.16.3.11/24
+      '115': 172.16.3.12/24
+      '116': 172.16.3.13/24
+      '117': 172.16.3.14/24
+      '118': 172.16.3.15/24
+      '119': 172.16.3.16/24
+      '120': 172.16.3.17/24
+      '121': 172.16.3.18/24
+      '122': 172.16.3.19/24
+      '123': 172.16.3.20/24
+      '124': 172.16.3.21/24
+      '125': 172.16.3.22/24
+      '126': 172.16.3.23/24
+      '127': 172.16.3.24/24
+      '128': 172.16.3.25/24
+      '129': 172.16.3.26/24
+      '130': 172.16.3.27/24
+      '131': 172.16.3.28/24
+      '132': 172.16.3.29/24
     type: host
   '101':
     coa: 101
     configuration:
       dns_host_name: rtu-101
+      server_tls_version: NONE
     facility_id: '901'
     facility_name: S-TSS-0
     id: '101'
     interfaces:
     - id: i0
       ip: 172.16.2.2/24
-      mac: 02:d8:b3:e5:00:01
+      mac: 02:7b:46:e8:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 101
     position2d:
     - 0.0
-    - -0.0
+    - 0.0
     position3d:
     - 0.0
-    - -0.0
+    - 0.0
     - 1.8
     role: rtu
     type: host
@@ -872,20 +891,23 @@ nodes:
     coa: 102
     configuration:
       dns_host_name: rtu-102
+      server_tls_version: NONE
     facility_id: '901'
     facility_name: S-TSS-0
     id: '102'
     interfaces:
     - id: i0
       ip: 172.16.2.3/24
-      mac: 02:d5:4b:a9:00:01
+      mac: 02:58:90:a1:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 102
     position2d:
-    - -1.0
+    - -1.125
     - -9.0
     position3d:
-    - -1.0
+    - -1.125
     - -9.0
     - 1.8
     role: rtu
@@ -894,20 +916,23 @@ nodes:
     coa: 103
     configuration:
       dns_host_name: rtu-103
+      server_tls_version: NONE
     facility_id: '901'
     facility_name: S-TSS-0
     id: '103'
     interfaces:
     - id: i0
       ip: 172.16.2.4/24
-      mac: 02:50:2c:88:00:01
+      mac: 02:42:7d:dd:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 103
     position2d:
-    - 1.0
+    - 1.125
     - -9.0
     position3d:
-    - 1.0
+    - 1.125
     - -9.0
     - 1.8
     role: rtu
@@ -916,20 +941,23 @@ nodes:
     coa: 104
     configuration:
       dns_host_name: rtu-104
+      server_tls_version: NONE
     facility_id: '901'
     facility_name: S-TSS-0
     id: '104'
     interfaces:
     - id: i0
       ip: 172.16.2.5/24
-      mac: 02:c5:bc:2c:00:01
+      mac: 02:b8:b5:f9:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 104
     position2d:
-    - -1.0
+    - -1.125
     - -6.0
     position3d:
-    - -1.0
+    - -1.125
     - -6.0
     - 1.8
     role: rtu
@@ -938,20 +966,23 @@ nodes:
     coa: 105
     configuration:
       dns_host_name: rtu-105
+      server_tls_version: NONE
     facility_id: '901'
     facility_name: S-TSS-0
     id: '105'
     interfaces:
     - id: i0
       ip: 172.16.2.6/24
-      mac: 02:12:fb:37:00:01
+      mac: 02:b5:85:91:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 105
     position2d:
-    - 1.0
+    - 1.125
     - -6.0
     position3d:
-    - 1.0
+    - 1.125
     - -6.0
     - 1.8
     role: rtu
@@ -960,21 +991,24 @@ nodes:
     coa: 106
     configuration:
       dns_host_name: rtu-106
+      server_tls_version: NONE
     facility_id: '1001'
     facility_name: S-DSS-0
     id: '106'
     interfaces:
     - id: i0
-      ip: 172.16.3.1/24
-      mac: 02:9c:f1:a0:00:01
+      ip: 172.16.3.3/24
+      mac: 02:80:13:f8:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 106
     position2d:
-    - 0.5
-    - -57.0
+    - 0.125
+    - -33.0
     position3d:
-    - 0.5
-    - -57.0
+    - 0.125
+    - -33.0
     - 1.8
     role: rtu
     type: host
@@ -982,21 +1016,24 @@ nodes:
     coa: 107
     configuration:
       dns_host_name: rtu-107
+      server_tls_version: NONE
     facility_id: '1001'
     facility_name: S-DSS-0
     id: '107'
     interfaces:
     - id: i0
-      ip: 172.16.3.2/24
-      mac: 02:57:eb:b7:00:01
+      ip: 172.16.3.4/24
+      mac: 02:6c:e9:17:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 107
     position2d:
-    - 0.39999999999999997
-    - -58.0
+    - 0.024999999999999967
+    - -34.0
     position3d:
-    - 0.39999999999999997
-    - -58.0
+    - 0.024999999999999967
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1004,21 +1041,24 @@ nodes:
     coa: 108
     configuration:
       dns_host_name: rtu-108
+      server_tls_version: NONE
     facility_id: '1001'
     facility_name: S-DSS-0
     id: '108'
     interfaces:
     - id: i0
-      ip: 172.16.3.3/24
-      mac: 02:a7:33:35:00:01
+      ip: 172.16.3.5/24
+      mac: 02:1c:20:c8:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 108
     position2d:
-    - 0.6
-    - -58.0
+    - 0.22499999999999998
+    - -34.0
     position3d:
-    - 0.6
-    - -58.0
+    - 0.22499999999999998
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1026,21 +1066,24 @@ nodes:
     coa: 109
     configuration:
       dns_host_name: rtu-109
+      server_tls_version: NONE
     facility_id: '1001'
     facility_name: S-DSS-0
     id: '109'
     interfaces:
     - id: i0
-      ip: 172.16.3.4/24
-      mac: 02:21:41:e0:00:01
+      ip: 172.16.3.6/24
+      mac: 02:b7:8b:11:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 109
     position2d:
-    - 0.8
-    - -58.0
+    - 0.425
+    - -34.0
     position3d:
-    - 0.8
-    - -58.0
+    - 0.425
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1048,21 +1091,24 @@ nodes:
     coa: 110
     configuration:
       dns_host_name: rtu-110
+      server_tls_version: NONE
     facility_id: '1002'
     facility_name: S-DSS-1
     id: '110'
     interfaces:
     - id: i0
-      ip: 172.16.3.5/24
-      mac: 02:14:5e:a4:00:01
+      ip: 172.16.3.7/24
+      mac: 02:5c:46:ad:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 110
     position2d:
-    - -2.5
-    - -69.0
+    - 0.125
+    - -39.0
     position3d:
-    - -2.5
-    - -69.0
+    - 0.125
+    - -39.0
     - 1.8
     role: rtu
     type: host
@@ -1070,21 +1116,24 @@ nodes:
     coa: 111
     configuration:
       dns_host_name: rtu-111
+      server_tls_version: NONE
     facility_id: '1002'
     facility_name: S-DSS-1
     id: '111'
     interfaces:
     - id: i0
-      ip: 172.16.3.6/24
-      mac: 02:d9:bc:50:00:01
+      ip: 172.16.3.8/24
+      mac: 02:41:d6:44:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 111
     position2d:
-    - -2.5999999999999996
-    - -70.0
+    - 0.025000000000000022
+    - -40.0
     position3d:
-    - -2.5999999999999996
-    - -70.0
+    - 0.025000000000000022
+    - -40.0
     - 1.8
     role: rtu
     type: host
@@ -1092,21 +1141,24 @@ nodes:
     coa: 112
     configuration:
       dns_host_name: rtu-112
+      server_tls_version: NONE
     facility_id: '1002'
     facility_name: S-DSS-1
     id: '112'
     interfaces:
     - id: i0
-      ip: 172.16.3.7/24
-      mac: 02:46:a9:8f:00:01
+      ip: 172.16.3.9/24
+      mac: 02:46:d4:4c:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 112
     position2d:
-    - -2.3999999999999995
-    - -70.0
+    - 0.22500000000000003
+    - -40.0
     position3d:
-    - -2.3999999999999995
-    - -70.0
+    - 0.22500000000000003
+    - -40.0
     - 1.8
     role: rtu
     type: host
@@ -1114,21 +1166,24 @@ nodes:
     coa: 113
     configuration:
       dns_host_name: rtu-113
+      server_tls_version: NONE
     facility_id: '1002'
     facility_name: S-DSS-1
     id: '113'
     interfaces:
     - id: i0
-      ip: 172.16.3.8/24
-      mac: 02:38:d9:9d:00:01
+      ip: 172.16.3.10/24
+      mac: 02:1f:27:9e:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 113
     position2d:
-    - -2.1999999999999993
-    - -70.0
+    - 0.42500000000000004
+    - -40.0
     position3d:
-    - -2.1999999999999993
-    - -70.0
+    - 0.42500000000000004
+    - -40.0
     - 1.8
     role: rtu
     type: host
@@ -1136,21 +1191,24 @@ nodes:
     coa: 114
     configuration:
       dns_host_name: rtu-114
+      server_tls_version: NONE
     facility_id: '1003'
     facility_name: S-DSS-2
     id: '114'
     interfaces:
     - id: i0
-      ip: 172.16.3.9/24
-      mac: 02:f8:e4:5d:00:01
+      ip: 172.16.3.11/24
+      mac: 02:69:a1:71:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 114
     position2d:
-    - -2.5
-    - -57.0
+    - -1.875
+    - -39.0
     position3d:
-    - -2.5
-    - -57.0
+    - -1.875
+    - -39.0
     - 1.8
     role: rtu
     type: host
@@ -1158,21 +1216,24 @@ nodes:
     coa: 115
     configuration:
       dns_host_name: rtu-115
+      server_tls_version: NONE
     facility_id: '1003'
     facility_name: S-DSS-2
     id: '115'
     interfaces:
     - id: i0
-      ip: 172.16.3.10/24
-      mac: 02:37:d9:80:00:01
+      ip: 172.16.3.12/24
+      mac: 02:ea:b7:a1:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 115
     position2d:
-    - -2.4
-    - -58.0
+    - -1.7750000000000001
+    - -40.0
     position3d:
-    - -2.4
-    - -58.0
+    - -1.7750000000000001
+    - -40.0
     - 1.8
     role: rtu
     type: host
@@ -1180,21 +1241,24 @@ nodes:
     coa: 116
     configuration:
       dns_host_name: rtu-116
+      server_tls_version: NONE
     facility_id: '1004'
     facility_name: S-DSS-3
     id: '116'
     interfaces:
     - id: i0
-      ip: 172.16.3.11/24
-      mac: 02:41:4a:d6:00:01
+      ip: 172.16.3.13/24
+      mac: 02:55:79:a3:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 116
     position2d:
-    - 1.0
-    - -21.0
+    - 1.125
+    - -15.0
     position3d:
-    - 1.0
-    - -21.0
+    - 1.125
+    - -15.0
     - 1.8
     role: rtu
     type: host
@@ -1202,21 +1266,24 @@ nodes:
     coa: 117
     configuration:
       dns_host_name: rtu-117
+      server_tls_version: NONE
     facility_id: '1005'
     facility_name: S-DSS-4
     id: '117'
     interfaces:
     - id: i0
-      ip: 172.16.3.12/24
-      mac: 02:ca:15:6d:00:01
+      ip: 172.16.3.14/24
+      mac: 02:12:fb:37:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 117
     position2d:
-    - 1.0
-    - -33.0
+    - 1.125
+    - -21.0
     position3d:
-    - 1.0
-    - -33.0
+    - 1.125
+    - -21.0
     - 1.8
     role: rtu
     type: host
@@ -1224,21 +1291,24 @@ nodes:
     coa: 118
     configuration:
       dns_host_name: rtu-118
+      server_tls_version: NONE
     facility_id: '1006'
     facility_name: S-DSS-5
     id: '118'
     interfaces:
     - id: i0
-      ip: 172.16.3.13/24
-      mac: 02:60:d7:19:00:01
+      ip: 172.16.3.15/24
+      mac: 02:18:9b:ef:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 118
     position2d:
-    - -1.0
-    - -21.0
+    - -1.135
+    - -15.01
     position3d:
-    - -1.0
-    - -21.0
+    - -1.135
+    - -15.01
     - 1.8
     role: rtu
     type: host
@@ -1246,21 +1316,24 @@ nodes:
     coa: 119
     configuration:
       dns_host_name: rtu-119
+      server_tls_version: NONE
     facility_id: '1007'
     facility_name: S-DSS-6
     id: '119'
     interfaces:
     - id: i0
-      ip: 172.16.3.14/24
-      mac: 02:a7:15:19:00:01
+      ip: 172.16.3.16/24
+      mac: 02:be:8f:31:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 119
     position2d:
-    - -1.0
-    - -33.0
+    - -1.125
+    - -21.0
     position3d:
-    - -1.0
-    - -33.0
+    - -1.125
+    - -21.0
     - 1.8
     role: rtu
     type: host
@@ -1268,21 +1341,24 @@ nodes:
     coa: 120
     configuration:
       dns_host_name: rtu-120
+      server_tls_version: NONE
     facility_id: '1007'
     facility_name: S-DSS-6
     id: '120'
     interfaces:
     - id: i0
-      ip: 172.16.3.15/24
-      mac: 02:39:f2:eb:00:01
+      ip: 172.16.3.17/24
+      mac: 02:0d:3e:43:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 120
     position2d:
-    - -0.9000000000000001
-    - -34.0
+    - -1.0250000000000001
+    - -22.0
     position3d:
-    - -0.9000000000000001
-    - -34.0
+    - -1.0250000000000001
+    - -22.0
     - 1.8
     role: rtu
     type: host
@@ -1290,21 +1366,24 @@ nodes:
     coa: 121
     configuration:
       dns_host_name: rtu-121
+      server_tls_version: NONE
     facility_id: '1008'
     facility_name: S-DSS-7
     id: '121'
     interfaces:
     - id: i0
-      ip: 172.16.3.16/24
-      mac: 02:e1:01:26:00:01
+      ip: 172.16.3.18/24
+      mac: 02:53:be:4b:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 121
     position2d:
-    - -2.0
-    - -45.0
+    - -2.375
+    - -27.0
     position3d:
-    - -2.0
-    - -45.0
+    - -2.375
+    - -27.0
     - 1.8
     role: rtu
     type: host
@@ -1312,21 +1391,24 @@ nodes:
     coa: 122
     configuration:
       dns_host_name: rtu-122
+      server_tls_version: NONE
     facility_id: '1008'
     facility_name: S-DSS-7
     id: '122'
     interfaces:
     - id: i0
-      ip: 172.16.3.17/24
-      mac: 02:35:df:f5:00:01
+      ip: 172.16.3.19/24
+      mac: 02:dd:6e:ca:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 122
     position2d:
-    - -1.9000000000000001
-    - -46.0
+    - -2.275
+    - -28.0
     position3d:
-    - -1.9000000000000001
-    - -46.0
+    - -2.275
+    - -28.0
     - 1.8
     role: rtu
     type: host
@@ -1334,21 +1416,24 @@ nodes:
     coa: 123
     configuration:
       dns_host_name: rtu-123
+      server_tls_version: NONE
     facility_id: '1009'
     facility_name: S-DSS-8
     id: '123'
     interfaces:
     - id: i0
-      ip: 172.16.3.18/24
-      mac: 02:23:26:de:00:01
+      ip: 172.16.3.20/24
+      mac: 02:f4:90:db:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 123
     position2d:
-    - -1.5
-    - -57.0
+    - -2.875
+    - -33.0
     position3d:
-    - -1.5
-    - -57.0
+    - -2.875
+    - -33.0
     - 1.8
     role: rtu
     type: host
@@ -1356,21 +1441,24 @@ nodes:
     coa: 124
     configuration:
       dns_host_name: rtu-124
+      server_tls_version: NONE
     facility_id: '1009'
     facility_name: S-DSS-8
     id: '124'
     interfaces:
     - id: i0
-      ip: 172.16.3.19/24
-      mac: 02:25:43:d5:00:01
+      ip: 172.16.3.21/24
+      mac: 02:8c:a3:a6:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 124
     position2d:
-    - -1.6
-    - -58.0
+    - -2.9749999999999996
+    - -34.0
     position3d:
-    - -1.6
-    - -58.0
+    - -2.9749999999999996
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1378,21 +1466,24 @@ nodes:
     coa: 125
     configuration:
       dns_host_name: rtu-125
+      server_tls_version: NONE
     facility_id: '1009'
     facility_name: S-DSS-8
     id: '125'
     interfaces:
     - id: i0
-      ip: 172.16.3.20/24
-      mac: 02:ec:8f:b2:00:01
+      ip: 172.16.3.22/24
+      mac: 02:95:6f:94:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 125
     position2d:
-    - -1.4000000000000001
-    - -58.0
+    - -2.7749999999999995
+    - -34.0
     position3d:
-    - -1.4000000000000001
-    - -58.0
+    - -2.7749999999999995
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1400,21 +1491,24 @@ nodes:
     coa: 126
     configuration:
       dns_host_name: rtu-126
+      server_tls_version: NONE
     facility_id: '1009'
     facility_name: S-DSS-8
     id: '126'
     interfaces:
     - id: i0
-      ip: 172.16.3.21/24
-      mac: 02:be:4b:98:00:01
+      ip: 172.16.3.23/24
+      mac: 02:d1:7e:f8:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 126
     position2d:
-    - -1.2000000000000002
-    - -58.0
+    - -2.5749999999999993
+    - -34.0
     position3d:
-    - -1.2000000000000002
-    - -58.0
+    - -2.5749999999999993
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1422,21 +1516,24 @@ nodes:
     coa: 127
     configuration:
       dns_host_name: rtu-127
+      server_tls_version: NONE
     facility_id: '1010'
     facility_name: S-DSS-9
     id: '127'
     interfaces:
     - id: i0
-      ip: 172.16.3.22/24
-      mac: 02:40:d4:c8:00:01
+      ip: 172.16.3.24/24
+      mac: 02:d5:e7:57:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 127
     position2d:
-    - -1.5
-    - -69.0
+    - -2.875
+    - -39.0
     position3d:
-    - -1.5
-    - -69.0
+    - -2.875
+    - -39.0
     - 1.8
     role: rtu
     type: host
@@ -1444,21 +1541,24 @@ nodes:
     coa: 128
     configuration:
       dns_host_name: rtu-128
+      server_tls_version: NONE
     facility_id: '1010'
     facility_name: S-DSS-9
     id: '128'
     interfaces:
     - id: i0
-      ip: 172.16.3.23/24
-      mac: 02:af:50:4c:00:01
+      ip: 172.16.3.25/24
+      mac: 02:14:09:15:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 128
     position2d:
-    - -1.4000000000000001
-    - -70.0
+    - -2.775
+    - -40.0
     position3d:
-    - -1.4000000000000001
-    - -70.0
+    - -2.775
+    - -40.0
     - 1.8
     role: rtu
     type: host
@@ -1466,21 +1566,24 @@ nodes:
     coa: 129
     configuration:
       dns_host_name: rtu-129
+      server_tls_version: NONE
     facility_id: '1011'
     facility_name: S-DSS-10
     id: '129'
     interfaces:
     - id: i0
-      ip: 172.16.3.24/24
-      mac: 02:0d:af:23:00:01
+      ip: 172.16.3.26/24
+      mac: 02:c7:a5:0d:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 129
     position2d:
-    - -0.5
-    - -57.0
+    - -0.875
+    - -33.0
     position3d:
-    - -0.5
-    - -57.0
+    - -0.875
+    - -33.0
     - 1.8
     role: rtu
     type: host
@@ -1488,21 +1591,24 @@ nodes:
     coa: 130
     configuration:
       dns_host_name: rtu-130
+      server_tls_version: NONE
     facility_id: '1011'
     facility_name: S-DSS-10
     id: '130'
     interfaces:
     - id: i0
-      ip: 172.16.3.25/24
-      mac: 02:e0:c6:96:00:01
+      ip: 172.16.3.27/24
+      mac: 02:60:d7:19:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 130
     position2d:
-    - -0.39999999999999997
-    - -58.0
+    - -0.7749999999999999
+    - -34.0
     position3d:
-    - -0.39999999999999997
-    - -58.0
+    - -0.7749999999999999
+    - -34.0
     - 1.8
     role: rtu
     type: host
@@ -1510,21 +1616,24 @@ nodes:
     coa: 131
     configuration:
       dns_host_name: rtu-131
+      server_tls_version: NONE
     facility_id: '1012'
     facility_name: S-DSS-11
     id: '131'
     interfaces:
     - id: i0
-      ip: 172.16.3.26/24
-      mac: 02:b2:f0:ee:00:01
+      ip: 172.16.3.28/24
+      mac: 02:7c:85:35:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 131
     position2d:
-    - 0.0
-    - -45.0
+    - 0.125
+    - -27.0
     position3d:
-    - 0.0
-    - -45.0
+    - 0.125
+    - -27.0
     - 1.8
     role: rtu
     type: host
@@ -1532,21 +1641,24 @@ nodes:
     coa: 132
     configuration:
       dns_host_name: rtu-132
+      server_tls_version: NONE
     facility_id: '1012'
     facility_name: S-DSS-11
     id: '132'
     interfaces:
     - id: i0
-      ip: 172.16.3.27/24
-      mac: 02:ae:4a:ed:00:01
+      ip: 172.16.3.29/24
+      mac: 02:cf:3e:f7:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: RTU 132
     position2d:
-    - 0.1
-    - -46.0
+    - 0.225
+    - -28.0
     position3d:
-    - 0.1
-    - -46.0
+    - 0.225
+    - -28.0
     - 1.8
     role: rtu
     type: host
@@ -1559,10 +1671,14 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.0.1/24
-      mac: 02:aa:13:b6:00:01
+      mac: 02:61:1f:47:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: 172.16.4.1/24
-      mac: 02:aa:13:b6:00:02
+      mac: 02:61:1f:47:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: Office-router
     position2d:
@@ -1583,10 +1699,14 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.1.1/24
-      mac: 02:81:10:65:00:01
+      mac: 02:a7:65:e5:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: 172.16.5.1/24
-      mac: 02:81:10:65:00:02
+      mac: 02:a7:65:e5:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: Control Center-router
     position2d:
@@ -1607,18 +1727,22 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.2.1/24
-      mac: 02:f8:06:24:00:01
+      mac: 02:85:28:d3:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: 172.16.7.1/24
-      mac: 02:f8:06:24:00:02
+      mac: 02:85:28:d3:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: TSS-0-router
     position2d:
-    - 1.3518697407916671e-17
-    - -6.780821917808219
+    - 0.0
+    - -5.775115594787725
     position3d:
-    - 1.3518697407916671e-17
-    - -6.780821917808219
+    - 0.0
+    - -5.775115594787725
     - 1.8
     role: router
     type: host
@@ -1631,13 +1755,19 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.4.2/24
-      mac: 02:cc:ee:85:00:01
+      mac: 02:75:f4:19:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: 172.16.6.1/24
-      mac: 02:cc:ee:85:00:02
+      mac: 02:75:f4:19:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: 172.16.8.1/24
-      mac: 02:cc:ee:85:00:03
+      mac: 02:75:f4:19:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: Office-backbone-router
     position2d:
@@ -1658,13 +1788,19 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.5.2/24
-      mac: 02:0c:5d:54:00:01
+      mac: 02:a0:82:23:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: 172.16.6.2/24
-      mac: 02:0c:5d:54:00:02
+      mac: 02:a0:82:23:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: 172.16.9.1/24
-      mac: 02:0c:5d:54:00:03
+      mac: 02:a0:82:23:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: Control Center-backbone-router
     position2d:
@@ -1685,732 +1821,1951 @@ nodes:
     interfaces:
     - id: i0
       ip: 172.16.7.2/24
-      mac: 02:b1:49:a4:00:01
+      mac: 02:7b:1a:bd:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: 172.16.8.2/24
-      mac: 02:b1:49:a4:00:02
+      mac: 02:7b:1a:bd:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: 172.16.9.2/24
-      mac: 02:b1:49:a4:00:03
+      mac: 02:7b:1a:bd:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
-      ip: 172.16.3.28/24
-      mac: 02:b1:49:a4:00:04
+      ip: 172.16.3.1/24
+      mac: 02:7b:1a:bd:00:04
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: 172.16.3.2/24
+      mac: 02:7b:1a:bd:00:05
+      suggested_postfix: 4
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-TSS-0-backbone-router
     position2d:
-    - 1.3518697407916671e-17
-    - -6.780821917808219
+    - 0.0
+    - -5.775115594787725
     position3d:
-    - 1.3518697407916671e-17
-    - -6.780821917808219
+    - 0.0
+    - -5.775115594787725
     - 2.0
     role: router
     type: host
   '301':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '701'
     facility_name: Office
     id: '301'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:63:ed:a5:00:01
+      mac: 02:be:30:05:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
+    - id: i1
+      ip: ''
+      mac: 02:be:30:05:00:02
+      spare: true
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:be:30:05:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:be:30:05:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:be:30:05:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:be:30:05:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:be:30:05:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:be:30:05:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: Office-sw-edge
     position2d:
-    - 0.04549437934550931
-    - 5.045494379345509
+    - 0.12018504251546618
+    - 5.120185042515466
     position3d:
-    - 0.04549437934550931
-    - 5.045494379345509
+    - 0.12018504251546618
+    - 5.120185042515466
     - 1.8
     role: switch
     type: switch
   '302':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '801'
     facility_name: Control Center
     id: '302'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:99:8d:1b:00:01
+      mac: 02:a0:37:4e:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:99:8d:1b:00:02
+      mac: 02:a0:37:4e:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:a0:37:4e:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:a0:37:4e:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:a0:37:4e:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:a0:37:4e:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:a0:37:4e:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:a0:37:4e:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: Control Center-sw-edge
     position2d:
-    - 1.0454943793455094
-    - 6.045494379345509
+    - 1.1201850425154662
+    - 6.120185042515466
     position3d:
-    - 1.0454943793455094
-    - 6.045494379345509
+    - 1.1201850425154662
+    - 6.120185042515466
     - 1.8
     role: switch
     type: switch
   '303':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '901'
     facility_name: S-TSS-0
     id: '303'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:b1:22:07:00:01
+      mac: 02:18:ab:98:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:b1:22:07:00:02
+      mac: 02:18:ab:98:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:b1:22:07:00:03
+      mac: 02:18:ab:98:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
       ip: ''
-      mac: 02:b1:22:07:00:04
+      mac: 02:18:ab:98:00:04
+      suggested_postfix: 3
+      suggested_prefix: eth
     - id: i4
       ip: ''
-      mac: 02:b1:22:07:00:05
+      mac: 02:18:ab:98:00:05
+      suggested_postfix: 4
+      suggested_prefix: eth
     - id: i5
       ip: ''
-      mac: 02:b1:22:07:00:06
+      mac: 02:18:ab:98:00:06
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:18:ab:98:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:18:ab:98:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
+    - id: i8
+      ip: ''
+      mac: 02:18:ab:98:00:09
+      spare: true
+      suggested_postfix: 8
+      suggested_prefix: eth
+    - id: i9
+      ip: ''
+      mac: 02:18:ab:98:00:0a
+      spare: true
+      suggested_postfix: 9
+      suggested_prefix: eth
+    - id: i10
+      ip: ''
+      mac: 02:18:ab:98:00:0b
+      spare: true
+      suggested_postfix: 10
+      suggested_prefix: eth
+    - id: i11
+      ip: ''
+      mac: 02:18:ab:98:00:0c
+      spare: true
+      suggested_postfix: 11
+      suggested_prefix: eth
+    - id: i12
+      ip: ''
+      mac: 02:18:ab:98:00:0d
+      spare: true
+      suggested_postfix: 12
+      suggested_prefix: eth
+    - id: i13
+      ip: ''
+      mac: 02:18:ab:98:00:0e
+      spare: true
+      suggested_postfix: 13
+      suggested_prefix: eth
+    - id: i14
+      ip: ''
+      mac: 02:18:ab:98:00:0f
+      spare: true
+      suggested_postfix: 14
+      suggested_prefix: eth
+    - id: i15
+      ip: ''
+      mac: 02:18:ab:98:00:10
+      spare: true
+      suggested_postfix: 15
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: TSS-0-sw-edge
     position2d:
-    - 0.045494379345509324
-    - -6.73532753846271
+    - 0.12018504251546618
+    - -5.654930552272259
     position3d:
-    - 0.045494379345509324
-    - -6.73532753846271
+    - 0.12018504251546618
+    - -5.654930552272259
     - 1.8
     role: switch
     type: switch
   '304':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1001'
     facility_name: S-DSS-0
     id: '304'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:9b:82:dc:00:01
+      mac: 02:5a:bb:26:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:9b:82:dc:00:02
+      mac: 02:5a:bb:26:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:9b:82:dc:00:03
+      mac: 02:5a:bb:26:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
       ip: ''
-      mac: 02:9b:82:dc:00:04
+      mac: 02:5a:bb:26:00:04
+      suggested_postfix: 3
+      suggested_prefix: eth
     - id: i4
       ip: ''
-      mac: 02:9b:82:dc:00:05
+      mac: 02:5a:bb:26:00:05
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:5a:bb:26:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:5a:bb:26:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:5a:bb:26:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
+    - id: i8
+      ip: ''
+      mac: 02:5a:bb:26:00:09
+      spare: true
+      suggested_postfix: 8
+      suggested_prefix: eth
+    - id: i9
+      ip: ''
+      mac: 02:5a:bb:26:00:0a
+      spare: true
+      suggested_postfix: 9
+      suggested_prefix: eth
+    - id: i10
+      ip: ''
+      mac: 02:5a:bb:26:00:0b
+      spare: true
+      suggested_postfix: 10
+      suggested_prefix: eth
+    - id: i11
+      ip: ''
+      mac: 02:5a:bb:26:00:0c
+      spare: true
+      suggested_postfix: 11
+      suggested_prefix: eth
+    - id: i12
+      ip: ''
+      mac: 02:5a:bb:26:00:0d
+      spare: true
+      suggested_postfix: 12
+      suggested_prefix: eth
+    - id: i13
+      ip: ''
+      mac: 02:5a:bb:26:00:0e
+      spare: true
+      suggested_postfix: 13
+      suggested_prefix: eth
+    - id: i14
+      ip: ''
+      mac: 02:5a:bb:26:00:0f
+      spare: true
+      suggested_postfix: 14
+      suggested_prefix: eth
+    - id: i15
+      ip: ''
+      mac: 02:5a:bb:26:00:10
+      spare: true
+      suggested_postfix: 15
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-0-sw-edge
     position2d:
-    - 0.49999999999999994
-    - -57.33333333333333
+    - 0.12499999999999997
+    - -33.666666666666664
     position3d:
-    - 0.49999999999999994
-    - -57.33333333333333
+    - 0.12499999999999997
+    - -33.666666666666664
     - 1.8
     role: switch
     type: switch
   '305':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1002'
     facility_name: S-DSS-1
     id: '305'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:10:62:2a:00:01
+      mac: 02:32:b9:86:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:10:62:2a:00:02
+      mac: 02:32:b9:86:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:10:62:2a:00:03
+      mac: 02:32:b9:86:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
       ip: ''
-      mac: 02:10:62:2a:00:04
+      mac: 02:32:b9:86:00:04
+      suggested_postfix: 3
+      suggested_prefix: eth
     - id: i4
       ip: ''
-      mac: 02:10:62:2a:00:05
+      mac: 02:32:b9:86:00:05
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:32:b9:86:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:32:b9:86:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:32:b9:86:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
+    - id: i8
+      ip: ''
+      mac: 02:32:b9:86:00:09
+      spare: true
+      suggested_postfix: 8
+      suggested_prefix: eth
+    - id: i9
+      ip: ''
+      mac: 02:32:b9:86:00:0a
+      spare: true
+      suggested_postfix: 9
+      suggested_prefix: eth
+    - id: i10
+      ip: ''
+      mac: 02:32:b9:86:00:0b
+      spare: true
+      suggested_postfix: 10
+      suggested_prefix: eth
+    - id: i11
+      ip: ''
+      mac: 02:32:b9:86:00:0c
+      spare: true
+      suggested_postfix: 11
+      suggested_prefix: eth
+    - id: i12
+      ip: ''
+      mac: 02:32:b9:86:00:0d
+      spare: true
+      suggested_postfix: 12
+      suggested_prefix: eth
+    - id: i13
+      ip: ''
+      mac: 02:32:b9:86:00:0e
+      spare: true
+      suggested_postfix: 13
+      suggested_prefix: eth
+    - id: i14
+      ip: ''
+      mac: 02:32:b9:86:00:0f
+      spare: true
+      suggested_postfix: 14
+      suggested_prefix: eth
+    - id: i15
+      ip: ''
+      mac: 02:32:b9:86:00:10
+      spare: true
+      suggested_postfix: 15
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-1-sw-edge
     position2d:
-    - -1.645614035087719
-    - -67.6140350877193
+    - 0.05833333333333335
+    - -39.666666666666664
     position3d:
-    - -1.645614035087719
-    - -67.6140350877193
+    - 0.05833333333333335
+    - -39.666666666666664
     - 1.8
     role: switch
     type: switch
   '306':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1003'
     facility_name: S-DSS-2
     id: '306'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:93:17:ea:00:01
+      mac: 02:0e:3d:28:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:93:17:ea:00:02
+      mac: 02:0e:3d:28:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:93:17:ea:00:03
+      mac: 02:0e:3d:28:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:0e:3d:28:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:0e:3d:28:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:0e:3d:28:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:0e:3d:28:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:0e:3d:28:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-2-sw-edge
     position2d:
-    - -2.4999999999999996
-    - -57.33333333333333
+    - -1.8750000000000002
+    - -38.666666666666664
     position3d:
-    - -2.4999999999999996
-    - -57.33333333333333
+    - -1.8750000000000002
+    - -38.666666666666664
     - 1.8
     role: switch
     type: switch
   '307':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1004'
     facility_name: S-DSS-3
     id: '307'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:9d:bd:f0:00:01
+      mac: 02:8f:81:c3:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:9d:bd:f0:00:02
+      mac: 02:8f:81:c3:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:8f:81:c3:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:8f:81:c3:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:8f:81:c3:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:8f:81:c3:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:8f:81:c3:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:8f:81:c3:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-3-sw-edge
     position2d:
-    - 0.9666666666666667
-    - -21.333333333333332
+    - 1.075
+    - -15.5
     position3d:
-    - 0.9666666666666667
-    - -21.333333333333332
+    - 1.075
+    - -15.5
     - 1.8
     role: switch
     type: switch
   '308':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1005'
     facility_name: S-DSS-4
     id: '308'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:59:c1:e6:00:01
+      mac: 02:d2:39:d6:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:59:c1:e6:00:02
+      mac: 02:d2:39:d6:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:d2:39:d6:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:d2:39:d6:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:d2:39:d6:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:d2:39:d6:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:d2:39:d6:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:d2:39:d6:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-4-sw-edge
     position2d:
-    - 1.0
-    - -33.333333333333336
+    - 1.125
+    - -22.333333333333332
     position3d:
-    - 1.0
-    - -33.333333333333336
+    - 1.125
+    - -22.333333333333332
     - 1.8
     role: switch
     type: switch
   '309':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1006'
     facility_name: S-DSS-5
     id: '309'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:17:1c:ef:00:01
+      mac: 02:01:fb:49:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:17:1c:ef:00:02
+      mac: 02:01:fb:49:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:01:fb:49:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:01:fb:49:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:01:fb:49:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:01:fb:49:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:01:fb:49:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:01:fb:49:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-5-sw-edge
     position2d:
-    - -1.0
-    - -21.0
+    - -1.125
+    - -15.0
     position3d:
-    - -1.0
-    - -21.0
+    - -1.125
+    - -15.0
     - 1.8
     role: switch
     type: switch
   '310':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1007'
     facility_name: S-DSS-6
     id: '310'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:d5:3f:4f:00:01
+      mac: 02:47:0b:9b:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:d5:3f:4f:00:02
+      mac: 02:47:0b:9b:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:d5:3f:4f:00:03
+      mac: 02:47:0b:9b:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:47:0b:9b:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:47:0b:9b:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:47:0b:9b:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:47:0b:9b:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:47:0b:9b:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-6-sw-edge
     position2d:
-    - -1.0
-    - -34.0
+    - -1.1916666666666667
+    - -21.666666666666664
     position3d:
-    - -1.0
-    - -34.0
+    - -1.1916666666666667
+    - -21.666666666666664
     - 1.8
     role: switch
     type: switch
   '311':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1008'
     facility_name: S-DSS-7
     id: '311'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:71:1e:0d:00:01
+      mac: 02:c6:e5:23:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:71:1e:0d:00:02
+      mac: 02:c6:e5:23:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:71:1e:0d:00:03
+      mac: 02:c6:e5:23:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:c6:e5:23:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:c6:e5:23:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:c6:e5:23:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:c6:e5:23:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:c6:e5:23:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-7-sw-edge
     position2d:
-    - -2.0
-    - -46.0
+    - -2.2416666666666667
+    - -28.333333333333336
     position3d:
-    - -2.0
-    - -46.0
+    - -2.2416666666666667
+    - -28.333333333333336
     - 1.8
     role: switch
     type: switch
   '312':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1009'
     facility_name: S-DSS-8
     id: '312'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:f0:20:2d:00:01
+      mac: 02:03:ca:71:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:f0:20:2d:00:02
+      mac: 02:03:ca:71:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:f0:20:2d:00:03
+      mac: 02:03:ca:71:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
       ip: ''
-      mac: 02:f0:20:2d:00:04
+      mac: 02:03:ca:71:00:04
+      suggested_postfix: 3
+      suggested_prefix: eth
     - id: i4
       ip: ''
-      mac: 02:f0:20:2d:00:05
+      mac: 02:03:ca:71:00:05
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:03:ca:71:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:03:ca:71:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:03:ca:71:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
+    - id: i8
+      ip: ''
+      mac: 02:03:ca:71:00:09
+      spare: true
+      suggested_postfix: 8
+      suggested_prefix: eth
+    - id: i9
+      ip: ''
+      mac: 02:03:ca:71:00:0a
+      spare: true
+      suggested_postfix: 9
+      suggested_prefix: eth
+    - id: i10
+      ip: ''
+      mac: 02:03:ca:71:00:0b
+      spare: true
+      suggested_postfix: 10
+      suggested_prefix: eth
+    - id: i11
+      ip: ''
+      mac: 02:03:ca:71:00:0c
+      spare: true
+      suggested_postfix: 11
+      suggested_prefix: eth
+    - id: i12
+      ip: ''
+      mac: 02:03:ca:71:00:0d
+      spare: true
+      suggested_postfix: 12
+      suggested_prefix: eth
+    - id: i13
+      ip: ''
+      mac: 02:03:ca:71:00:0e
+      spare: true
+      suggested_postfix: 13
+      suggested_prefix: eth
+    - id: i14
+      ip: ''
+      mac: 02:03:ca:71:00:0f
+      spare: true
+      suggested_postfix: 14
+      suggested_prefix: eth
+    - id: i15
+      ip: ''
+      mac: 02:03:ca:71:00:10
+      spare: true
+      suggested_postfix: 15
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-8-sw-edge
     position2d:
-    - -1.5
-    - -57.33333333333333
+    - -2.875
+    - -33.666666666666664
     position3d:
-    - -1.5
-    - -57.33333333333333
+    - -2.875
+    - -33.666666666666664
     - 1.8
     role: switch
     type: switch
   '313':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1010'
     facility_name: S-DSS-9
     id: '313'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:81:5b:43:00:01
+      mac: 02:5e:a6:b4:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:81:5b:43:00:02
+      mac: 02:5e:a6:b4:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:81:5b:43:00:03
+      mac: 02:5e:a6:b4:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:5e:a6:b4:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:5e:a6:b4:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:5e:a6:b4:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:5e:a6:b4:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:5e:a6:b4:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-9-sw-edge
     position2d:
-    - -1.1944444444444444
-    - -67.55555555555556
+    - -2.875
+    - -40.33333333333333
     position3d:
-    - -1.1944444444444444
-    - -67.55555555555556
+    - -2.875
+    - -40.33333333333333
     - 1.8
     role: switch
     type: switch
   '314':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1011'
     facility_name: S-DSS-10
     id: '314'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:3e:10:60:00:01
+      mac: 02:61:24:87:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:3e:10:60:00:02
+      mac: 02:61:24:87:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:3e:10:60:00:03
+      mac: 02:61:24:87:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:61:24:87:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:61:24:87:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:61:24:87:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:61:24:87:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:61:24:87:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-10-sw-edge
     position2d:
-    - -0.4999999999999999
-    - -57.33333333333332
+    - -0.8750000000000001
+    - -34.33333333333333
     position3d:
-    - -0.4999999999999999
-    - -57.33333333333332
+    - -0.8750000000000001
+    - -34.33333333333333
     - 1.8
     role: switch
     type: switch
   '315':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1012'
     facility_name: S-DSS-11
     id: '315'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:f3:57:52:00:01
+      mac: 02:1a:6c:dc:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:f3:57:52:00:02
+      mac: 02:1a:6c:dc:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:f3:57:52:00:03
+      mac: 02:1a:6c:dc:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:1a:6c:dc:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:1a:6c:dc:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:1a:6c:dc:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:1a:6c:dc:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:1a:6c:dc:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_LAN
     name: DSS-11-sw-edge
     position2d:
-    - 0.25
-    - -45.0
+    - 0.425
+    - -28.333333333333336
     position3d:
-    - 0.25
-    - -45.0
+    - 0.425
+    - -28.333333333333336
     - 1.8
     role: switch
     type: switch
   '316':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1001'
     facility_name: S-DSS-0
     id: '316'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:3e:84:42:00:01
+      mac: 02:0c:00:41:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:3e:84:42:00:02
+      mac: 02:0c:00:41:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:3e:84:42:00:03
+      mac: 02:0c:00:41:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:0c:00:41:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:0c:00:41:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:0c:00:41:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:0c:00:41:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:0c:00:41:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-0-backbone-switch
     position2d:
-    - 0.49999999999999994
-    - -57.33333333333333
+    - 0.12499999999999997
+    - -33.666666666666664
     position3d:
-    - 0.49999999999999994
-    - -57.33333333333333
+    - 0.12499999999999997
+    - -33.666666666666664
     - 2.0
     role: switch
     type: switch
   '317':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1002'
     facility_name: S-DSS-1
     id: '317'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:0d:38:a9:00:01
+      mac: 02:da:70:03:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:0d:38:a9:00:02
+      mac: 02:da:70:03:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:0d:38:a9:00:03
+      mac: 02:da:70:03:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:da:70:03:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:da:70:03:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:da:70:03:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:da:70:03:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:da:70:03:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-1-backbone-switch
     position2d:
-    - -1.645614035087719
-    - -67.6140350877193
+    - 0.05833333333333335
+    - -39.666666666666664
     position3d:
-    - -1.645614035087719
-    - -67.6140350877193
+    - 0.05833333333333335
+    - -39.666666666666664
     - 2.0
     role: switch
     type: switch
   '318':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1003'
     facility_name: S-DSS-2
     id: '318'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:7c:c1:0d:00:01
+      mac: 02:aa:1f:6f:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:7c:c1:0d:00:02
+      mac: 02:aa:1f:6f:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:aa:1f:6f:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:aa:1f:6f:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:aa:1f:6f:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:aa:1f:6f:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:aa:1f:6f:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-2-backbone-switch
     position2d:
-    - -2.4999999999999996
-    - -57.33333333333333
+    - -1.8750000000000002
+    - -38.666666666666664
     position3d:
-    - -2.4999999999999996
-    - -57.33333333333333
+    - -1.8750000000000002
+    - -38.666666666666664
     - 2.0
     role: switch
     type: switch
   '319':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1004'
     facility_name: S-DSS-3
     id: '319'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:71:37:cd:00:01
+      mac: 02:ea:0e:41:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:71:37:cd:00:02
+      mac: 02:ea:0e:41:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:71:37:cd:00:03
+      mac: 02:ea:0e:41:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:ea:0e:41:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:ea:0e:41:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:ea:0e:41:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:ea:0e:41:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:ea:0e:41:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-3-backbone-switch
     position2d:
-    - 0.9666666666666667
-    - -21.333333333333332
+    - 1.075
+    - -15.5
     position3d:
-    - 0.9666666666666667
-    - -21.333333333333332
+    - 1.075
+    - -15.5
     - 2.0
     role: switch
     type: switch
   '320':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1005'
     facility_name: S-DSS-4
     id: '320'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:34:2a:88:00:01
+      mac: 02:67:a7:dd:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:34:2a:88:00:02
+      mac: 02:67:a7:dd:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:34:2a:88:00:03
+      mac: 02:67:a7:dd:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:67:a7:dd:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:67:a7:dd:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:67:a7:dd:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:67:a7:dd:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:67:a7:dd:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-4-backbone-switch
     position2d:
-    - 1.0
-    - -33.333333333333336
+    - 1.125
+    - -22.333333333333332
     position3d:
-    - 1.0
-    - -33.333333333333336
+    - 1.125
+    - -22.333333333333332
     - 2.0
     role: switch
     type: switch
   '321':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1006'
     facility_name: S-DSS-5
     id: '321'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:7f:3e:85:00:01
+      mac: 02:c5:5d:20:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:7f:3e:85:00:02
+      mac: 02:c5:5d:20:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:c5:5d:20:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:c5:5d:20:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:c5:5d:20:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:c5:5d:20:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:c5:5d:20:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:c5:5d:20:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-5-backbone-switch
     position2d:
-    - -1.0
-    - -21.0
+    - -1.125
+    - -15.0
     position3d:
-    - -1.0
-    - -21.0
+    - -1.125
+    - -15.0
     - 2.0
     role: switch
     type: switch
   '322':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1007'
     facility_name: S-DSS-6
     id: '322'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:d5:16:15:00:01
+      mac: 02:f5:63:c8:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:d5:16:15:00:02
+      mac: 02:f5:63:c8:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:d5:16:15:00:03
+      mac: 02:f5:63:c8:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
       ip: ''
-      mac: 02:d5:16:15:00:04
+      mac: 02:f5:63:c8:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:f5:63:c8:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:f5:63:c8:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:f5:63:c8:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-6-backbone-switch
     position2d:
-    - -1.0
-    - -34.0
+    - -1.1916666666666667
+    - -21.666666666666664
     position3d:
-    - -1.0
-    - -34.0
+    - -1.1916666666666667
+    - -21.666666666666664
     - 2.0
     role: switch
     type: switch
   '323':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1008'
     facility_name: S-DSS-7
     id: '323'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:91:ff:d2:00:01
+      mac: 02:31:76:1a:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:91:ff:d2:00:02
+      mac: 02:31:76:1a:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:91:ff:d2:00:03
+      mac: 02:31:76:1a:00:03
+      spare: true
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:31:76:1a:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:31:76:1a:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:31:76:1a:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-7-backbone-switch
     position2d:
-    - -2.0
-    - -46.0
+    - -2.2416666666666667
+    - -28.333333333333336
     position3d:
-    - -2.0
-    - -46.0
+    - -2.2416666666666667
+    - -28.333333333333336
     - 2.0
     role: switch
     type: switch
   '324':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1009'
     facility_name: S-DSS-8
     id: '324'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:b3:c2:29:00:01
+      mac: 02:90:40:d1:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:b3:c2:29:00:02
+      mac: 02:90:40:d1:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:b3:c2:29:00:03
+      mac: 02:90:40:d1:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:90:40:d1:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:90:40:d1:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:90:40:d1:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:90:40:d1:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:90:40:d1:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-8-backbone-switch
     position2d:
-    - -1.5
-    - -57.33333333333333
+    - -2.875
+    - -33.666666666666664
     position3d:
-    - -1.5
-    - -57.33333333333333
+    - -2.875
+    - -33.666666666666664
     - 2.0
     role: switch
     type: switch
   '325':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1010'
     facility_name: S-DSS-9
     id: '325'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:fa:7f:ec:00:01
+      mac: 02:bf:70:d1:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:fa:7f:ec:00:02
+      mac: 02:bf:70:d1:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:bf:70:d1:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:bf:70:d1:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:bf:70:d1:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:bf:70:d1:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:bf:70:d1:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:bf:70:d1:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-9-backbone-switch
     position2d:
-    - -1.1944444444444444
-    - -67.55555555555556
+    - -2.875
+    - -40.33333333333333
     position3d:
-    - -1.1944444444444444
-    - -67.55555555555556
+    - -2.875
+    - -40.33333333333333
     - 2.0
     role: switch
     type: switch
   '326':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1011'
     facility_name: S-DSS-10
     id: '326'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:5b:b9:fc:00:01
+      mac: 02:53:92:c9:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:5b:b9:fc:00:02
+      mac: 02:53:92:c9:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
+    - id: i2
+      ip: ''
+      mac: 02:53:92:c9:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
+    - id: i3
+      ip: ''
+      mac: 02:53:92:c9:00:04
+      spare: true
+      suggested_postfix: 3
+      suggested_prefix: eth
+    - id: i4
+      ip: ''
+      mac: 02:53:92:c9:00:05
+      spare: true
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:53:92:c9:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:53:92:c9:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:53:92:c9:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-10-backbone-switch
     position2d:
-    - -0.4999999999999999
-    - -57.33333333333332
+    - -0.8750000000000001
+    - -34.33333333333333
     position3d:
-    - -0.4999999999999999
-    - -57.33333333333332
+    - -0.8750000000000001
+    - -34.33333333333333
     - 2.0
     role: switch
     type: switch
   '327':
-    configuration: {}
+    configuration:
+      is_manageable: false
     facility_id: '1012'
     facility_name: S-DSS-11
     id: '327'
     interfaces:
     - id: i0
       ip: ''
-      mac: 02:a8:1e:2d:00:01
+      mac: 02:e2:12:8d:00:01
+      suggested_postfix: 0
+      suggested_prefix: eth
     - id: i1
       ip: ''
-      mac: 02:a8:1e:2d:00:02
+      mac: 02:e2:12:8d:00:02
+      suggested_postfix: 1
+      suggested_prefix: eth
     - id: i2
       ip: ''
-      mac: 02:a8:1e:2d:00:03
+      mac: 02:e2:12:8d:00:03
+      suggested_postfix: 2
+      suggested_prefix: eth
     - id: i3
       ip: ''
-      mac: 02:a8:1e:2d:00:04
+      mac: 02:e2:12:8d:00:04
+      suggested_postfix: 3
+      suggested_prefix: eth
     - id: i4
       ip: ''
-      mac: 02:a8:1e:2d:00:05
+      mac: 02:e2:12:8d:00:05
+      suggested_postfix: 4
+      suggested_prefix: eth
+    - id: i5
+      ip: ''
+      mac: 02:e2:12:8d:00:06
+      spare: true
+      suggested_postfix: 5
+      suggested_prefix: eth
+    - id: i6
+      ip: ''
+      mac: 02:e2:12:8d:00:07
+      spare: true
+      suggested_postfix: 6
+      suggested_prefix: eth
+    - id: i7
+      ip: ''
+      mac: 02:e2:12:8d:00:08
+      spare: true
+      suggested_postfix: 7
+      suggested_prefix: eth
+    - id: i8
+      ip: ''
+      mac: 02:e2:12:8d:00:09
+      spare: true
+      suggested_postfix: 8
+      suggested_prefix: eth
+    - id: i9
+      ip: ''
+      mac: 02:e2:12:8d:00:0a
+      spare: true
+      suggested_postfix: 9
+      suggested_prefix: eth
+    - id: i10
+      ip: ''
+      mac: 02:e2:12:8d:00:0b
+      spare: true
+      suggested_postfix: 10
+      suggested_prefix: eth
+    - id: i11
+      ip: ''
+      mac: 02:e2:12:8d:00:0c
+      spare: true
+      suggested_postfix: 11
+      suggested_prefix: eth
+    - id: i12
+      ip: ''
+      mac: 02:e2:12:8d:00:0d
+      spare: true
+      suggested_postfix: 12
+      suggested_prefix: eth
+    - id: i13
+      ip: ''
+      mac: 02:e2:12:8d:00:0e
+      spare: true
+      suggested_postfix: 13
+      suggested_prefix: eth
+    - id: i14
+      ip: ''
+      mac: 02:e2:12:8d:00:0f
+      spare: true
+      suggested_postfix: 14
+      suggested_prefix: eth
+    - id: i15
+      ip: ''
+      mac: 02:e2:12:8d:00:10
+      spare: true
+      suggested_postfix: 15
+      suggested_prefix: eth
     layer: Layers.NETWORK.Layers.NETWORK_BACKBONE
     name: S-DSS-11-backbone-switch
     position2d:
-    - 0.25
-    - -45.0
+    - 0.425
+    - -28.333333333333336
     position3d:
-    - 0.25
-    - -45.0
+    - 0.425
+    - -28.333333333333336
     - 2.0
     role: switch
     type: switch

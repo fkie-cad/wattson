@@ -40,11 +40,14 @@ class GridValueCliCommand(CliCommandHandler):
             return self.strtobool(value)
         except ValueError as e:
             try:
-                return float(value)
-            except:
-                print(f"{value} / {type(value)}")
-                print(f"{e=}")
-                return value
+                return int(value)
+            except ValueError:
+                try:
+                    return float(value)
+                except:
+                    print(f"{value} / {type(value)}")
+                    print(f"{e=}")
+                    return value
 
     def handle_command(self, command: List[str], prefix: List[str]) -> bool:
         if command[0] not in self._available_commands or len(command) < 2:

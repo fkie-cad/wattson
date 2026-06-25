@@ -12,12 +12,13 @@ class WattsonZebraService(WattsonFrRoutingService):
         super().__init__(service_configuration, network_node)
         self.frr_artifacts = [
             self.get_artifact("zebra.pid"),
-            self.get_artifact("zebra.cfg"),
             self.get_artifact("zebra.api"),
-            self.get_artifact("zebra_vty", is_folder=True)
+            #self.get_artifact("zebra_vty", is_folder=True)
         ]
 
     def write_fr_config_file(self, refresh_config: bool = False):
+        # No config file as of FRRouting 9+
+        return
         if not refresh_config and not self.get_artifact("ospf.cfg").is_empty():
             return
         self.network_node.logger.debug(f"Writing Zebra Config")
@@ -74,27 +75,26 @@ class WattsonZebraService(WattsonFrRoutingService):
         self.get_artifact("zebra.pid").get_current().unlink(missing_ok=True)
 
     def get_socket_file(self) -> Optional[Path]:
+        #return self.get_frr_path().joinpath("zserv.api")
         return self.get_tmp_path(self.get_artifact("zebra.api"))
 
     def get_start_command(self) -> List[str]:
-        config_file = self.get_artifact("zebra.cfg")
         pid_file = self.get_artifact("zebra.pid")
         socket_file = self.get_artifact(f"zebra.api")
-        vty_folder = self.get_artifact("zebra_vty", is_folder=True)
-        vty_folder.get_current().mkdir(exist_ok=True)
+        #vty_folder = self.get_artifact("zebra_vty", is_folder=True)
+        #vty_folder.get_current().mkdir(exist_ok=True)
 
         cmd = [
             "zebra",
-            "-f", str(self.get_tmp_path(config_file)),
+            "-N", str(self.network_node.system_name),
             "-i", str(self.get_tmp_path(pid_file)),
             "-z", str(self.get_tmp_path(socket_file)),
-            "--vty_socket", str(self.get_tmp_path(vty_folder)),
             "--log", "stdout",
             "--log-level", "debug",
-            "-u", "root"
         ]
         # self.network_node.logger.info(" ".join(cmd))
         return cmd
 
     def get_pid_file(self):
+        #return self.get_frr_path().joinpath("zebra.pid")
         return self.get_artifact("zebra.pid")

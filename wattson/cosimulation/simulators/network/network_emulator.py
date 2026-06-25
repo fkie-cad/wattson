@@ -81,6 +81,10 @@ class NetworkEmulator(Simulator):
     def set_configuration_store(self, configuration_store: Optional[ConfigurationStore]):
         super().set_configuration_store(configuration_store=configuration_store)
         self._fill_configuration_store()
+
+    def on_scenario_loaded(self):
+        for entity in self.get_entities():
+            entity.on_scenario_loaded(self)
         
     def start(self):
         super().start()
@@ -131,6 +135,11 @@ class NetworkEmulator(Simulator):
                 self.add_interface(node, interface)
         self.on_topology_change(node, "add_node")
         self._remote_node_cache.set_outdated()
+        if node.has_child_nodes():
+            for child_node in node.get_child_nodes():
+                if not self.has_entity(child_node):
+                    self.add_node(child_node)
+        node.on_add_to_emulator(self)
         return node
 
     def replace_node(self, original_node: WattsonNetworkNode, new_node: WattsonNetworkNode) -> WattsonNetworkNode:
@@ -351,6 +360,9 @@ class NetworkEmulator(Simulator):
         if handle_interfaces:
             for interface in node.get_interfaces():
                 self.remove_interface(interface=interface)
+        if node.has_child_nodes():
+            for child_node in node.get_child_nodes():
+                self.remove_node(child_node, handle_interfaces=handle_interfaces)
         self._graph.remove_node(node.entity_id)
         self.on_topology_change(node, "remove_node")
         self.on_entity_remove(node)
@@ -416,7 +428,9 @@ class NetworkEmulator(Simulator):
     def connect_nodes(self, node_a: Union[str, WattsonNetworkNode], node_b: Union[str, WattsonNetworkNode],
                       interface_a_options: Optional[dict] = None,
                       interface_b_options: Optional[dict] = None,
-                      link_options: Optional[dict] = None) -> Tuple[WattsonNetworkInterface, WattsonNetworkLink, WattsonNetworkInterface]:
+                      link_options: Optional[dict] = None,
+                      interface_a: Optional[WattsonNetworkInterface] = None,
+                      interface_b: Optional[WattsonNetworkInterface] = None) -> Tuple[WattsonNetworkInterface, WattsonNetworkLink, WattsonNetworkInterface]:
         if interface_a_options is None:
             interface_a_options = {}
         if interface_b_options is None:
@@ -433,10 +447,12 @@ class NetworkEmulator(Simulator):
                 interface_options["subnet_prefix_length"] = interface_options["prefix_length"]
                 del interface_options["prefix_length"]
 
-        interface_a = WattsonNetworkInterface(node=node_a, link=self._dummy_link, **interface_a_options)
-        interface_b = WattsonNetworkInterface(node=node_b, link=self._dummy_link, **interface_b_options)
-        self.add_interface(node_a, interface_a)
-        self.add_interface(node_b, interface_b)
+        if interface_a is None:
+            interface_a = WattsonNetworkInterface(node=node_a, link=self._dummy_link, **interface_a_options)
+            self.add_interface(node_a, interface_a)
+        if interface_b is None:
+            interface_b = WattsonNetworkInterface(node=node_b, link=self._dummy_link, **interface_b_options)
+            self.add_interface(node_b, interface_b)
         link = self.connect_interfaces(interface_a, interface_b, link_options=link_options)
         return interface_a, link, interface_b
 
@@ -533,6 +549,15 @@ class NetworkEmulator(Simulator):
             raise NetworkEntityNotFoundException(f"Entity {entity_b.entity_id} does not exist")
         if not self._graph.has_edge(entity_a.entity_id, entity_b.entity_id):
             self._graph.add_edge(entity_a.entity_id, entity_b.entity_id)
+
+    def get_ca_certificate_file_path(self) -> Optional[Path]:
+        return self.get_configuration_store().get_configuration("certificate_files", {}).get("root", {}).get("certificate")
+
+    def get_host_certificate_file_path(self, host: WattsonNetworkHost) -> Optional[Path]:
+        return self.get_configuration_store().get_configuration("certificate_files", {}).get("hosts", {}).get(host.id, {}).get("certificate")
+
+    def get_host_private_key_file_path(self, host: WattsonNetworkHost) -> Optional[Path]:
+        return self.get_configuration_store().get_configuration("certificate_files", {}).get("hosts", {}).get(host.id, {}).get("private")
 
     def load_scenario(self, scenario_path: Path):
         """
@@ -824,6 +849,25 @@ class NetworkEmulator(Simulator):
                                 WattsonNetworkQueryType.REMOVE_INTERFACE,
                                 WattsonNetworkQueryType.CREATE_INTERFACE]:
             return self._handle_interface_simulation_control_query(query)
+
+        if query.query_type == WattsonNetworkQueryType.RESTART_ROUTING:
+            routers = self.get_routers()
+            at_least_one_error = False
+            errors = []
+            for router in routers:
+                routing_service = router.get_routing_service()
+                if routing_service is None:
+                    self.logger.warning(f"Requesting to restart routing service for {router.entity_id} - service not found!")
+                    continue
+                if routing_service.restart():
+                    self.logger.info(f"Restarted routing service for {router.entity_id}")
+                else:
+                    at_least_one_error = True
+                    self.logger.error(f"Routing service for {router.entity_id} could not be restarted!")
+                    errors.append(f"Routing service for {router.entity_id} could not be restarted!")
+            if at_least_one_error:
+                return WattsonNetworkResponse(successful=False, data={"error": "\n".join(errors)})
+            return WattsonNetworkResponse(successful=True, data={})
 
         if query.query_type == WattsonNetworkQueryType.GET_UNUSED_IP:
             query.mark_as_handled()

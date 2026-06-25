@@ -22,5 +22,11 @@ class RtuDefaultConfiguration(ServiceConfiguration):
             "statistics": "!statistics",
             "scenario_path": "!scenario_path",
             "allowed_mtu_ips": "!allowed_mtu_ips",
-            "local_control": False
+            "local_control": False,
+            "tls": {
+                "valid_clients": "!mtu_ids",
+                "server_tls_version": "NONE",
+                "client_tls_version": "NONE",
+                "overrides": {}
+            }
         })

@@ -1,5 +1,6 @@
 from typing import Optional
 
+from wattson.cosimulation.exceptions import NetworkNodeNotFoundException
 from wattson.cosimulation.cli.cli_command_handler import CliCommandHandler
 from wattson.cosimulation.simulators.network.components.remote.remote_network_host import RemoteNetworkHost
 from wattson.cosimulation.simulators.network.components.remote.remote_network_interface import RemoteNetworkInterface
@@ -59,11 +60,11 @@ class FirewallCliCommand(CliCommandHandler):
             ]
         ]
     def get_node(self, entity_id) -> Optional[RemoteNetworkNode]:
-        node = None
         try:
             node = self.remote_network_emulator.get_node(node=entity_id)
-        finally:
-            return node
+        except NetworkNodeNotFoundException:
+            node = None
+        return node
 
     def handle_command(self, command: list[str], prefix: list[str]) -> bool:
         action = command[0]

@@ -4,7 +4,7 @@ import threading
 from pathlib import Path
 from typing import Optional
 
-import pyprctl
+from wattson.util.threading import set_thread_name
 from wattson.time import WattsonTime, WattsonTimeType
 from wattson.util import get_logger
 
@@ -58,7 +58,7 @@ class ExportThread(threading.Thread):
         return time.file_name(WattsonTimeType.WALL, with_milliseconds=True, with_timestamp=True)
 
     def run(self) -> None:
-        pyprctl.set_name("W/PG/Exp")
+        set_thread_name("W/PG/Exp")
         last_timestamp = -1
         if self._initial_configuration_applied_event is not None:
             while not self._termination_requested.is_set():

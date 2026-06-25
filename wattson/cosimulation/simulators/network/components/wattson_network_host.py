@@ -3,6 +3,7 @@ import ipaddress
 import os
 import shutil
 import subprocess
+from pathlib import Path
 from typing import ClassVar, Optional, TYPE_CHECKING, Tuple, List, Union
 
 from wattson.cosimulation.control.constants import SIM_CONTROL_ID
@@ -25,6 +26,8 @@ class WattsonNetworkHost(WattsonNetworkNode, NetworkHost):
     def start(self):
         super().start()
         self.loopback_up()
+        # Ensure that the folder exists
+        self.load_certificates()
         if not self.is_outside_namespace():
             self._set_name_servers()
 
@@ -139,7 +142,8 @@ class WattsonNetworkHost(WattsonNetworkNode, NetworkHost):
                 parsed_routes.append(translated_route)
             routes = parsed_routes
         finally:
-            return routes
+            pass
+        return routes
 
     def generate_display_name(self) -> str:
         # TODO: Allow to register names for certain roles
@@ -202,21 +206,64 @@ class WattsonNetworkHost(WattsonNetworkNode, NetworkHost):
         divider = "-e"
         use_shell = False
         pre_cmd = ""
+        print_command = False
         if "gnome-terminal" in terminal:
             divider = "--"
             dbus = shutil.which("dbus-launch")
             pre_cmd = f"{dbus} "
             use_shell = True
+            print_command = False                        
 
         cmd = f"{pre_cmd}{terminal} {divider} {shell}"
+        if print_command:
+            self.logger.info(cmd)
 
         def pre_exec_function():
             # Detach from process group to ignore signals sent to main process
             os.setpgrp()
             
-        p = self.popen(cmd, cwd=cwd, stdout=subprocess.DEVNULL, shell=use_shell, stderr=subprocess.DEVNULL, preexec_fn=pre_exec_function)
+        if print_command:
+            p = self.popen(cmd, cwd=cwd, stdout=subprocess.PIPE, shell=use_shell, stderr=subprocess.PIPE, preexec_fn=pre_exec_function)
+        else:
+            p = self.popen(cmd, cwd=cwd, stdout=subprocess.DEVNULL, shell=use_shell, stderr=subprocess.DEVNULL, preexec_fn=pre_exec_function)
         self.manage_process(p)
         return p.poll() is None
 
     def loopback_up(self) -> bool:
         return self.get_namespace().loopback_up()
+
+    def get_host_certificates_folder(self, ensure_exists: bool = True) -> Path:
+        folder = self.get_host_folder(ensure_exists=ensure_exists).joinpath("certificates")
+        if ensure_exists:
+            folder.mkdir(parents=True, exist_ok=True)
+        return folder
+
+    def get_guest_certificates_folder(self):
+        return self.get_guest_folder().joinpath("certificates")
+
+    def load_certificates(self):
+        root_ca_certificate = self.network_emulator.get_ca_certificate_file_path()
+        host_certificate_file = self.network_emulator.get_host_certificate_file_path(self)
+        host_private_key_file = self.network_emulator.get_host_private_key_file_path(self)
+
+        certificate_folder = self.get_host_certificates_folder()
+        guest_certificate_folder = self.get_guest_certificates_folder()
+        if root_ca_certificate is not None:
+            shutil.copyfile(root_ca_certificate, certificate_folder / "root-ca.pem")
+            root_ca_certificate_guest = guest_certificate_folder / "root-ca.pem"
+            self.config["root_ca_certificate_file"] = root_ca_certificate_guest
+        if host_certificate_file is not None:
+            shutil.copyfile(host_certificate_file, certificate_folder / "certificate.pem")
+            host_certificate_file_guest = guest_certificate_folder / "certificates" / "certificate.pem"
+            self.config["host_certificate_file"] = host_certificate_file_guest
+        if host_private_key_file is not None:
+            shutil.copyfile(host_private_key_file, certificate_folder / "private_key.pem")
+            host_private_key_file_guest = guest_certificate_folder / "certificates" / "private_key.pem"
+            self.config["private_key_file"] = host_private_key_file_guest
+
+        # External certificates
+        for node_id in self.config.get("required_tls_certificates", []):
+            node = self.network_emulator.get_host(node_id)
+            node_certificate = self.network_emulator.get_host_certificate_file_path(node)
+            if node_certificate is not None:
+                shutil.copyfile(node_certificate, certificate_folder.joinpath(f"{node.id}-certificate.pem"))

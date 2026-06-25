@@ -29,6 +29,38 @@ class NetworkScenarioLoader:
         with network_file.open("r") as f:
             network_data = yaml.load(f, Loader=yaml.CLoader)
 
+        # Certificates
+        certificate_dict = {
+            "root": {},
+            "hosts": {},
+            "users": {}
+        }
+        certificate_folder = scenario_path.joinpath("certificates")
+        if certificate_folder.exists():
+            host_certificates = certificate_folder.joinpath("host_certificates")
+            ca_certificates = certificate_folder.joinpath("ca_certificates")
+            user_certificates = certificate_folder.joinpath("user_certificates")
+
+            root_certificate = ca_certificates.joinpath(f"root-CA-certificate.pem")
+            root_private_key = ca_certificates.joinpath(f"root-CA-private.key")
+
+            if root_certificate.exists():
+                certificate_dict["root"]["certificate"] = root_certificate
+            if root_private_key.exists():
+                certificate_dict["root"]["private"] = root_private_key
+            if host_certificates.exists():
+                for file in host_certificates.iterdir():
+                    if file.is_file():
+                        if file.name.endswith("certificate.pem"):
+                            # certificate
+                            host_uid = file.name.split("_")[0]
+                            certificate_dict["hosts"].setdefault(host_uid, {})["certificate"] = file
+                        elif file.name.endswith("private.key"):
+                            # Private key
+                            host_uid = file.name.split("_")[0]
+                            certificate_dict["hosts"].setdefault(host_uid, {})["private"] = file
+        network_emulator.get_configuration_store().register_configuration("certificate_files", certificate_dict)
+
         # Add Nodes
         for node_id, node in network_data["nodes"].items():
             self._check_node(node)
@@ -153,7 +185,7 @@ class NetworkScenarioLoader:
                 raise InvalidNetworkNodeException(f"Unknown node type {node_type}")
             network_node.config = node.copy()
             for interface_config in node["interfaces"]:
-                interface = WattsonNetworkInterface(id=interface_config["id"], node=network_node)
+                interface = WattsonNetworkInterface(id=interface_config["id"], node=network_node, config=interface_config.copy())
                 if "ip" in interface_config and interface_config["ip"] != "":
                     ip_subnet = ipaddress.IPv4Network(interface_config["ip"], strict=False)
                     ip_address = ipaddress.IPv4Address(interface_config["ip"].split("/")[0])
@@ -180,6 +212,8 @@ class NetworkScenarioLoader:
             network_link.interface_a = interface_a
             network_link.interface_b = interface_b
             network_emulator.add_link(network_link)
+
+        network_emulator.on_scenario_loaded()
 
     @staticmethod
     def _prefix_node_id(node_id: str) -> str:

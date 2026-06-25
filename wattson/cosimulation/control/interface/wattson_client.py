@@ -1,3 +1,4 @@
+import logging
 import math
 import queue
 import threading
@@ -132,6 +133,10 @@ class WattsonClient(threading.Thread):
 
         """
         return self._client_id
+
+    @property
+    def namespace(self):
+        return self._namespace
 
     @property
     def name(self) -> str:
@@ -294,8 +299,6 @@ class WattsonClient(threading.Thread):
                                 event.set()
                         except Exception as e:
                             self.logger.error(f"{e=}")
-                        finally:
-                            continue
 
     def async_query(self, query: WattsonQuery) -> WattsonResponsePromise:
         """
@@ -727,3 +730,25 @@ class WattsonClient(threading.Thread):
             self.logger.error("GetSimulators query not successful")
             return []
         return response.data.get("simulators", [])
+
+    ###
+    ### Logging
+    ###
+    def log(self, level: int, message: str) -> None:
+        query = WattsonQuery(query_type=WattsonQueryType.GLOBAL_LOG, query_data={"level": level, "message": message})
+        self.query(query, block=False)
+
+    def debug(self, message: str):
+        self.log(logging.DEBUG, message)
+
+    def info(self, message: str):
+        self.log(logging.INFO, message)
+
+    def warning(self, message: str):
+        self.log(logging.WARNING, message)
+
+    def error(self, message: str):
+        self.log(logging.ERROR, message)
+
+    def critical(self, message: str):
+        self.log(logging.CRITICAL, message)

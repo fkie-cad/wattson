@@ -1,0 +1,12 @@
+import enum
+
+
+class MmsControlError(str, enum.Enum):
+    NO_ERROR = "SUCCESS"
+    SELECT_ERROR = "SELECT_ERROR"
+    OPERATE_ERROR = "OPERATE_ERROR"
+    CANCEL_ERROR = "CANCEL_ERROR"
+
+    STATUS_ONLY = "STATUS_ONLY"
+
+    UNKNOWN_ERROR = "UNKNOWN_ERROR"

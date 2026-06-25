@@ -7,13 +7,13 @@ from typing import Union, Type, Optional, Set, Dict, List, Any
 
 import yaml
 
+from powerowl.layers.network.configuration.protocols.tls_version import TlsVersion
 from powerowl.layers.powergrid import PowerGridModel
 from powerowl.layers.powergrid.elements import GridElement
 from powerowl.layers.powergrid.values.grid_value import GridValue
 from powerowl.layers.powergrid.values.grid_value_context import GridValueContext
 from powerowl.simulators.pandapower import PandaPowerGridModel
 from wattson.cosimulation.control.messages.wattson_async_group_response import WattsonAsyncGroupResponse
-from wattson.cosimulation.control.messages.wattson_async_response import WattsonAsyncResponse
 
 from wattson.cosimulation.exceptions import InvalidScenarioException, InvalidSimulationControlQueryException
 from wattson.cosimulation.control.messages.wattson_query import WattsonQuery
@@ -54,6 +54,7 @@ class PowerGridSimulator(PhysicalSimulator):
         self._mtu_entity_ids = []
         self._mtu_ids = []
         self._rtu_map = {}
+        self._tls_map = {}
         self._grid_model = grid_model_class()
         self._noise_manager = NoiseManager(power_grid_model=self._grid_model, logger=self.logger.getChild("NoiseManager"))
         self._grid_model.set_pre_sim_noise_callback(self._noise_manager.pre_sim_noise)
@@ -272,9 +273,10 @@ class PowerGridSimulator(PhysicalSimulator):
                 success = True
                 query.mark_as_handled()
             finally:
-                return PowerGridMeasurementResponse(
-                    query.element_identifier, query.attribute_name, value, successful=success
-                )
+                pass
+            return PowerGridMeasurementResponse(
+                query.element_identifier, query.attribute_name, value, successful=success
+            )
 
         if isinstance(query, PowerGridQuery):
             if query.query_type == PowerGridQueryType.GET_GRID_VALUE or query.query_type == PowerGridQueryType.GET_GRID_VALUE_VALUE:
@@ -407,6 +409,13 @@ class PowerGridSimulator(PhysicalSimulator):
                 rtu_configuration = RtuDefaultConfiguration()
                 rtu_configuration["use_syslog"] = self.get_configuration_store().get("configuration", {}).get("use_syslog", False)
 
+                server_tls_version_name: str = node.get_config().get("configuration", {}).get("server_tls_version", "NONE")
+                server_tls_version = TlsVersion[server_tls_version_name]
+                rtu_configuration["tls"] = {
+                    "overrides": self.get_configuration_store().get_configuration("configuration", {}).get("tls", {}),
+                    "server_tls_version": server_tls_version.name
+                }
+
                 from wattson.hosts.rtu import RtuDeployment
                 node.add_service(WattsonPythonService(RtuDeployment, rtu_configuration, node))
                 self._required_sim_control_clients.add(node.entity_id)
@@ -429,6 +438,10 @@ class PowerGridSimulator(PhysicalSimulator):
                     ccx_configuration = CCXDefaultConfiguration()
                     ccx_configuration["use_syslog"] = self.get_configuration_store().get_configuration("configuration", {}).get("use_syslog", False)
                     ccx_export_config = self.get_configuration_store().get_configuration("configuration", {}).get("ccx_export")
+                    ccx_tls_overrides = self.get_configuration_store().get_configuration("configuration", {}).get("tls", {})
+                    ccx_configuration["tls"]["overrides"] = ccx_tls_overrides
+
+                    rtu_tls_map = {}
 
                     if isinstance(ccx_export_config, dict) and "enabled" in ccx_export_config and "file" in ccx_export_config:
                         file_path = ccx_export_config["file"]
@@ -450,6 +463,14 @@ class PowerGridSimulator(PhysicalSimulator):
 
                 rtu_map = node.config.get("rtu_map", {})
                 self._rtu_map[node.entity_id] = {rtu_id: {"coa": rtu_id, "ip": rtu_ip.split("/")[0]} for rtu_id, rtu_ip in rtu_map.items()}
+                tls_versions = {}
+                for rtu_id in rtu_map.keys():
+                    rtu = self._network_emulator.get_host(rtu_id)
+                    tls_version = TlsVersion[rtu.get_config().get("configuration", {}).get("server_tls_version", "NONE")]
+                    tls_versions[rtu_id] = tls_version.name
+                    rtu.config.setdefault("required_tls_certificates", set()).add(node.id)
+                    node.config.setdefault("required_tls_certificates", set()).add(rtu_id)
+                self._tls_map[node.entity_id] = tls_versions
                 self._required_sim_control_clients.add(node.entity_id)
 
             if node.has_role("vcc"):
@@ -488,6 +509,7 @@ class PowerGridSimulator(PhysicalSimulator):
         self._configuration_store.register_configuration("mtus", lambda node, store: self._mtu_entity_ids)
         self._configuration_store.register_configuration("mtu_ids", lambda node, store: self._mtu_ids)
         self._configuration_store.register_configuration("rtu_map", lambda node, store: self._rtu_map)
+        self._configuration_store.register_configuration("ccx_tls", lambda node, store: self._tls_map)
         self._configuration_store.register_short_notation("!coa", "!coas.!entityid")
         self._configuration_store.register_configuration("power_grid", self._grid_model.to_primitive_dict())
 

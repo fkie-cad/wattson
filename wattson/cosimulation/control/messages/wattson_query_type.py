@@ -23,6 +23,9 @@ class WattsonQueryType(str, enum.Enum):
 
     REQUEST_SHUTDOWN = "request-shutdown"
 
+    SUBMIT_STATISTIC = "submit-statistic"
+    GLOBAL_LOG = "global-log"
+
     def __eq__(self, other):
         if isinstance(other, str):
             return other == self.value

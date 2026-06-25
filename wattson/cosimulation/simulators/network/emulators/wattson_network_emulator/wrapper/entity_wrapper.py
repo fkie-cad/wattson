@@ -15,6 +15,9 @@ class EntityWrapper(abc.ABC):
         self.emulator: 'WattsonNetworkEmulator' = emulator
         self._virtual_machine_namespace = None
         self.logger = get_logger(f"{entity.entity_id}Wrapper", f"{entity.entity_id}Wrapper")
+        from wattson.cosimulation.simulators.network.components.wattson_network_entity import WattsonNetworkEntity
+        if isinstance(self.entity, WattsonNetworkEntity):
+            self.entity.emulation_instance = self
 
     @abc.abstractmethod
     def get_namespace(self) -> Namespace:

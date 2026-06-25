@@ -224,12 +224,73 @@ class WattsonNetworkEmulator(NetworkEmulator):
         self.logger.info(f"Exposing Open vSwitch database as {str(ovs_socket_path.relative_to(self._working_directory))}")
         subprocess.check_call(f"ovs-vsctl set-manager punix:{ovs_socket_path_string}", shell=True) #, stdout=subprocess.DEVNULL)
 
+    def _configure_network_manager(self) -> bool:
+        wattson_config_file = Path("/etc/NetworkManager/conf.d/90-wattson.conf")
+        if wattson_config_file.exists():
+            return True
+        try:
+            from pystemd.systemd1 import Unit
+        except ImportError:
+            return False
+        network_manager_service = Unit("NetworkManager.service")
+        network_manager_service.load()
+        if network_manager_service.Unit.SubState.decode() != "running":
+            # No configuration necessary
+            return True
+
+        create_config_answer = self._config.get("auto-configure-network-manager")
+
+        self.logger.warning("NetworkManager detected on your system.")
+        self.logger.warning("NetworkManager interferes with interfaces created by Wattson.")
+        self.logger.warning(f"Wattson can create a NetworkManager configuration file {str(wattson_config_file.absolute())}")
+        if create_config_answer is None:
+            self.logger.warning("Do you want to ignore all interfaces created by Wattson? (s*-*, h*-*)")
+
+            res = input("Create NetworkManager configuration? [y/N]: ")
+            create_config_answer = res.lower() in ["y", "yes"]
+        if not create_config_answer:
+            self.logger.warning("Wattson will not change NetworkManager configuration - be aware of potential issues")
+            return False
+        with wattson_config_file.open("w") as f:
+            f.writelines([
+                "[keyfile]\n",
+                "unmanaged-devices=interface-name:s*-*,interface-name=h*-*\n"
+            ])
+        self.logger.info("Created NetworkManager configuration")
+        try:
+            network_manager_service.Unit.ReloadOrRestart(b"replace")
+        except Exception as e:
+            self.logger.error(f"Could not reload NetworkManager ({e=})")
+            return False
+        self.logger.info("Reloaded NetworkManager configuration")
+        return True
+
+    def _configure_udev_rules(self) -> bool:
+        udev_rule_file = Path("/etc/systemd/network/10-wattson-mac-policy.link")
+        if udev_rule_file.exists():
+            return True
+        if not udev_rule_file.parent.exists():
+            return False
+        self.logger.warning(f"Adjusting udev rules for MAC addresses")
+        with udev_rule_file.open("w") as f:
+            f.writelines([
+                "[Match]\n",
+                "OriginalName=s*-*\n",
+                "\n",
+                "[Link]\n",
+                "MACAddressPolicy=none\n"
+            ])
+        subprocess.check_call(f"udevadm control --reload", shell=True, stdout=subprocess.DEVNULL)
+        subprocess.check_call(f"udevadm trigger", shell=True, stdout=subprocess.DEVNULL)
+
     def start(self):
         if not self._main_namespace.exists():
             self._main_namespace.from_pid(os.getpid())
         super().start()
         self._adjust_resource_limits()
         self._expose_open_vswitch_database()
+        self._configure_network_manager()
+        self._configure_udev_rules()
 
         if self._async_start:
             self.logger.warning(f"Asynchronous start enabled - be aware of potential stability issues")

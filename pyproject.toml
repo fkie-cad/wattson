@@ -46,6 +46,7 @@ dependencies = [
   "pyroute2",
   "PySide6",
   "PyQt6-WebEngine>=6.5.0",
+  "pystemd",
   "pywebview>=3.3.5",
   "pyyaml>=5.4",
   "pyzmq>=20.0.0",

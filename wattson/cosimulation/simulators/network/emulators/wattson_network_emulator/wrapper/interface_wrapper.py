@@ -93,10 +93,9 @@ class InterfaceWrapper(EntityWrapper):
                 if platform.system() == "Windows":
                     self.logger.warning(f"Not implemented for Windows!")
                 success = self.get_namespace().if_add(self.interface.get_system_name(), interface_type="dummy")
-                # success, lines = self.get_namespace().exec(["ip", "link", "add", self.interface.interface_name, "type", "dummy"])
-                """for line in lines:
-                    print(line)
-                """
+                if not success:
+                    self.logger.error(f"Failed to create interface {self.interface.get_system_name()}")
+                    return False
                 self.push_to_namespace()
                 self.configure(wait_timeout=2)
                 return True
@@ -151,7 +150,8 @@ class InterfaceWrapper(EntityWrapper):
         """
         if self.has_additional_namespace():
             self.get_additional_namespace().if_down(self.interface.get_system_name())
-        return self.interface.down()
+        self.get_namespace().if_down(self.interface.get_system_name())
+        #return self.interface.down()
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "down"])
         return code0
 
@@ -165,6 +165,7 @@ class InterfaceWrapper(EntityWrapper):
         """
         if self.has_additional_namespace():
             self.get_additional_namespace().if_up(self.interface.get_system_name())
+        return self.get_namespace().if_up(self.interface.get_system_name())
 
         return self.interface.up()
         code0, _ = self.get_namespace().exec(["ip", "link", "set", "dev", self.interface.interface_name, "up"])
@@ -184,6 +185,12 @@ class InterfaceWrapper(EntityWrapper):
         # Set IP
         self.update_ip_address()
         return self.up()
+
+    def read_mac_address(self):
+        info = self.get_system_info()
+        if info is None:
+            return None
+        return info.get("hardware-address")
 
     def update_mac_address(self):
         interface = self.interface
@@ -247,14 +254,9 @@ class InterfaceWrapper(EntityWrapper):
         interface = self.interface
         node_wrapper = typing.cast(NodeWrapper, self.emulator.get_wrapper(interface.node))
         node_wrapper.remove_interface(interface)
-        if self.get_namespace().is_network_namespace:
+        if self.get_namespace().is_network_namespace and self.get_namespace() != self.emulator.get_main_namespace():
             if not self.get_namespace().if_set_namespace(interface.interface_name, self.emulator.get_main_namespace().name):
-                """
-            code0, lines = self.get_namespace().exec(["ip", "link", "set", interface.interface_name, "netns", self.emulator.get_main_namespace().name])
-            if not code0:
-                """
                 self.logger.warning(f"Cannot move interface {interface.interface_name}")
-                # self.logger.debug("\n".join(lines))
                 return False
         return True
 
@@ -270,7 +272,7 @@ class InterfaceWrapper(EntityWrapper):
         interface = self.interface
         if namespace is None:
             namespace = self.get_namespace()
-        if namespace.is_network_namespace:
+        if namespace.is_network_namespace and namespace != self.emulator.get_main_namespace():
             if not self.emulator.get_main_namespace().if_set_namespace(interface.interface_name, namespace.name):
                 self.logger.warning(f"Cannot move interface {interface.interface_name}")
                 return False

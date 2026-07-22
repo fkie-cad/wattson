@@ -138,6 +138,16 @@ class WattsonService(WattsonServiceInterface):
         self._log_handle = self.log_file.get_current().open("w")
         return self._log_handle
 
+    def read_log_file(self) -> Optional[List[str]]:
+        if self.log_file is None:
+            return None
+        try:
+            with self.log_file.get_current().open("r") as f:
+                lines = f.readlines()
+                return lines
+        except Exception:
+            return None
+
     def __repr__(self):
         return f"{self.network_node.entity_id} // {self.id}"
 
